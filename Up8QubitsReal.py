@@ -50,7 +50,7 @@ inputs = [[np.pi, t_1q, 10*1e-9],   # [drive angle0, drive time 0, drive start 0
           [np.pi/5,t_1q, 0    ],
           [np.pi*2,t_1q, 0     ]]
 
-Qubitstates0 =np.zeros(NoOfQubits) #Initial state of qubits (all = 1), change as you please
+Qubitstates0 =np.zeros(NoOfQubits) #Initial state of qubits (all = 0), change as you please
 
 
 
