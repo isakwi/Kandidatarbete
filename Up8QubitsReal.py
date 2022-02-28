@@ -24,9 +24,9 @@ from qutip import *
 from qutip.measurement import measure, measurement_statistics
 
 
-w_01 = 4*1e9 *2*np.pi   # Qubit frequency 
+w_01 = 4*1e9 *2*np.pi   # Qubit frequency (4-5 GHz)
 w_d = w_01
-U = 2*1e8 *2*np.pi   # Anhormicity (only if levels > 2 )
+U = 200*1e6 *2*np.pi   # Anhormicity (only if levels > 2 ) (150-250 MHz)
 
 t_1q = 20*1e-9   #1qubit gate time 
 t_2q = 200*1e-9  #2qubit gate time 
@@ -50,29 +50,27 @@ inputs = [[np.pi, t_1q, 10*1e-9],   # [drive angle0, drive time 0, drive start 0
           [np.pi/5,t_1q, 0    ],
           [np.pi*2,t_1q, 0     ]]
 
-Qubitstates0 =np.zeros(NoOfQubits) #Initial state of qubits (all = 1), change as you please
-
+Qubitstates0 =np.zeros(NoOfQubits) #Initial state of qubits (all = 0), change as you please
 
 
 T1 = 50*1e-6 # relax time
 Tphi = 100*1e-6 # dephase time 
-relax_rate =np.concatenate((((1/T1)*np.ones(NoOfQubits)) ,np.zeros(MaxNoOfQubits-NoOfQubits))) #Same rates for everythin, change if u want
-dephas_rate = np.concatenate((1/Tphi*np.ones(NoOfQubits) ,np.zeros(MaxNoOfQubits-NoOfQubits))) #Same rates for everythin, change if u want
+relax_rate =(1/T1)*np.ones(NoOfQubits) #Same rates for everythin, change if u want
+dephas_rate = (1/Tphi)*np.ones(NoOfQubits) #Same rates for everythin, change if u want
 
 use_MCWF = True
-ntraj = 100
+ntraj = 10
 
 
 #%%
 
 tlist=np.linspace(0,1*1e-7,101)
 
-psi0 = basis(2,int(Qubitstates0[0]))
-for j in range(NoOfQubits-1):   # Get the right dim for psi0
-    psi0 = tensor(psi0, basis(2,int(Qubitstates0[j+1])))
+psi0 = basis(3,int(Qubitstates0[0]))
+for j in range(NoOfQubits-1):
+    psi0 = tensor(psi0, basis(3,int(Qubitstates0[j+1])))
 
-a=destroy(2)
-
+a=destroy(3)
 
 def DimensionifyOperator(Q, NoOfQubits, vals):
     #Create list of operators that could act on each qubit. 
@@ -81,16 +79,32 @@ def DimensionifyOperator(Q, NoOfQubits, vals):
     Opers = []
     Qlist = []
     for i in range(NoOfQubits):
-        Qlist.append(qeye(2)) # Start with list of Identity-ops 
+        Qlist.append(qeye(3)) # Start with list of Identity-ops 
     for j in range(NoOfQubits):
-        Qlist[j]=vals[j]*Q    # Change one at a time to Q-op and tensorproduct
-        Opers.append(tensor(Qlist)) # Save in Opers-list 
-        Qlist[j]=qeye(2)      #Reset for next loop 
+        Qlist[j]=vals[j]*Q    # Change one at a time to Q-op and tensor 
+        Opers.append(tensor(Qlist))
+        Qlist[j]=qeye(3)      #Reset for next loop 
     return Opers
+    
+    
+def TensorifyOperator(Q, NoOfQubits):
+    #Tensorproduct for length NoOfQubits 
+    # Q = Operator 
+    Qlist = []
+    for i in range(NoOfQubits):
+        Qlist.append(Q)
+    return tensor(Qlist)
 
 
 # Create list of gates that could run on each qubit. That is gate[0] => operate on qubit1, gate[3] => operate on qubit4
-gate=DimensionifyOperator(sigmax(), NoOfQubits, np.ones(MaxNoOfQubits))
+gate=DimensionifyOperator((a+a.dag()), NoOfQubits, np.ones(NoOfQubits))
+
+
+#Anharmonicity 
+H_anh  = 0
+H_anhh = DimensionifyOperator(U*a.dag()*a.dag()*a*a, NoOfQubits, np.ones(NoOfQubits))
+for i in range(NoOfQubits):
+    H_anh = H_anh + H_anhh[i]
 
 #%%Timefuncs
 def EnvelopeFunc (t, beta, t_qd, t_st):
@@ -161,24 +175,23 @@ def Et7(t, args):
 
 #%% Time dependance of H 
 inp={'Et0': inputs[0],'Et1': inputs[1],'Et2': inputs[2],'Et3': inputs[3],'Et4': inputs[4],'Et5': inputs[5],'Et6': inputs[6],'Et7': inputs[7]}
-
 # 
 if len(gate)==1:
-    H = QobjEvo([gate[0],Et0],args=inp)
+    H = QobjEvo([H_anh,[gate[0],Et0]],args=inp)
 elif len(gate)==2:
-    H = QobjEvo([[gate[0],Et0],[gate[1], Et1]],args=inp)
+    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1]],args=inp)
 elif len(gate)==3:
-    H = QobjEvo([[gate[0],Et0],[gate[1], Et1],[gate[2], Et2]],args=inp)
+    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1],[gate[2], Et2]],args=inp)
 elif len(gate)==4:
-    H = QobjEvo([[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3]],args=inp)
+    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3]],args=inp)
 elif len(gate)==5:
-    H = QobjEvo([[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3],[gate[4], Et4]],args=inp)
+    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3],[gate[4], Et4]],args=inp)
 elif len(gate)==6: 
-    H = QobjEvo([[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3],[gate[4], Et4],[gate[5], Et5]],args=inp)
+    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3],[gate[4], Et4],[gate[5], Et5]],args=inp)
 elif len(gate)==7:
-    H = QobjEvo([[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3],[gate[4], Et4],[gate[5], Et5],[gate[6], Et6]],args=inp)
+    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3],[gate[4], Et4],[gate[5], Et5],[gate[6], Et6]],args=inp)
 elif len(gate)==8:
-    H = QobjEvo([[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3],[gate[4], Et4],[gate[5], Et5],[gate[6], Et6],[gate[7], Et7]],args=inp)
+    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3],[gate[4], Et4],[gate[5], Et5],[gate[6], Et6],[gate[7], Et7]],args=inp)
     
 
 
@@ -187,7 +200,8 @@ elif len(gate)==8:
 e_ops=DimensionifyOperator(a.dag()*a, NoOfQubits, np.ones(MaxNoOfQubits))
 
 c_ops1 = DimensionifyOperator(a, NoOfQubits, np.sqrt(relax_rate))
-c_ops2 = DimensionifyOperator(sigmaz()/2, NoOfQubits, np.sqrt(dephas_rate))
+c_ops2 = DimensionifyOperator(qeye(3), NoOfQubits, np.sqrt(dephas_rate))
+#What is the dephasing operator in 3level?? 
 
 c_ops=c_ops1+c_ops2
 
@@ -206,7 +220,7 @@ fig1.set_ylabel('Ockupation prob')
 fig1.set_xlabel('t')
 fig1.grid()
 fig1.legend(loc='upper right')
-fig1.axis([0,tlist[-1],0,1.05])
+fig1.axis([0,tlist[-1],0,2.05])
 fig1.title.set_text('Qubit states')
 
 for i in range(NoOfQubits):
