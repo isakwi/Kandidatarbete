@@ -68,7 +68,7 @@ ntraj = 100
 tlist=np.linspace(0,1*1e-7,101)
 
 psi0 = basis(2,int(Qubitstates0[0]))
-for j in range(NoOfQubits-1):
+for j in range(NoOfQubits-1):   # Get the right dim for psi0
     psi0 = tensor(psi0, basis(2,int(Qubitstates0[j+1])))
 
 a=destroy(2)
@@ -79,20 +79,13 @@ def DimensionifyOperator(Q, NoOfQubits, vals):
     # That is gate[0] => operate on qubit1, gate[3] => operate on qubit4.. etc
     # Q = Operator, vals= array of length MaxNoOQubits with values s.a. rates for each qubit
     Opers = []
-    Opers.append(vals[0]*Q)   #Relaxation
-    Opers.append(tensor(qeye(2),vals[1]*Q))   #Relaxation
-    Opers.append(tensor(qeye(2),qeye(2),vals[2]*Q))   #Relaxation
-    Opers.append(tensor(qeye(2),qeye(2),qeye(2),vals[3]*Q) )  #Relaxation
-    Opers.append(tensor(qeye(2),qeye(2),qeye(2),qeye(2),vals[4]*Q))   #Relaxation
-    Opers.append(tensor(qeye(2),qeye(2),qeye(2),qeye(2),qeye(2),vals[5]*Q) )  #Relaxation
-    Opers.append(tensor(qeye(2),qeye(2),qeye(2),qeye(2),qeye(2),qeye(2),vals[6]*Q)  ) #Relaxation
-    Opers.append(tensor(qeye(2),qeye(2),qeye(2),qeye(2),qeye(2),qeye(2),qeye(2),vals[7]*Q) )  #Relaxation
-    
+    Qlist = []
     for i in range(NoOfQubits):
-        for j in range(NoOfQubits-1-i):
-            Opers[i]=tensor(Opers[i], qeye(2))
-    del Opers[NoOfQubits:]
-    
+        Qlist.append(qeye(2)) # Start with list of Identity-ops 
+    for j in range(NoOfQubits):
+        Qlist[j]=vals[j]*Q    # Change one at a time to Q-op and tensorproduct
+        Opers.append(tensor(Qlist)) # Save in Opers-list 
+        Qlist[j]=qeye(2)      #Reset for next loop 
     return Opers
 
 
@@ -193,8 +186,8 @@ elif len(gate)==8:
 
 e_ops=DimensionifyOperator(a.dag()*a, NoOfQubits, np.ones(MaxNoOfQubits))
 
-c_ops1 = DimensionifyOperator(a.dag()*a, NoOfQubits, np.sqrt(relax_rate))
-c_ops2 = DimensionifyOperator(a.dag()*a, NoOfQubits, np.sqrt(dephas_rate))
+c_ops1 = DimensionifyOperator(a, NoOfQubits, np.sqrt(relax_rate))
+c_ops2 = DimensionifyOperator(sigmaz()/2, NoOfQubits, np.sqrt(dephas_rate))
 
 c_ops=c_ops1+c_ops2
 
