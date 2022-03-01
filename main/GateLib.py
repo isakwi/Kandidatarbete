@@ -1,6 +1,5 @@
 """
-Backend with definition of gates
-
+Backend with definition of 1qb and 2qb gates
 
 """
 
