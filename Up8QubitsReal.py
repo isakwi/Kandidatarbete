@@ -15,7 +15,7 @@ H_i_drive = b cos(w_d t) (a_i + a_i.dag())
 Incorporate drive pulse E(t) = Acos^2(t),  
 
 """
-# Hej
+
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
@@ -26,10 +26,10 @@ from qutip.measurement import measure, measurement_statistics
 
 w_01 = 4*1e9 *2*np.pi   # Qubit frequency (4-5 GHz)
 w_d = w_01
-U = 200*1e6 *2*np.pi   # Anhormicity (only if levels > 2 ) (150-250 MHz)
+U = -200*1e6 *2*np.pi   # Anhormicity (only if levels > 2 ) (150-250 MHz)
 
 t_1q = 20*1e-9   #1qubit gate time 
-t_2q = 200*1e-9  #2qubit gate time 
+t_2q =200*1e-9  #2qubit gate time 
 
 
 """
@@ -40,14 +40,14 @@ INPUTS:
 """
 
 MaxNoOfQubits = 8  
-NoOfQubits = 8 # Choose how many qubits you want to run No more than 8
-inputs = [[np.pi, t_1q, 10*1e-9],   # [drive angle0, drive time 0, drive start 0],
-          [np.pi/4,t_1q, 0     ],   # [drive angle1...] 
-          [np.pi/2,t_1q, 4*1e-8],
-          [np.pi/8,t_1q, 0     ],
-          [np.pi/3,t_1q, 0     ],
-          [np.pi/16,t_1q, 0    ],
-          [np.pi/5,t_1q, 0    ],
+NoOfQubits = 4 # Choose how many qubits you want to run No more than 8
+inputs = [[np.pi, t_1q, 10*1e-9],   # [drive angle0, maxgate time 0, drive start 0],
+          [np.pi/2,t_1q, 0     ],   # [drive angle1...] 
+          [np.pi/3,t_1q, 4*1e-8],
+          [np.pi/4,t_1q, 2*1e-8],
+          [np.pi/5,t_1q, 0     ],
+          [np.pi/6,t_1q, 0     ],
+          [np.pi/7,t_1q, 0     ],
           [np.pi*2,t_1q, 0     ]]
 
 Qubitstates0 =np.zeros(NoOfQubits) #Initial state of qubits (all = 0), change as you please
@@ -64,7 +64,7 @@ ntraj = 10
 
 #%%
 
-tlist=np.linspace(0,1*1e-7,101)
+tlist=np.linspace(0,1*6e-8,101)
 
 psi0 = basis(3,int(Qubitstates0[0]))
 for j in range(NoOfQubits-1):
@@ -107,93 +107,34 @@ for i in range(NoOfQubits):
     H_anh = H_anh + H_anhh[i]
 
 #%%Timefuncs
-def EnvelopeFunc (t, beta, t_qd, t_st):
-    # Models the drive pulse as E(t) = A*cos^2(tπ/t_qd - π/2), 
+
+def EnvelopeFunc (t, beta, t_m, t_d, t_st): 
+    # Models the drive pulse as E(t) = A*cos^2(tπ/t_d - π/2), 
     # Used in the time functions Et# which are used in H = QobjEvo 
-    A    = beta/t_qd
-    E = A*np.cos((t-t_st)*np.pi/t_qd-np.pi/2)**2
-    if t_st<t<t_qd+t_st:
-         return E
-    else: 
-        return 0
+    # beta = drive strength
+    # t_m = t_max gate time (~ ang=π)
+    # t_d =drive time, 
+    # t_st = start time 
+    E    = beta/2*np.sin((t-t_st)*np.pi/t_d)**2
+    return E*np.heaviside(t_st+t_d-t,1)*np.heaviside(t-t_st,1)
 
-def Et0 (t, args): 
-    # args in form {'beta': value, 't_qd': value}
-    beta = args['Et0'][0] #Drive angle 
-    t_qd = args['Et0'][1] #Gate time 
-    t_st = args['Et0'][2] #Start time for drive 
-    return EnvelopeFunc(t, beta, t_qd, t_st)
 
-def Et1(t, args): 
-    # args in form {'beta': value, 't_qd': value}
-    beta = args['Et1'][0] #Drive angle 
-    t_qd = args['Et1'][1] #Gate time 
-    t_st = args['Et1'][2] #Start time 
-    return EnvelopeFunc(t, beta, t_qd, t_st)
+def TimeFunc (t, args): 
+    # To be called from QobjEvo([gate[i],TimeFunc(tlist, inputs[i])], tlist=tlist)
+    # where inputs[i] is an array of dim3 with values for i:th qubit
+    ang  = args[0]  # Drive angle 
+    t_m  = args[1]  # Max gate time (~ ang=π)
+    t_st = args[2]  # Start time for drive 
+    beta = 2*np.pi/t_m    #Drive strength
+    t_d = t_m * ang/np.pi # Drive time for specified angle
+    return EnvelopeFunc(t, beta, t_m, t_d, t_st)
 
-def Et2 (t, args): 
-    # args in form {'beta': value, 't_qd': value}
-    beta = args['Et2'][0] #Drive angle 
-    t_qd = args['Et2'][1] #Gate time 
-    t_st = args['Et2'][2] #Start time for drive 
-    return EnvelopeFunc(t, beta, t_qd, t_st)
-
-def Et3(t, args): 
-    # args in form {'beta': value, 't_qd': value}
-    beta = args['Et3'][0] #Drive angle 
-    t_qd = args['Et3'][1] #Gate time 
-    t_st = args['Et3'][2] #Start time 
-    return EnvelopeFunc(t, beta, t_qd, t_st)
-
-def Et4 (t, args): 
-    # args in form {'beta': value, 't_qd': value}
-    beta = args['Et4'][0] #Drive angle 
-    t_qd = args['Et4'][1] #Gate time 
-    t_st = args['Et4'][2] #Start time for drive 
-    return EnvelopeFunc(t, beta, t_qd, t_st)
-
-def Et5(t, args): 
-    # args in form {'beta': value, 't_qd': value}
-    beta = args['Et5'][0] #Drive angle 
-    t_qd = args['Et5'][1] #Gate time 
-    t_st = args['Et5'][2] #Start time 
-    return EnvelopeFunc(t, beta, t_qd, t_st)
-
-def Et6 (t, args):
-    # args in form {'beta': value, 't_qd': value}
-    beta = args['Et6'][0] #Drive angle 
-    t_qd = args['Et6'][1] #Gate time 
-    t_st = args['Et6'][2] #Start time for drive 
-    return EnvelopeFunc(t, beta, t_qd, t_st)
-
-def Et7(t, args): 
-    # args in form {'beta': value, 't_qd': value}
-    beta = args['Et7'][0] #Drive angle 
-    t_qd = args['Et7'][1] #Gate time 
-    t_st = args['Et7'][2] #Start time 
-    return EnvelopeFunc(t, beta, t_qd, t_st)
 
 #%% Time dependance of H 
-inp={'Et0': inputs[0],'Et1': inputs[1],'Et2': inputs[2],'Et3': inputs[3],'Et4': inputs[4],'Et5': inputs[5],'Et6': inputs[6],'Et7': inputs[7]}
-# 
-if len(gate)==1:
-    H = QobjEvo([H_anh,[gate[0],Et0]],args=inp)
-elif len(gate)==2:
-    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1]],args=inp)
-elif len(gate)==3:
-    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1],[gate[2], Et2]],args=inp)
-elif len(gate)==4:
-    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3]],args=inp)
-elif len(gate)==5:
-    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3],[gate[4], Et4]],args=inp)
-elif len(gate)==6: 
-    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3],[gate[4], Et4],[gate[5], Et5]],args=inp)
-elif len(gate)==7:
-    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3],[gate[4], Et4],[gate[5], Et5],[gate[6], Et6]],args=inp)
-elif len(gate)==8:
-    H = QobjEvo([H_anh,[gate[0],Et0],[gate[1], Et1],[gate[2], Et2],[gate[3], Et3],[gate[4], Et4],[gate[5], Et5],[gate[6], Et6],[gate[7], Et7]],args=inp)
-    
 
+H = H_anh
+for i in range(NoOfQubits):
+    H= H + QobjEvo([gate[i],TimeFunc(tlist, inputs[i])], tlist=tlist)
 
 #%% Expectations and collapse operators 
 
@@ -220,13 +161,13 @@ fig1.set_ylabel('Ockupation prob')
 fig1.set_xlabel('t')
 fig1.grid()
 fig1.legend(loc='upper right')
-fig1.axis([0,tlist[-1],0,2.05])
+fig1.axis([0,tlist[-1],0,1.65])
 fig1.title.set_text('Qubit states')
 
 for i in range(NoOfQubits):
     drive=[]
     for t in tlist:
-        drive.append(Et0(t,{'Et0': inputs[i]})) 
+        drive.append(TimeFunc(t,inputs[i])) 
     fig2.plot(tlist, drive, label='Envelope #'+str(i+1)+ ' ~'+ str(round((inputs[i][0]/np.pi),3)) +' π' )
 
 fig2.set_ylabel('E(t)')
