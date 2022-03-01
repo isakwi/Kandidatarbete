@@ -15,7 +15,7 @@ H_i_drive = b cos(w_d t) (a_i + a_i.dag())
 Incorporate drive pulse E(t) = Acos^2(t),  
 
 """
-
+# Hej
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
