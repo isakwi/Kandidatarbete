@@ -23,3 +23,8 @@ def single_qubit_gate(n, L, G, i):
 def annihilation(n,L,i):
     return single_qubit_gates(n,L,destroy,i) 
 
+
+"For future reference, Add Gates could probably be written on this sort of form"
+# H = H_anh
+# for i in len(gate):
+#     H= H + QobjEvo([gate[i],TimeFunc(tlist, inputs[i])], tlist=tlist)
