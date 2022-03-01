@@ -19,11 +19,12 @@ def EnvelopeFunc (t, beta, t_m, t_d, t_st):
 
 
 def TimeFunc (t, args): 
-    # To be called from QobjEvo([H, TimeFunc], args={'inp': input[i]})
-    # where input[i] is an array of vals for i:th 
-    ang  = args['inp'][0] # Drive angle 
-    t_m  = args['inp'][1] # Max gate time (~ ang=π)
-    t_st = args['inp'][2] # Start time for drive 
+    # To be called from QobjEvo([gate[i],TimeFunc(tlist, inputs[i])], tlist=tlist)
+    # where inputs[i] is an array of vals for i:th qubit
+    ang  = args[0]  # Drive angle 
+    t_m  = args[1]  # Max gate time (~ ang=π)
+    t_st = args[2]  # Start time for drive 
     beta = 2*np.pi/t_m    #Drive strength
     t_d = t_m * ang/np.pi # Drive time for specified angle
     return EnvelopeFunc(t, beta, t_m, t_d, t_st)
+
