@@ -24,11 +24,11 @@ from qutip import *
 class Qubit:
 
     def __init__(self, beta, level, noisert_vec, desig, init_cvec):
-        self.beta = beta
+        self.beta = beta  # Möjligtvis bestäms beta av t_gate ?
         self.level = level
         self.noisert_vec = noisert_vec
         self.desig = desig
-        self.init_cvec = init_cvec
+        self.init_cvec = init_cvec  # Starta qubit i grundtillstånd?
 #function that calculates normalized initial state of qubit from init_cvec
     def initstate(self):
         norm = 0
