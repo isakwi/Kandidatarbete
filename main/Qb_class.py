@@ -34,7 +34,7 @@ class Qubit:
         norm = 0
         init_statemed = 0
         for i in range(0, len(self.init_cvec)):
-            norm = norm + self.init_cvec[i]
+            norm = norm + self.init_cvec[i] * np.conj(self.init_cvec[i])
             print(norm)
 
 
