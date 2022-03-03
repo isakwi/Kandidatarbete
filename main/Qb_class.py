@@ -28,7 +28,7 @@ class Qubit:
         self.level = level
         self.noisert_vec = noisert_vec
         self.desig = desig
-        self.init_cvec = init_cvec  # Starta qubit i grundtillstånd?
+        self.init_cvec = init_cvec
 #function that calculates normalized initial state of qubit from init_cvec
     def initstate(self):
         norm = 0
