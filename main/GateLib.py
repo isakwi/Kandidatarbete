@@ -40,6 +40,12 @@ def PZ(Qblist, target):
     return tensor(sz)
 
 
+def HD(Qblist, tar_con):
+    """Create Hadamard gate, angle for this gate should always be pi/2"""
+    HD = PY(Qblist, tar_con[1]) + PZ(Qblist, tar_con[2])
+    return HD
+
+
 if __name__ == "__main__":
     """ Troubleshooting"""
 
