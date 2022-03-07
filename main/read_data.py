@@ -2,7 +2,8 @@ import pandas as pd
 
 
 def read_data():
-    # Function that reads qubit number from user and parameters from a .csv file
+    """Function that reads qubit number from user and parameters from a .csv file
+    Also has error handling if csv file is wrong or if input is wack"""
 
     # Input for number of qubits
     cont = False
