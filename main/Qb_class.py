@@ -23,8 +23,7 @@ from qutip import *
 
 class Qubit:
 
-    def __init__(self, beta, level, noisert_vec, desig, init_cvec):
-        self.beta = beta  # Möjligtvis bestäms beta av t_gate ?
+    def __init__(self, level, noisert_vec, desig, init_cvec):
         self.level = level
         self.noisert_vec = noisert_vec
         self.desig = desig
