@@ -1,5 +1,6 @@
 import numpy as np
 from qutip import *
+import GateLib as gl
 import Qubitclass as qc
 
 '''Takes array of instances of qubits from the Qubitclass as input, i need to add thermal noise and noise from unwanted 
@@ -39,3 +40,17 @@ def Collapse_ops(qb_vec):
 
     return cops_vec
 
+""" Alternative, maybe more compact? Makes use of the gatelib
+def create_c_ops(Qblist):
+    c_ops = []
+    for i in range(0, len(Qblist)):
+        if Qblist[i].noisert_vec[0] > 0.0:  # Relaxation/Decoherence
+            c_ops.append(math.sqrt(Qblist[i].noisert_vec[0]) * PM(Qblist, i))
+        if Qblist[i].noisert_vec[1] > 0.0:  # Dephasing
+            c_ops.append(math.sqrt(Qblist[i].noisert_vec[1]) * PZ(Qblist, i)/2)
+        #if Qblist[i].noisert_vec[2] > 0.0:  # Interaction
+            #c_ops.append(math.sqrt(Qblist[i].noisert_vec[2]) * 1)  # What is this operator??
+        if Qblist[i].noisert_vec[3] > 0.0:  # Thermal
+            c_ops.append(math.sqrt(Qblist[i].noisert_vec[3]) * PM(Qblist, i).dag())
+    return c_ops
+    """
