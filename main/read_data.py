@@ -36,7 +36,7 @@ def read_data():
             depha.append(arr[i, 2])
             inter.append(arr[i, 3])
             therma.append(arr[i, 4])
-            levels.append(arr[i, 5])
+            levels.append(int(arr[i, 5]))
     except:
         print("Something is wrong with the csv file!")
         quit()

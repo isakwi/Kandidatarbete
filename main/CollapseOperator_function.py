@@ -1,7 +1,7 @@
 import numpy as np
 from qutip import *
+import math
 import GateLib as gl
-import Qubitclass as qc
 
 '''Takes array of instances of qubits from the Qubitclass as input, i need to add thermal noise and noise from unwanted 
 interactions, unwanted interactions is alot trickier because we need to check if qubits can affect each other '''
@@ -37,20 +37,20 @@ def Collapse_ops(qb_vec):
 
                 cops_vec.append(np.sqrt((qb[1].noisert_vec[2] + q[1].noisert_vec[2])/2) * (tensor(eye_vec) * tensor(eye_vec2) + tensor(eye_vec2) * tensor(eye_vec)))
 
-
     return cops_vec
 
-""" Alternative, maybe more compact? Makes use of the gatelib
+
 def create_c_ops(Qblist):
+    """Alternative, maybe more compact? Makes use of the gatelib. But still need
+    to add function for interaction (distance between qubits) and thermal excitation"""
     c_ops = []
     for i in range(0, len(Qblist)):
         if Qblist[i].noisert_vec[0] > 0.0:  # Relaxation/Decoherence
-            c_ops.append(math.sqrt(Qblist[i].noisert_vec[0]) * PM(Qblist, i))
+            c_ops.append(math.sqrt(Qblist[i].noisert_vec[0]) * gl.PM(Qblist, i))
         if Qblist[i].noisert_vec[1] > 0.0:  # Dephasing
-            c_ops.append(math.sqrt(Qblist[i].noisert_vec[1]) * PZ(Qblist, i)/2)
+            c_ops.append(math.sqrt(Qblist[i].noisert_vec[1]) * gl.PZ(Qblist, i)/2)
         #if Qblist[i].noisert_vec[2] > 0.0:  # Interaction
-            #c_ops.append(math.sqrt(Qblist[i].noisert_vec[2]) * 1)  # What is this operator??
-        if Qblist[i].noisert_vec[3] > 0.0:  # Thermal
-            c_ops.append(math.sqrt(Qblist[i].noisert_vec[3]) * PM(Qblist, i).dag())
+            #c_ops.append(math.sqrt(Qblist[i].noisert_vec[2]) * 1)  # Need to use [X,Y] here together with the rate
+        #if Qblist[i].noisert_vec[3] > 0.0:  # Thermal
+            #c_ops.append(math.sqrt(Qblist[i].noisert_vec[3]) * gl.PM(Qblist, i).dag())  # Not sure about the thermal rates
     return c_ops
-    """
