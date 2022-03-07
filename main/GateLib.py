@@ -2,6 +2,7 @@
 Backend with definition of 1qb and 2qb gates
 """
 
+import Qb_class as Qb
 from qutip import *
 
 def PX(Qblist, target):
@@ -37,6 +38,53 @@ def PZ(Qblist, target):
     sz = [qeye(Qb.level) for Qb in Qblist]
     sz[target] = create(Qblist[target].level)*destroy(Qblist[target].level)
     return tensor(sz)
+
+
+if __name__ == "__main__":
+    """ Troubleshooting"""
+
+    # Test specific sigmax
+    sx1 = tensor(qeye(2), sigmax(), qeye(2))
+    Qblist = [Qb.Qubit(2, [], [], []) for i in range(0,3)]
+    sx = PX(Qblist,1)
+    if sx1 == sx:
+        print("Specific sigx works!")
+    else:
+        print("Specific sigx doesn't work")
+        print(sx1)
+        print(sx)
+
+    # Test specific sigmay
+    sy1 = tensor(qeye(2), sigmay(), qeye(2))
+    sy = PY(Qblist,1)
+    if sy1 == sy:
+        print("Specific sigy works!")
+    else:
+        print("Specific sigy doesn't work")
+        print(sy1)
+        print(sy)
+
+    # Test specific sigmam
+    sm1 = tensor(qeye(2), destroy(2), qeye(2))
+    sm = PM(Qblist, 1)
+    if sy1 == sy:
+        print("Specific sigm works!")
+    else:
+        print("Specific sigm doesn't work")
+        print(sy1)
+        print(sy)
+
+
+    # Test specific sigmaz
+    sz1 = sm1.dag()*sm1
+    sz = PZ(Qblist,1)
+    if sz1 == sz:
+        print("Specific sigz works!")
+    else:
+        print("Specific sigz doesn't work")
+        print(sz1)
+        print(sz)
+
 
 
 
