@@ -42,8 +42,8 @@ def main_algorithm(args):
             output = mcsolve(H,psi, tlist, c_ops = c_ops, ntraj = 1, progress_bar=None)
             outstate = (output.states[:,-1])
             psilist.append(outstate[0])
-            #the virtual gates should be able to apply through matrix multiplication
-            #if virtualgate != None:
+            # the virtual gates should be able to apply through matrix multiplication
+            # if virtualgate != None:
             #   psi0 = virtualgates[i] * psi0
         psi0 = psilist
     return psi0
