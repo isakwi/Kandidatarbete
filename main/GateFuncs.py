@@ -39,6 +39,8 @@ Function for creating a Hamiltonian from a given step in the algorithm
     return tensor(x)"""
 
 def CreateHfromStep(step, Qblist):
+    """ Create a list of Qobj from a step in the step_list
+    Maybe add function to determine which are virtual gates and which are not? """
     H = []  # Try to make H pre defined in size!!!
     for i in range(len(step.name)):
         y = eval("GateLib." + step.name[i])
