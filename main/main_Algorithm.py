@@ -32,7 +32,7 @@ def main_algorithm(args):
     output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj)
     psi0 = output.states[:, -1]
 
-    for i in range(1,len(steps)): #each
+    for i in range(1,len(steps)): #each step except the first one
         psilist = []
         for psi in psi0:
             gates = gf.CreateHfromStep(steps[i], Qblist)  #gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
