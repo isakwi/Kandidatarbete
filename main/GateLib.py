@@ -43,12 +43,16 @@ def VPZ(Qblist, target, angle):
     """Creates virtual sigmaz gate, not sure if this is the way to do it though
     Maybe change this so that it takes an array of targets and array of angles?"""
     vsz = [qeye(Qb.level) for Qb in Qblist]
-    if Qblist[target].level == 2:
-        vsz[target] = Qobj([[np.exp(-1j*angle/2), 0], [0, np.exp(1j*angle/2)]])
-    elif Qblist[target].level == 3:
-        vsz[target] = Qobj([[np.exp(-1j * angle / 2), 0, 0], [0, np.exp(1j * angle / 2), 0], [0, 0, 1]])
-    elif Qblist[target].level == 4:
-        vsz[target] = Qobj([[np.exp(-1j * angle / 2), 0, 0, 0], [0, np.exp(1j * angle / 2), 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    try:
+        if Qblist[target].level == 2:
+            vsz[target] = Qobj([[np.exp(-1j*angle/2), 0], [0, np.exp(1j*angle/2)]])
+        elif Qblist[target].level == 3:
+            vsz[target] = Qobj([[np.exp(-1j * angle / 2), 0, 0], [0, np.exp(1j * angle / 2), 0], [0, 0, 1]])
+        elif Qblist[target].level == 4:
+            vsz[target] = Qobj([[np.exp(-1j * angle / 2), 0, 0, 0], [0, np.exp(1j * angle / 2), 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    except:
+        print("Couldn't create Virtual Pauli Z gate! Maybe you dont have qubit level between 2 and 4?")
+        print("Calculates the virtual pauli z gate as identity matrix!")
     return tensor(vsz)
 
 
