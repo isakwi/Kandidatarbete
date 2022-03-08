@@ -78,7 +78,7 @@ class qutip_zvode(zvode):
         return r
 
 
-[docs]def mcsolve(H, psi0, tlist, c_ops=[], e_ops=[], ntraj=0,
+[docs]def mcsolve(H, psi0vec, tlist, c_ops=[], e_ops=[], ntraj=0,
             args={}, options=None, progress_bar=True,
             map_func=parallel_map, map_kwargs={}, _safe_mode=True):
     r"""Monte Carlo evolution of a state vector :math:`|\psi \rangle` for a
@@ -129,7 +129,7 @@ class qutip_zvode(zvode):
     H : :class:`qutip.Qobj`, ``list``
         System Hamiltonian.
 
-    psi0 : :class:`qutip.Qobj`
+    psi0vec : :class:`qutip.Qobj`
         Initial state vector
 
     tlist : array_like
@@ -193,9 +193,9 @@ class qutip_zvode(zvode):
 
     if len(c_ops) == 0 and not options.rhs_reuse:
         warn("No c_ops, using sesolve")
-        return sesolve(H, psi0, tlist, e_ops=e_ops, args=args,
+        return [sesolve(H, psi0, tlist, e_ops=e_ops, args=args,
                        options=options, progress_bar=progress_bar,
-                       _safe_mode=_safe_mode)
+                       _safe_mode=_safe_mode) for psi0 in psi0vec]
 
     try:
         num_traj = int(ntraj)
@@ -203,7 +203,7 @@ class qutip_zvode(zvode):
         num_traj = max(ntraj)
 
     # set the physics
-    if not psi0.isket:
+    if not psi0vec[0].isket:
         raise Exception("Initial state must be a state vector.")
 
     # load monte carlo class
@@ -214,7 +214,7 @@ class qutip_zvode(zvode):
     else:
         mc.make_system(H, c_ops, tlist, args, options)
 
-    mc.reset(tlist[0], psi0)
+    mc.reset(tlist[0], psi0vec)
 
     mc.set_e_ops(e_ops)
 
@@ -248,7 +248,7 @@ class _MC():
         self.tlist = None
         self.e_ops = None
         self.ran = False
-        self.psi0 = None
+        self.psi0vec = None
         self.seeds = []
         self.t = 0.
         self.num_traj = 0
@@ -259,11 +259,11 @@ class _MC():
         self._collapse = []
         self._ss_out = []
 
-    def reset(self, t=0., psi0=None):
-        if psi0 is not None:
-            self.psi0 = psi0
-        if self.psi0 is not None:
-            self.initial_vector = self.psi0.full().ravel("F")
+    def reset(self, t=0., psi0vec=None):
+        if psi0vec is not None:
+            self.psi0vec = psi0vec
+        if self.psi0vec is not None:
+            self.initial_vector = self.psi0vec.full().ravel("F")
             if self.ss is not None and self.ss.type == "Diagonal":
                 self.initial_vector = np.dot(self.ss.Ud, self.initial_vector)
 
@@ -359,23 +359,23 @@ class _MC():
     def run_test(self):
         try:
             for c_op in self.ss.td_c_ops:
-                c_op.mul_vec(0, self.psi0)
+                c_op.mul_vec(0, self.psi0vec)
         except Exception as e:
-            raise Exception("c_ops are not consistant with psi0") from e
+            raise Exception("c_ops are not consistant with psi0vec") from e
 
         if self.ss.type == "QobjEvo":
             try:
-                self.ss.H_td.mul_vec(0., self.psi0)
+                self.ss.H_td.mul_vec(0., self.psi0vec)
             except Exception as e:
                 raise Exception("Error calculating H") from e
         else:
             try:
                 rhs, ode_args = self.ss.makefunc(self.ss)
-                rhs(0, self.psi0.full().ravel(), ode_args)
+                rhs(0, self.psi0vec.full().ravel(), ode_args)
             except Exception as e:
                 raise Exception("Error calculating H") from e
 
-    def run(self, num_traj=0, psi0=None, tlist=None,
+    def run(self, num_traj=0, psi0vec=None, tlist=None,
             args={}, e_ops=None, options=None,
             progress_bar=True,
             map_func=parallel_map, map_kwargs={}):
@@ -391,7 +391,7 @@ class _MC():
         options = options if options is not None else self.options
 
         if self.ran and tlist[0] == self.t:
-            # psi0 is ignored since we restart from a
+            # psi0vec is ignored since we restart from a
             # different states for each trajectories
             self.continue_runs(num_traj, tlist, args, e_ops, options,
                                progress_bar, map_func, map_kwargs)
@@ -405,8 +405,8 @@ class _MC():
             self.set_e_ops(e_ops)
             self.reset()
 
-        if psi0 is not None and psi0 != self.psi0:
-            self.psi0 = psi0
+        if psi0vec is not None and psi0vec != self.psi0vec:
+            self.psi0vec = psi0vec
             self.reset()
 
         tlist = np.array(tlist)
@@ -480,7 +480,7 @@ class _MC():
     # --------------------------------------------------------------------------
     @property
     def states(self):
-        dims = self.psi0.dims[0]
+        dims = self.psi0vec.dims[0]
         len_ = self._psi_out.shape[2]
         if self._psi_out.shape[1] == 1:
             dm_t = np.zeros((len_, len_), dtype=complex)
@@ -500,7 +500,7 @@ class _MC():
 
     @property
     def final_state(self):
-        dims = self.psi0.dims[0]
+        dims = self.psi0vec.dims[0]
         len_ = self._psi_out.shape[2]
         dm_t = np.zeros((len_, len_), dtype=complex)
         for i in range(self.num_traj):
@@ -510,7 +510,7 @@ class _MC():
 
     @property
     def runs_final_states(self):
-        dims = self.psi0.dims[0]
+        dims = self.psi0vec.dims[0]
         psis = np.empty((self.num_traj), dtype=object)
         for i in range(self.num_traj):
             psis[i] = Qobj(dense1D_to_fastcsr_ket(self._psi_out[i, -1]),
@@ -546,8 +546,8 @@ class _MC():
     @property
     def steady_state(self):
         if self._ss_out is not None:
-            dims = self.psi0.dims[0]
-            len_ = self.psi0.shape[0]
+            dims = self.psi0vec.dims[0]
+            len_ = self.psi0vec.shape[0]
             return Qobj(np.mean(self._ss_out, axis=0),
                         dims=[dims, dims], shape=(len_, len_))
         # TO-DO rebuild steady_state from _psi_out if needed
@@ -558,7 +558,7 @@ class _MC():
 
     @property
     def runs_states(self):
-        dims = self.psi0.dims
+        dims = self.psi0vec.dims
         psis = np.empty((self.num_traj, len(self.tlist)), dtype=object)
         for i in range(self.num_traj):
             for j in range(len(self.tlist)):
@@ -758,7 +758,7 @@ class _MC():
 # -----------------------------------------------------------------------------
 # CODES FOR PYTHON FUNCTION BASED TIME-DEPENDENT RHS
 # -----------------------------------------------------------------------------
-def _qobjevo_set(ss, psi0=None, args={}, opt=None):
+def _qobjevo_set(ss, psi0vec=None, args={}, opt=None):
     if args:
         self.set_args(args)
     rhs = ss.H_td.compiled_qobjevo.mul_vec
@@ -769,14 +769,14 @@ def _qobjevo_args(ss, args):
     var = _collapse_args(args)
     ss.col_args = var
     ss.args = args
-    ss.H_td.solver_set_args(args, psi0, e_ops)
+    ss.H_td.solver_set_args(args, psi0vec, e_ops)
     for c in ss.td_c_ops:
-        c.solver_set_args(args, psi0, e_ops)
+        c.solver_set_args(args, psi0vec, e_ops)
     for c in ss.td_n_ops:
-        c.solver_set_args(args, psi0, e_ops)
+        c.solver_set_args(args, psi0vec, e_ops)
 
 
-def _func_set(HS, psi0=None, args={}, opt=None):
+def _func_set(HS, psi0vec=None, args={}, opt=None):
     if args:
         self.set_args(args)
     else:
@@ -793,9 +793,9 @@ def _func_args(ss, args):
     ss.col_args = var
     ss.args = args
     for c in ss.td_c_ops:
-        c.solver_set_args(args, psi0, e_ops)
+        c.solver_set_args(args, psi0vec, e_ops)
     for c in ss.td_n_ops:
-        c.solver_set_args(args, psi0, e_ops)
+        c.solver_set_args(args, psi0vec, e_ops)
     return rhs, (ss.h_func, ss.Hc_td, args)
 
 
