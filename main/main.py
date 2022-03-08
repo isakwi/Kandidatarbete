@@ -17,11 +17,11 @@ for i in range(0, n):  # Creates list with all qubits, for now the desig and ini
 # Parameters for gates
 t_1q = 20e-9  # Max time for 1 qubit gate
 t_2q = 200e-9  # Max time for 2 qubit gate
-w_01 = 4*1e9 * 2 * np.pi   # Qubit frequency (4-5 GHz)
+w_01 = 4*1e9 * 2 * pi   # Qubit frequency (4-5 GHz)
 w_d = w_01
-U = -200*1e6 * 2 * np.pi   # Anhormonicity (only if levels > 2 ) (150-250 MHz)
-beta1 = np.pi/t_1q  # Driving strength for 1q gate
-beta2 = np.pi/t_2q  # Driving strength for 2q gate
+U = -200*1e6 * 2 * pi   # Anhormonicity (only if levels > 2 ) (150-250 MHz)
+beta1 = pi/t_1q  # Driving strength for 1q gate
+beta2 = pi/t_2q  # Driving strength for 2q gate
 """Change TimeFunc / Envelope so that it takes beta as parameter?"""
 
 
@@ -36,9 +36,9 @@ def create_psi0(Qblist):
 
 
 psi0 = create_psi0(Qblist)
-#c_ops1 = co.create_c_ops(Qblist)
-#c_ops2 = co.Collapse_ops(Qblist)
+# c_ops1 = co.create_c_ops(Qblist)
+# c_ops2 = co.Collapse_ops(Qblist)
 
 """ Adding the algorithm steps! """
 steps = []
-steps.append(gf.Add_step(["PX", "PY"], [0,1], [pi, pi/2]))
+steps.append(gf.Add_step(["PX", "PY"], [0, 1], [pi, pi/2]))

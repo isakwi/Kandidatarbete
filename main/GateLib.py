@@ -4,12 +4,12 @@ Backend with definition of 1qb and 2qb gates
 
 import Qb_class as Qb
 from qutip import *
+import numpy as np
 
 def PX(Qblist, target):
     """Creates specific sigmax gate, maybe better than to create all gates? Then
     you can use only the operators you need.
     Input is list of qubits and which qubit you want to target with the operator"""
-
     sx = [qeye(Qb.level) for Qb in Qblist]
     sx[target] = destroy(Qblist[target].level) + create(Qblist[target].level)
     return tensor(sx)
@@ -39,9 +39,21 @@ def PZ(Qblist, target):
     sz[target] = create(Qblist[target].level)*destroy(Qblist[target].level)
     return tensor(sz)
 
+def VPZ(Qblist, target, angle):
+    """Creates virtual sigmaz gate, not sure if this is the way to do it though
+    Maybe change this so that it takes an array of targets and array of angles?"""
+    vsz = [qeye(Qb.level) for Qb in Qblist]
+    if Qblist[target].level == 2:
+        vsz[target] = Qobj([[np.exp(-1j*angle/2), 0], [0, np.exp(1j*angle/2)]])
+    elif Qblist[target].level == 3:
+        vsz[target] = Qobj([[np.exp(-1j * angle / 2), 0, 0], [0, np.exp(1j * angle / 2), 0], [0, 0, 1]])
+    elif Qblist[target].level == 4:
+        vsz[target] = Qobj([[np.exp(-1j * angle / 2), 0, 0, 0], [0, np.exp(1j * angle / 2), 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    return tensor(vsz)
+
 
 def HD(Qblist, tar_con):
-    """Create Hadamard gate, angle for this gate should always be pi/2"""
+    """Create Hadamard gate, angle for this gate should always be pi/2!!"""
     HD = PY(Qblist, tar_con[1]) + PZ(Qblist, tar_con[2])
     return HD
 
@@ -91,6 +103,6 @@ if __name__ == "__main__":
         print(sz1)
         print(sz)
 
-
+    hej = VPZ(Qblist, )
 
 
