@@ -1,6 +1,14 @@
+##This program takes as input:
+# *steps which includes t_list(s) and gates 
+# *c_ops
+# * psi0_start ? (number of qubits qubits and energy levels are the important things, all qubits are assumed to be in ground state)
+# * envelope fcn
+##This program calls a function which performs the #gate algorithm"
+##THis program should return the final state
 from qutip import *
 import numpy as np
 #TODO: replace everything until the for loop and
+
 ## This script doesn't need to explicitly know the number of qubits
 ##Assume that we have a steps[] data set
 ## Also assume that the gates are implemented iin the Hamiltonian
@@ -16,8 +24,11 @@ tlists = inputfile["tlists"]
 e_ops = inputfile["e_ops"]
 virtualgates = inputfile["virtualgates"] #rotations around the z axis
 
+
+
 ##--------EVERYTHING ABOVE THIS IS JUST TAKING IN INPUT
 for i in range(len(steps)):
+    #todo: Calla the gate algorithm to obtain the Hamiltonian for this step 
     H = beta/2 * steps[i]["gate"]
     output = mcsolve(H,psi0[i], tlists[i],  c_ops= c_ops, ntraj = 1)
     currentstate = output.states
@@ -26,4 +37,5 @@ for i in range(len(steps)):
         currentstate = virtualgates[i] * currentstate
     psi0.append(currentstate)
     print(psi0[-1])
+    #TODO: Return the final state (we will need to "functionize" this code)
 
