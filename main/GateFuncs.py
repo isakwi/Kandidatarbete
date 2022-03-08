@@ -47,19 +47,12 @@ def CreateHfromStep(step, Qblist):
     for i in range(len(step.name)):
         y = eval("GateLib." + step.name[i])
         if step.name[i] in ["VPZ"]:
-            H_virt.append(y(Qblist, step.Tar_Con[i]))
+            H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
         elif step.name[i] in ["2qubitgates"]:
             H_real.append(y(Qblist, step.Tar_Con[i]))
             tlist = 200e-9
         else:
             H_real.append(y(Qblist, step.Tar_Con[i]))
-        """if 2q gate:
-                H.append(y(Qblist, step.Tar_Con))
-                tlist = ;
-            elif virtuell gate:
-                add to H_virt
-            else:
-                do what we did before"""
     return H_real, H_virt, tlist
 
 if __name__ == "__main__":
@@ -68,7 +61,7 @@ if __name__ == "__main__":
     Qblist.append(Qb.Qubit(2, [], [], []))
 
     steps = []
-    steps.append(Add_step(["PX", "PY"], [0, 1, [1,2]], [5, 5]))
+    steps.append(Add_step(["PX", "PY", "VPZ"], [0, 1, 1], [5, 5, 5]))
     hej_real, hej_virt, tlist = CreateHfromStep(steps[0], Qblist)
     print(hej_real)
 
