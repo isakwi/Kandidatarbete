@@ -44,4 +44,6 @@ c_ops = co.create_c_ops(Qblist)
 steps = []
 steps.append(gf.Add_step(["PX", "PY"], [0, 1], [pi, pi/2]))
 
-result = mA.main_algorithm(Qblist, steps, psi0, c_ops)
+args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps}
+result = mA.main_algorithm(args)
+print(result)
