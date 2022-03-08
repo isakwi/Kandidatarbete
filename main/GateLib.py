@@ -56,9 +56,9 @@ def VPZ(Qblist, target, angle):
     return tensor(vsz)
 
 
-def HD(Qblist, tar_con):
+def HD(Qblist, target):
     """Create Hadamard gate, angle for this gate should always be pi/2!!"""
-    HD = PY(Qblist, tar_con[1]) + PZ(Qblist, tar_con[2])
+    HD = sqrtm(PY(Qblist, target)) * PZ(Qblist,target) #we don't know if sqrtm works
     return HD
 
 
