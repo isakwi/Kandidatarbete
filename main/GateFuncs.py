@@ -29,6 +29,7 @@ Function for creating a Hamiltonian from a given step in the algorithm
 """
 
 def CreateHFromSteps(step, n, L):
+    # Maybe change the n and L inputs to a list of Qubit-objects, so that we can have different L
     x = [qeye(L) for x in range(n)]
     for i in range(len(step.name)):
         y = "GateLib."

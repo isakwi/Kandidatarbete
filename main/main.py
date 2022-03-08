@@ -5,6 +5,8 @@ import Qb_class as Qb
 import numpy as np
 import CollapseOperator_function as co
 from qutip import *
+import GateFuncs as gf
+pi = np.pi
 
 # Parameters, eventually the number of qubits and the levels will be read from OpenQASM instead!
 n, relax, depha, inter, therma, l = rd.read_data()  # Parameters
@@ -34,5 +36,9 @@ def create_psi0(Qblist):
 
 
 psi0 = create_psi0(Qblist)
-c_ops1 = co.create_c_ops(Qblist)
-c_ops2 = co.Collapse_ops(Qblist)
+#c_ops1 = co.create_c_ops(Qblist)
+#c_ops2 = co.Collapse_ops(Qblist)
+
+""" Adding the algorithm steps! """
+steps = []
+steps.append(gf.Add_step(["PX", "PY"], [0,1], [pi, pi/2]))
