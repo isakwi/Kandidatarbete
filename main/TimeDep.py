@@ -38,6 +38,3 @@ def TimeDepend(step, gates):
         H = H + QobjEvo([gate[i], TimeFunc(tlist, args[i])], tlist=tlist)
     return [H, tlist]
 
-
-# for i in len(gate):
-#     H= H + QobjEvo([gate[i],TimeFunc(tlist, inputs[i])], tlist=tlist)
