@@ -21,17 +21,29 @@ def main_algorithm(args):
         ntraj = args["ntraj"]
     else:
         ntraj = 500
-    H0 = 0#ZZ_Interaction(Qblist) + anharmonicity(Qblist)
-    for i in range(len(steps)): #each 
-        gates = gf.CreateHfromStep(steps[i], Qblist)  #gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
-        H = gf.TimeDepend(steps[i], gates[0], gates[2])[0] + H0
-        virtualgate = gates[1]
-        tlist = gf.TimeDepend(steps[i], gates[0], gates[2])[1]
-        output = mcsolve(H,psi0, tlist, c_ops = c_ops, ntraj = ntraj)
-        print(output.states.shape)
-        psi0 = sum(output.states[:, -1])/len(output.states[:, -1])
-        #the virtual gates should be able to apply through matrix multiplication
-        #if virtualgate != None:
-         #   psi0 = virtualgates[i] * psi0
+
+    H0 = 0  # ZZ_Interaction(Qblist) + anharmonicity(Qblist)
+
+    ## Do first iteration for ntraj trajectories to split the mcsolve
+    gates = gf.CreateHfromStep(steps[0], Qblist)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
+    H = gf.TimeDepend(steps[0], gates[0], gates[2])[0] + H0
+    virtualgate = gates[1]
+    tlist = gf.TimeDepend(steps[0], gates[0], gates[2])[1]
+    output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj)
+    psi0 = output.states[:, -1]
+
+    for i in range(1,len(steps)): #each
+        psilist = []
+        for psi in psi0:
+            gates = gf.CreateHfromStep(steps[i], Qblist)  #gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
+            H = gf.TimeDepend(steps[i], gates[0], gates[2])[0] + H0
+            virtualgate = gates[1]
+            tlist = gf.TimeDepend(steps[i], gates[0], gates[2])[1]
+            output = mcsolve(H,psi, tlist, c_ops = c_ops, ntraj = 1, progress_bar=None)
+            psilist.append(output.states[:, -1])
+            #the virtual gates should be able to apply through matrix multiplication
+            #if virtualgate != None:
+             #   psi0 = virtualgates[i] * psi0
+        psi0 = psilist
     return psi0
     

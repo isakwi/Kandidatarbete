@@ -74,7 +74,6 @@ def TimeDepend(step, gates, t_max):
         args[0] = angles[i]  # Drive angle
         args[1] = t_max  # Theoretical max gate time (~ ang=π)
         args[2] = 0   # Start time for drive
-        print(args)
         H = H + QobjEvo([[gate, TimeFunc(tlist, args)]], tlist=tlist)
     return [H, tlist]
 
