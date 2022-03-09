@@ -69,8 +69,9 @@ def VPZ(Qblist, target, angle):
 
 
 def HD(Qblist, target):
-    """Create Hadamard gate, this is not done and not working!!
-    Maybe 1/sqrt(2) * (PX + PZ) with an angle pi/2"""
+    """Create Hadamard gate
+    Returns two operations, one real and one virtual. The virtual is to be applied after the alg-step
+    NOTE: Angle for HD_real is always pi/2 and for HD_virt always pi"""
     #HD = sqrtm(PY(Qblist, target)) * PZ(Qblist,target) #we don't know if sqrtm works
     HD_real = 1/np.sqrt(2) * PX(Qblist, target)
     HD_virt = 1/np.sqrt(2) * VPZ(Qblist, target, np.pi)
