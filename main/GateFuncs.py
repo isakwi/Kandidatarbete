@@ -1,13 +1,11 @@
 """
-Contains a class for adding a steps of an algorithm as well as a function creating 
-a Hamiltonian from these steps.
-
-(Not sure if the rest of the comment is relevant anymore, will leave it for later)
-Definition of functions:
-- CreateGates (Gate, target, NoOfGates, QbLevel) - > Tensored operator where gate acts on correct qubit
-- TimeDependGates (tlist) - > QobjEvo of time dependant gate with correct drive interval
-- AddGates ( QobjEvo ) - > Adds QobjEvos to final Hamiltonian
-
+Contains: 
+- Class Add_step for initialising a new step in the algorithm. 
+- Function CreateHFromStep(step, Qblist) that returns a list of [H_real, H_virt, tmax], where
+  H_real is the Hamiltonian for the real part of the step, H_virt is the Hamiltonian for the virtual 
+  part of the step, and tmax is the maximal time corresponding to a rotation of pi. 
+- Function TimeDepend(step, gates, t_max) which returns [H,tlist], H being a time dependent Hamiltonian 
+  and tlist being a list of times over which the simulation will run.
 """
 
 import GateLib
@@ -85,8 +83,8 @@ if __name__ == "__main__":
     steps = []
     steps.append(Add_step(["PX", "PY", "VPZ"], [0, 1, 1], [5, 5, 5]))
     hej_real, hej_virt, tlist = CreateHfromStep(steps[0], Qblist)
-    print(hej_real)
-
+    #print(hej_real)
+    print(tlist)
 """
 Ex of usage:
 
