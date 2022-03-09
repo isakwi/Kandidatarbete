@@ -69,9 +69,12 @@ def VPZ(Qblist, target, angle):
 
 
 def HD(Qblist, target):
-    """Create Hadamard gate, this is not done and not working!!"""
-    HD = sqrtm(PY(Qblist, target)) * PZ(Qblist,target) #we don't know if sqrtm works
-    return HD
+    """Create Hadamard gate, this is not done and not working!!
+    Maybe 1/sqrt(2) * (PX + PZ) with an angle pi/2"""
+    #HD = sqrtm(PY(Qblist, target)) * PZ(Qblist,target) #we don't know if sqrtm works
+    HD_real = 1/np.sqrt(2) * PX(Qblist, target)
+    HD_virt = 1/np.sqrt(2) * VPZ(Qblist, target, np.pi)
+    return [HD_real, HD_virt]
 
 def CNOT(Qblist, Tar_Con):
     """Create a controlled-not gate, so far only for 2-level qubits"""

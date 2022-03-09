@@ -41,6 +41,11 @@ def CreateHfromStep(step, Qblist):
         elif step.name[i] in ["2qubitgates"]:  # Check 2q gates
             H_real.append(y(Qblist, step.Tar_Con[i]))
             tmax = 200e-9
+        elif step.name[i] in ["HD"]:
+            step.angle[i] = np.pi/2
+            H = GateLib.HD(Qblist, step.Tar_Con[i])
+            H_real.append(H[0])
+            H_virt.append(H[1])
         else:  # Else append as 1q gate
             H_real.append(y(Qblist, step.Tar_Con[i]))
     return [H_real, H_virt, tmax]

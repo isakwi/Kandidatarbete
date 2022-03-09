@@ -49,7 +49,8 @@ def main_algorithm(args):
     output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj)
     psi0 = output.states[:, -1].tolist()
     for vgate in virtualgates:
-        psi0 = [vgate*psi for psi in psi0]
+        psi_temp = mcsolving.virtgate(psi0,vgate=vgate)
+        psi0 = psi_temp
 
 
     for i in range(1,len(steps)): #each step except the first one
@@ -60,6 +61,7 @@ def main_algorithm(args):
         psi_temp = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
         psi0 = psi_temp
         for vgate in virtualgates:
-            psi0 = [vgate * psi for psi in psi0]
+            psi_temp = mcsolving.virtgate(psi0, vgate=vgate)
+            psi0 = psi_temp
     return psi0
     
