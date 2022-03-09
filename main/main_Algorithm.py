@@ -9,6 +9,7 @@
 from qutip import *
 import numpy as np
 import GateFuncs as gf
+from Anharmonicity import anharmonicity
 
 
 ##--------EVERYTHING ABOVE THIS IS JUST TAKING IN INPUT
@@ -23,7 +24,7 @@ def main_algorithm(args):
     else:
         ntraj = 500
 
-    H0 = 0  + anharmonicity(U, Qblist) # + ZZ_Interaction(Qblist)
+    H0 = anharmonicity(U, Qblist) # + ZZ_Interaction(Qblist)
 
     ## Do first iteration for ntraj trajectories to split the mcsolve
     gates = gf.CreateHfromStep(steps[0], Qblist)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER

@@ -39,6 +39,15 @@ def PZ(Qblist, target):
     sz[target] = create(Qblist[target].level)*destroy(Qblist[target].level)
     return tensor(sz)
 
+def AnHarm(Qblist, target):
+    """Creates specific sigmaz gate, maybe better than to create all gates? Then
+    you can use only the operators you need.
+    Input is list of qubits and which qubit you want to target with the operator
+    This might need to be changed to be a "virtual" gate """
+    AH = [qeye(Qb.level) for Qb in Qblist]
+    AH[target] = create(Qblist[target].level)*create(Qblist[target].level)*destroy(Qblist[target].level)*destroy(Qblist[target].level)
+    return tensor(AH)
+
 def VPZ(Qblist, target, angle):
     """Creates virtual sigmaz gate, not sure if this is the way to do it though
     Maybe change this so that it takes an array of targets and array of angles?"""
