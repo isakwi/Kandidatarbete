@@ -73,7 +73,7 @@ def HD(Qblist, target):
     return HD
 
 
-def Cnot_2qb (Qblist, targetlist):
+def Cnot_2qb (Qblist, targetlist, controlvalue):
     Cnotvec = [qeye(Qb.level) for Qb in Qblist] * Qblist[targetlist[0]].level
     state_con =[]
     Cnot = 0
@@ -81,12 +81,12 @@ def Cnot_2qb (Qblist, targetlist):
 
 
     for ind in range(0, Qblist[targetlist[0]].level):
-        state_con.append(basis(Qblist[targetlist[0]]), ind)
+        state_con.append(basis(Qblist[targetlist[0]].level), ind)
 
     for i in range(0, Qblist[targetlist[0]].level):
         Cnotvec[i][targetlist[0]] = state_con[i] * state_con[i].dag()
-        Cnotvec[i][targetlist[1]] = destroy(Qblist[1].level) + destroy(Qblist[1].level)
 
+    Cnotvec[controlvalue][targetlist[1]] = destroy(Qblist[1].level) + destroy(Qblist[1].level)
 
     for ix in range(0, len(Cnotvec)):
         Cnot = Cnot + tensor(Cnotvec[ix])
