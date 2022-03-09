@@ -1,7 +1,7 @@
 from qutip import *
 
 
-def anharm_term(U, Qblist):
+def anharmonicity(U, Qblist):
     #function for creating the anharmonicty term for the Hamiltonian. 
     H = []
     for i in range(0, len(Qblist)):
