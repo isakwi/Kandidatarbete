@@ -118,6 +118,4 @@ if __name__ == "__main__":
         print(sz1)
         print(sz)
 
-    hej = VPZ(Qblist, )
-
 
