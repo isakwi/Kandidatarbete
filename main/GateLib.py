@@ -91,6 +91,21 @@ def CNOT(Qblist, Tar_Con):
     CNOT = tensor(CNOT_list_0) + tensor(CNOT_list_1)
     return CNOT
 
+def CZ(Qblist, Tar_Con):
+    """Create a controlled-Z gate, so far only for 2-level qubits"""
+    target = Tar_Con[0]
+    control = Tar_Con[1]
+    if Qblist[target].level != 2:
+        raise Exception("Qubit level needs to be 2!")
+    outerproducts = [basis(2, 0) * basis(2,0).dag(), basis(2, 1) * basis(2,1).dag()]
+    CZ_list_0 = [qeye(Qb.level) for Qb in Qblist]
+    CZ_list_1 = [qeye(Qb.level) for Qb in Qblist]
+    CZ_list_0[control] = [outerproducts[0]]
+    CZ_list_1[control] = [outerproducts[1]]
+    CZ_list_1[target] = [sigmaz()]
+    CZ = tensor(CZ_list_0) + tensor(CZ_list_1)
+    return CZ
+
 
 
 def Cnot_2qb (Qblist, targetlist, controlvalue):
@@ -161,6 +176,3 @@ if __name__ == "__main__":
         print("Specific sigz doesn't work")
         print(sz1)
         print(sz)
-
-
-
