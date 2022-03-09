@@ -1,4 +1,5 @@
 """ Main program, this is the one you should run! """
+import time
 
 import read_data as rd
 import Qb_class as Qb
@@ -48,5 +49,7 @@ steps.append(gf.Add_step(["PX", "PY"], [0, 1], [pi, pi/2]))
 steps.append(gf.Add_step(["PX", "HD"], [0, 1], [pi, 0]))
 
 args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "U": U}
+tic = time.perf_counter() # Start stopwatch in order to print the run time
 result = mA.main_algorithm(args)
-print("Done!")
+toc = time.perf_counter() # Stop stopwatch
+print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
