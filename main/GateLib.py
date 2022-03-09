@@ -40,8 +40,7 @@ def PZ(Qblist, target):
     return tensor(sz)
 
 def AnHarm(Qblist, target):
-    """Creates specific sigmaz gate, maybe better than to create all gates? Then
-    you can use only the operators you need.
+    """Creates anharmonicty term of correct dimension
     Input is list of qubits and which qubit you want to target with the operator
     This might need to be changed to be a "virtual" gate """
     AH = [qeye(Qb.level) for Qb in Qblist]
