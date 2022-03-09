@@ -92,7 +92,7 @@ def CNOT(Qblist, Tar_Con):
     CNOT = tensor(CNOT_list_0) + tensor(CNOT_list_1)
     return CNOT
 
-def CZ(Qblist, Tar_Con):
+def CZ_old(Qblist, Tar_Con):
     """Create a controlled-Z gate, so far only for 2-level qubits"""
     target = Tar_Con[0] #index of the targeted qubit
     control = Tar_Con[1] #index of the controlling qubit
@@ -108,7 +108,21 @@ def CZ(Qblist, Tar_Con):
     CZ = tensor(CZ_list_0) + tensor(CZ_list_1) #we make Kronecker products and add them up
     return CZ
 
-
+def CZ(Qblist, Tar_Con):
+    """Create a controlled-Z gate, for up to 4-level qubits
+    It depends only on the lowest to states though"""
+    target = Tar_Con[0] #index of the targeted qubit
+    control = Tar_Con[1] #index of the controlling qubit
+    lvl = Qblist[control].level
+    outerproducts = [basis(lvl, 0) * basis(lvl,0).dag(), basis(lvl, 1) * basis(lvl,1).dag()] #[|0><0|, |1><1|]
+    #we make one list for the control = 0 case and one for the control = 1
+    CZ_list_0 = [qeye(Qb.level) for Qb in Qblist] #some of these will be replaced below
+    CZ_list_1 = [qeye(Qb.level) for Qb in Qblist] #some of these will be replaced below
+    CZ_list_0[control] = outerproducts[0] #this is the projection onto psi_control = 0
+    CZ_list_1[control] = outerproducts[1] #this is the projection onto psi_control = 1
+    CZ_list_1[target] = create(Qblist[target].level)*destroy(Qblist[target].level) #if psi_control = 1, then we will apply sz on the target
+    CZ = tensor(CZ_list_0) + tensor(CZ_list_1) #we make Kronecker products and add them up
+    return CZ
 
 def Cnot_2qb (Qblist, targetlist, controlvalue):
     Cnotvec = [qeye(Qb.level) for Qb in Qblist] * Qblist[targetlist[0]].level
