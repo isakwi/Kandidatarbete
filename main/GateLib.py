@@ -39,6 +39,14 @@ def PZ(Qblist, target):
     sz[target] = create(Qblist[target].level)*destroy(Qblist[target].level)
     return tensor(sz)
 
+def AnHarm(Qblist, target):
+    """Creates anharmonicty term of correct dimension
+    Input is list of qubits and which qubit you want to target with the operator
+    This might need to be changed to be a "virtual" gate """
+    AH = [qeye(Qb.level) for Qb in Qblist]
+    AH[target] = create(Qblist[target].level)*create(Qblist[target].level)*destroy(Qblist[target].level)*destroy(Qblist[target].level)
+    return tensor(AH)
+
 def VPZ(Qblist, target, angle):
     """Creates virtual sigmaz gate, not sure if this is the way to do it though
     Maybe change this so that it takes an array of targets and array of angles?"""
