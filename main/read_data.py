@@ -2,7 +2,9 @@ import pandas as pd
 
 
 def read_data():
-    """Function that reads qubit number from user and parameters from a .csv file
+    """Function that reads qubit number from user and qubit parameters from a .csv file
+    Maybe chang what parameters come from the file? Separation in csv must be ;
+    Easiest is to create an excel and save it as a csv with ;
     Also has error handling if csv file is wrong or if input is wack"""
 
     # Input for number of qubits
@@ -20,8 +22,6 @@ def read_data():
         except ValueError:
             print("That's not a whole number!")
 
-    # Separation in csv must be ;
-    # Easiest is to create an excel and save it as a csv with ;
     # Read the file
     relax = []
     depha = []

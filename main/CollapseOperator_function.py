@@ -32,7 +32,8 @@ def Collapse_ops(qb_vec):
 
 def create_c_ops(Qblist):
     """Alternative, maybe more compact? Makes use of the gatelib. But still need
-    to add function for interaction (distance between qubits) and thermal excitation"""
+    to add functionality for interaction (ZZ_interaction) and thermal excitation
+    Returns a list with Qobj collapse operators"""
     c_ops = []
     for i in range(0, len(Qblist)):
         if Qblist[i].noisert_vec[0] > 0.0:  # Relaxation/Decoherence
