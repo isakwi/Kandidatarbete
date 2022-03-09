@@ -73,6 +73,30 @@ def HD(Qblist, target):
     return HD
 
 
+def Cnot_2qb (Qblist, targetlist):
+    Cnotvec = [qeye(Qb.level) for Qb in Qblist] * Qblist[targetlist[0]].level
+    state_con =[]
+    Cnot = 0
+
+
+
+    for ind in range(0, Qblist[targetlist[0]].level):
+        state_con.append(basis(Qblist[targetlist[0]]), ind)
+
+    for i in range(0, Qblist[targetlist[0]].level):
+        Cnotvec[i][targetlist[0]] = state_con[i] * state_con[i].dag()
+        Cnotvec[i][targetlist[1]] = destroy(Qblist[1].level) + destroy(Qblist[1].level)
+
+
+    for ix in range(0, len(Cnotvec)):
+        Cnot = Cnot + tensor(Cnotvec[ix])
+
+    return Cnot
+
+
+
+
+
 if __name__ == "__main__":
     """ Troubleshooting"""
 
@@ -117,5 +141,6 @@ if __name__ == "__main__":
         print("Specific sigz doesn't work")
         print(sz1)
         print(sz)
+
 
 
