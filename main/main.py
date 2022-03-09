@@ -43,7 +43,7 @@ c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing f
 steps = []
 steps.append(gf.Add_step(["PX", "PX"], [0, 1], [pi, pi/2]))
 steps.append(gf.Add_step(["PX", "PY"], [0, 1], [pi, pi/2]))
-steps.append(gf.Add_step(["PX", "PX"], [0, 1], [pi, pi/2]))
+steps.append(gf.Add_step(["PX", "HD"], [0, 1], [pi, 0]))
 
 args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "U": U}
 result = mA.main_algorithm(args)
