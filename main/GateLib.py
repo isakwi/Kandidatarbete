@@ -5,7 +5,7 @@ Backend with definition of 1qb and 2qb gates
 import Qb_class as Qb
 from qutip import *
 import numpy as np
-from scipy import *
+from scipy.linalg import *
 
 def PX(Qblist, target):
     """Creates specific sigmax gate, maybe better than to create all gates? Then
