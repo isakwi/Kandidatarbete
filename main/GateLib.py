@@ -73,6 +73,22 @@ def HD(Qblist, target):
     HD = sqrtm(PY(Qblist, target)) * PZ(Qblist,target) #we don't know if sqrtm works
     return HD
 
+def CNOT(Qblist, Tar_Con):
+    """Create a controlled-not gate, so far only for 2-level qubits"""
+    target = Tar_Con[0]
+    control = Tar_Con[1]
+    if Qblist[target].level != 2:
+        raise Exception("Qubit level needs to be 2!")
+    outerproducts = [basis(2, 0) * basis(2,0).dag(), basis(2, 1)  * basis(2,1).dag()]
+    CNOT_list_0 = [qeye(Qb.level) for Qb in Qblist]
+    CNOT_list_1 = [qeye(Qb.level) for Qb in Qblist]
+    CNOT_list_0[control] = [outerproducts[0]]
+    CNOT_list_1[control] = [outerproducts[1]]
+    CNOT_list_1[target] = [sigmax()]
+    CNOT = tensor(CNOT_list_0) + tensor(CNOT_list_1)
+    return CNOT
+
+
 
 def Cnot_2qb (Qblist, targetlist, controlvalue):
     Cnotvec = [qeye(Qb.level) for Qb in Qblist] * Qblist[targetlist[0]].level
