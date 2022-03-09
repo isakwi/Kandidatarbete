@@ -78,7 +78,7 @@ class qutip_zvode(zvode):
         return r
 
 
-[docs]def mcsolve(H, psi0vec, tlist, c_ops=[], e_ops=[], ntraj=0,
+def mcsolve(H, psi0vec, tlist, c_ops=[], e_ops=[], ntraj=0,
             args={}, options=None, progress_bar=True,
             map_func=parallel_map, map_kwargs={}, _safe_mode=True):
     r"""Monte Carlo evolution of a state vector :math:`|\psi \rangle` for a

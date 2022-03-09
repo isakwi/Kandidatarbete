@@ -16,6 +16,7 @@ for i in range(0, n):  # Creates list with all qubits, for now the desig and ini
     Qblist.append(Qb.Qubit(l[i], [relax[i], depha[i], inter[i], therma[i]], [], []))
 
 # Parameters for gates
+""" Maybe we can remove this? """
 t_1q = 20e-9  # Max time for 1 qubit gate
 t_2q = 200e-9  # Max time for 2 qubit gate
 w_01 = 4*1e9 * 2 * pi   # Qubit frequency (4-5 GHz)
@@ -41,9 +42,10 @@ c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing f
 
 """ Adding the algorithm steps! """
 steps = []
+steps.append(gf.Add_step(["CZ"], [[0, 1]], [pi]))
+steps.append(gf.Add_step(["CNOT"], [[0, 1]], [pi]))
 steps.append(gf.Add_step(["PX", "PY"], [0, 1], [pi, pi/2]))
-steps.append(gf.Add_step(["PX", "PY"], [0, 1], [pi, pi/2]))
-steps.append(gf.Add_step(["PX", "PY"], [0, 1], [pi, pi/2]))
+steps.append(gf.Add_step(["PX", "HD"], [0, 1], [pi, 0]))
 
 args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "U": U}
 result = mA.main_algorithm(args)

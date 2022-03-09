@@ -8,3 +8,6 @@ def mcs(psi,H,tlist,c_ops):
     # the virtual gates should be able to apply through matrix multiplication
     # if virtualgate != None:
     #   psi0 = virtualgates[i] * psi0
+
+def virtgate(psi,vgate):
+    return vgate*psi

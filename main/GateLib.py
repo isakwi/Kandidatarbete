@@ -5,6 +5,7 @@ Backend with definition of 1qb and 2qb gates
 import Qb_class as Qb
 from qutip import *
 import numpy as np
+from scipy.linalg import *
 
 def PX(Qblist, target):
     """Creates specific sigmax gate, maybe better than to create all gates? Then
@@ -68,10 +69,60 @@ def VPZ(Qblist, target, angle):
 
 
 def HD(Qblist, target):
-    """Create Hadamard gate, this is not done and not working!!"""
-    HD = sqrtm(PY(Qblist, target)) * PZ(Qblist,target) #we don't know if sqrtm works
-    return HD
+    """Create Hadamard gate
+    Returns two operations, one real and one virtual. The virtual is to be applied after the alg-step
+    NOTE: Angle for HD_real is always pi/2 and for HD_virt always pi"""
+    #HD = sqrtm(PY(Qblist, target)) * PZ(Qblist,target) #we don't know if sqrtm works
+    HD_real = 1/np.sqrt(2) * PX(Qblist, target)
+    HD_virt = 1/np.sqrt(2) * VPZ(Qblist, target, np.pi)
+    return [HD_real, HD_virt]
 
+def CNOT(Qblist, Tar_Con):
+    """Create a controlled-not gate, so far only for 2-level qubits"""
+    target = Tar_Con[0]
+    control = Tar_Con[1]
+    if Qblist[target].level != 2:
+        raise Exception("Qubit level needs to be 2!")
+    outerproducts = [basis(2, 0) * basis(2,0).dag(), basis(2, 1)  * basis(2,1).dag()]
+    CNOT_list_0 = [qeye(Qb.level) for Qb in Qblist]
+    CNOT_list_1 = [qeye(Qb.level) for Qb in Qblist]
+    CNOT_list_0[control] = outerproducts[0]
+    CNOT_list_1[control] = outerproducts[1]
+    CNOT_list_1[target] = sigmax()
+    CNOT = tensor(CNOT_list_0) + tensor(CNOT_list_1)
+    return CNOT
+
+def CZ_old(Qblist, Tar_Con):
+    """Create a controlled-Z gate, so far only for 2-level qubits"""
+    target = Tar_Con[0] #index of the targeted qubit
+    control = Tar_Con[1] #index of the controlling qubit
+    if Qblist[target].level != 2: #we will probably allow higher levels later
+        raise Exception("Qubit level needs to be 2!")
+    outerproducts = [basis(2, 0) * basis(2,0).dag(), basis(2, 1) * basis(2,1).dag()] #[|0><0|, |1><1|]
+    #we make one list for the control = 0 case and one for the control = 1
+    CZ_list_0 = [qeye(Qb.level) for Qb in Qblist] #some of these will be replaced below
+    CZ_list_1 = [qeye(Qb.level) for Qb in Qblist] #some of these will be replaced below
+    CZ_list_0[control] = outerproducts[0] #this is the projection onto psi_control = 0
+    CZ_list_1[control] = outerproducts[1] #this is the projection onto psi_control = 1
+    CZ_list_1[target] = sigmaz() #if psi_control = 1, then we will apply sz on the target
+    CZ = tensor(CZ_list_0) + tensor(CZ_list_1) #we make Kronecker products and add them up
+    return CZ
+
+def CZ(Qblist, Tar_Con):
+    """Create a controlled-Z gate, for up to 4-level qubits
+    It depends only on the lowest to states though"""
+    target = Tar_Con[0] #index of the targeted qubit
+    control = Tar_Con[1] #index of the controlling qubit
+    lvl = Qblist[control].level
+    outerproducts = [basis(lvl, 0) * basis(lvl,0).dag(), basis(lvl, 1) * basis(lvl,1).dag()] #[|0><0|, |1><1|]
+    #we make one list for the control = 0 case and one for the control = 1
+    CZ_list_0 = [qeye(Qb.level) for Qb in Qblist] #some of these will be replaced below
+    CZ_list_1 = [qeye(Qb.level) for Qb in Qblist] #some of these will be replaced below
+    CZ_list_0[control] = outerproducts[0] #this is the projection onto psi_control = 0
+    CZ_list_1[control] = outerproducts[1] #this is the projection onto psi_control = 1
+    CZ_list_1[target] = create(Qblist[target].level)*destroy(Qblist[target].level) #if psi_control = 1, then we will apply sz on the target
+    CZ = tensor(CZ_list_0) + tensor(CZ_list_1) #we make Kronecker products and add them up
+    return CZ
 
 def Cnot_2qb (Qblist, targetlist, controlvalue):
     Cnotvec = [qeye(Qb.level) for Qb in Qblist] * Qblist[targetlist[0]].level
@@ -141,6 +192,3 @@ if __name__ == "__main__":
         print("Specific sigz doesn't work")
         print(sz1)
         print(sz)
-
-
-
