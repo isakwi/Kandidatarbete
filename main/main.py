@@ -1,4 +1,4 @@
-""" Main program, this is the one you should run!"""
+""" Main program, this is the one you should run! """
 
 import read_data as rd
 import Qb_class as Qb
@@ -6,8 +6,8 @@ import numpy as np
 import CollapseOperator_function as co
 from qutip import *
 import GateFuncs as gf
-pi = np.pi
 import main_Algorithm as mA
+pi = np.pi
 
 # Parameters, eventually the number of qubits and the levels will be read from OpenQASM instead!
 n, relax, depha, inter, therma, l = rd.read_data()  # Parameters
