@@ -13,9 +13,13 @@ import mcsolving
 from Anharmonicity import anharmonicity
 
 def main_algorithm(args):
-    """ The main algorithm. Takes in args: steps of the algorithm containing information
+    """ The main algorithm.
+    Takes in args:
+    steps of the algorithm containing information
     about gates, collapes operators, initial state, list of Qubit objects and
-    anharmonicity strength (and maybe ntraj?). It first converts the first step of the
+    anharmonicity strength (and maybe ntraj?).
+    What it does:
+    It first converts the first step of the
     algorithm steps to a Hamiltonian, with anharmonicity. Then runs the first mcsolve
     with 'ntraj' trajectories. This returns an array (converted to list) of final states.
     It then goes to a parfor loop over the remaining steps which runs mcsolve with 1
@@ -23,7 +27,8 @@ def main_algorithm(args):
     virtual gates after every step of the algorithm, and to be able to continue
     each trajectory where it left off in the last step without risking errors that
     could come from taking average states and so on
-    The function returns a list of the final states"""
+    What it returns:
+    The function returns a list (of length ntraj) of the final states"""
     steps = args["steps"]
     c_ops = args["c_ops"]
     psi0 = args["psi0"]
