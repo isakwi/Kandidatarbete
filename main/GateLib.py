@@ -117,4 +117,37 @@ if __name__ == "__main__":
 
     hej = VPZ(Qblist, )
 
+def Cnot_2qb (Qblist, targetlist):
+    Cnotvec = [qeye(Qb.level) for Qb in Qblist] * Qblist[targetlist[0]].level
+    state_con =[]
+    Cnot = 0
+
+
+
+    for ind in range(0, Qblist[targetlist[0]].level):
+        state_con.append(basis(Qblist[targetlist[0]]), ind)
+
+    for i in range(0, Qblist[targetlist[0]].level):
+        Cnotvec[i][targetlist[0]] = state_con[i] * state_con[i].dag()
+        Cnotvec[i][targetlist[1]] = destroy(Qblist[1].level) + destroy(Qblist[1].level)
+
+
+    for ix in range(0, len(Cnotvec)):
+        Cnot = Cnot + tensor(Cnotvec[ix])
+
+    return Cnot
+
+
+
+
+    scon0 = basis(Qblist[targetlist[0]].level, 0)
+    scon1 = basis(Qblist[targetlist[0]].level, 1)
+
+
+
+
+
+
+
+    return
 
