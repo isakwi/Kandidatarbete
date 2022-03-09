@@ -33,9 +33,7 @@ def main_algorithm(args):
     virtualgate = gates[1]
     tlist = gf.TimeDepend(steps[0], gates[0], gates[2])[1]
     output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj)
-    psi0 = []
-    for idx in range(len(output.states[:,-1])):
-        psi0.append(output.states[idx,-1])
+    psi0 = output.states[:, -1].tolist()
 
     for i in range(1,len(steps)): #each step except the first one
         gates = gf.CreateHfromStep(steps[i], Qblist)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
