@@ -17,12 +17,13 @@ def main_algorithm(args):
     c_ops = args["c_ops"]
     psi0 = args["psi0"]
     Qblist = args["Qblist"]
+    U = args["U"]
     if "ntraj" in args:
         ntraj = args["ntraj"]
     else:
         ntraj = 500
 
-    H0 = 0  + anharmonicity(Qblist) # + ZZ_Interaction(Qblist)
+    H0 = 0  + anharmonicity(U, Qblist) # + ZZ_Interaction(Qblist)
 
     ## Do first iteration for ntraj trajectories to split the mcsolve
     gates = gf.CreateHfromStep(steps[0], Qblist)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
