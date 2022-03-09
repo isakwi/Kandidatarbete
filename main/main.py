@@ -36,9 +36,8 @@ def create_psi0(Qblist):
     return tensor(psi0)
 
 
-psi0 = create_psi0(Qblist)
-c_ops = co.create_c_ops(Qblist)
-# c_ops2 = co.Collapse_ops(Qblist)
+psi0 = create_psi0(Qblist)  # Create initial state with all qubits in ground state
+c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
 
 """ Adding the algorithm steps! """
 steps = []

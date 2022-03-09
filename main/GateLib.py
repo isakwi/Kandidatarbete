@@ -9,7 +9,8 @@ import numpy as np
 def PX(Qblist, target):
     """Creates specific sigmax gate, maybe better than to create all gates? Then
     you can use only the operators you need.
-    Input is list of qubits and which qubit you want to target with the operator"""
+    Input is list of qubits and which qubit you want to target with the operator
+    Returns a Qobj that operates on qubit[target] with the gate"""
     sx = [qeye(Qb.level) for Qb in Qblist]
     sx[target] = destroy(Qblist[target].level) + create(Qblist[target].level)
     return tensor(sx)
@@ -17,7 +18,8 @@ def PX(Qblist, target):
 def PY(Qblist, target):
     """Creates specific sigmay gate, maybe better than to create all gates? Then
     you can use only the operators you need.
-    Input is list of qubits and which qubit you want to target with the operator"""
+    Input is list of qubits and which qubit you want to target with the operator
+    Returns a Qobj that operates on qubit[target] with the gate"""
     sy = [qeye(Qb.level) for Qb in Qblist]
     sy[target] = -1j * (destroy(Qblist[target].level) - create(Qblist[target].level))
     return tensor(sy)
@@ -25,7 +27,8 @@ def PY(Qblist, target):
 def PM(Qblist, target):
     """Creates specific sigma- gate, maybe better than to create all gates? Then
     you can use only the operators you need.
-    Input is list of qubits and which qubit you want to target with the operator"""
+    Input is list of qubits and which qubit you want to target with the operator
+    Returns a Qobj that operates on qubit[target] with the gate"""
     sm = [qeye(Qb.level) for Qb in Qblist]
     sm[target] = destroy(Qblist[target].level)
     return tensor(sm)
@@ -34,7 +37,7 @@ def PZ(Qblist, target):
     """Creates specific sigmaz gate, maybe better than to create all gates? Then
     you can use only the operators you need.
     Input is list of qubits and which qubit you want to target with the operator
-    This might need to be changed to be a "virtual" gate """
+    Returns a Qobj that operates on qubit[target] with the gate"""
     sz = [qeye(Qb.level) for Qb in Qblist]
     sz[target] = create(Qblist[target].level)*destroy(Qblist[target].level)
     return tensor(sz)
@@ -42,14 +45,14 @@ def PZ(Qblist, target):
 def AnHarm(Qblist, target):
     """Creates anharmonicty term of correct dimension
     Input is list of qubits and which qubit you want to target with the operator
-    This might need to be changed to be a "virtual" gate """
+    Returns Qobj anharmonicity operator for targeted qubit """
     AH = [qeye(Qb.level) for Qb in Qblist]
     AH[target] = create(Qblist[target].level)*create(Qblist[target].level)*destroy(Qblist[target].level)*destroy(Qblist[target].level)
     return tensor(AH)
 
 def VPZ(Qblist, target, angle):
     """Creates virtual sigmaz gate, not sure if this is the way to do it though
-    Maybe change this so that it takes an array of targets and array of angles?"""
+    Returns Qobj that operates on targeted qubit with specified angle"""
     vsz = [qeye(Qb.level) for Qb in Qblist]
     try:
         if Qblist[target].level == 2:
@@ -65,7 +68,7 @@ def VPZ(Qblist, target, angle):
 
 
 def HD(Qblist, target):
-    """Create Hadamard gate, angle for this gate should always be pi/2!!"""
+    """Create Hadamard gate, this is not done and not working!!"""
     HD = sqrtm(PY(Qblist, target)) * PZ(Qblist,target) #we don't know if sqrtm works
     return HD
 
