@@ -42,6 +42,7 @@ c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing f
 """ Adding the algorithm steps! """
 steps = []
 steps.append(gf.Add_step(["CZ"], [[0, 1]], [pi]))
+steps.append(gf.Add_step(["CNOT"], [[0, 1]], [pi]))
 steps.append(gf.Add_step(["PX", "PY"], [0, 1], [pi, pi/2]))
 steps.append(gf.Add_step(["PX", "HD"], [0, 1], [pi, 0]))
 

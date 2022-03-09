@@ -86,9 +86,9 @@ def CNOT(Qblist, Tar_Con):
     outerproducts = [basis(2, 0) * basis(2,0).dag(), basis(2, 1)  * basis(2,1).dag()]
     CNOT_list_0 = [qeye(Qb.level) for Qb in Qblist]
     CNOT_list_1 = [qeye(Qb.level) for Qb in Qblist]
-    CNOT_list_0[control] = [outerproducts[0]]
-    CNOT_list_1[control] = [outerproducts[1]]
-    CNOT_list_1[target] = [sigmax()]
+    CNOT_list_0[control] = outerproducts[0]
+    CNOT_list_1[control] = outerproducts[1]
+    CNOT_list_1[target] = sigmax()
     CNOT = tensor(CNOT_list_0) + tensor(CNOT_list_1)
     return CNOT
 
@@ -102,9 +102,9 @@ def CZ(Qblist, Tar_Con):
     #we make one list for the control = 0 case and one for the control = 1
     CZ_list_0 = [qeye(Qb.level) for Qb in Qblist] #some of these will be replaced below
     CZ_list_1 = [qeye(Qb.level) for Qb in Qblist] #some of these will be replaced below
-    CZ_list_0[control] = [outerproducts[0]] #this is the projection onto psi_control = 0
-    CZ_list_1[control] = [outerproducts[1]] #this is the projection onto psi_control = 1
-    CZ_list_1[target] = [sigmaz()] #if psi_control = 1, then we will apply sz on the target
+    CZ_list_0[control] = outerproducts[0] #this is the projection onto psi_control = 0
+    CZ_list_1[control] = outerproducts[1] #this is the projection onto psi_control = 1
+    CZ_list_1[target] = sigmaz() #if psi_control = 1, then we will apply sz on the target
     CZ = tensor(CZ_list_0) + tensor(CZ_list_1) #we make Kronecker products and add them up
     return CZ
 
