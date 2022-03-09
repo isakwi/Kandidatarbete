@@ -10,7 +10,6 @@ def read_data():
     # Input for number of qubits
     cont = False
     while cont == False:
-
         n = input("\nEnter number of qubits (1 <= n <= 15): ")
         try:
             n = int(n)
