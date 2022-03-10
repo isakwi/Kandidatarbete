@@ -73,7 +73,7 @@ def HD(Qblist, target):
     Returns two operations, one real and one virtual. The virtual is to be applied after the alg-step
     NOTE: Angle for HD_real is always pi/2 and for HD_virt always pi"""
     #HD = sqrtm(PY(Qblist, target)) * PZ(Qblist,target) #we don't know if sqrtm works
-    HD_real = 1/np.sqrt(2) * PX(Qblist, target)
+    HD_real = 1/np.sqrt(2) * PY(Qblist, target)
     HD_virt = 1/np.sqrt(2) * VPZ(Qblist, target, np.pi)
     return [HD_real, HD_virt]
 
