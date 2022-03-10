@@ -58,9 +58,6 @@ toc = time.perf_counter() # Stop stopwatch
 print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
 
 #Used for testing
-"""Why is it not the same to have 2 gates in same step on same qubit compared to 
-having the same gates divided on two steps? Which one will work: Virtual z gates and dividing 
-the algorithm in steps or z gates with very short pulse and having the whole algorithm?"""
 print(psi0)
 print(result[-1])
 if len(Qblist) == 1 and Qblist[0].level == 2:
