@@ -22,7 +22,7 @@ def PY(Qblist, target):
     Input is list of qubits and which qubit you want to target with the operator
     Returns a Qobj that operates on qubit[target] with the gate"""
     sy = [qeye(Qb.level) for Qb in Qblist]
-    sy[target] = -1j * (destroy(Qblist[target].level) - create(Qblist[target].level))
+    sy[target] = 1j * (destroy(Qblist[target].level) - create(Qblist[target].level))
     return tensor(sy)
 
 def PM(Qblist, target):
