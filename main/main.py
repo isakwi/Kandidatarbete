@@ -43,7 +43,7 @@ c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing f
 
 """ Adding the algorithm steps! """
 steps = []
-steps.append(gf.Add_step(["PY", "PX"], [0, 0], [pi/3, pi/2]))
+steps.append(gf.Add_step(["PY"], [0], [pi]))
 #steps.append(gf.Add_step(["CZ"], [[0, 1]], [pi]))
 #steps.append(gf.Add_step(["PY","PX"], [0,1], [pi/2,pi]))
 #steps.append(gf.Add_step(["HD","PX"], [0,1], [0,pi]))
@@ -59,7 +59,7 @@ print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
 
 #Used for testing
 print(psi0)
-print(result[-1])
+print(result[-1]) # Prints one of the final states
 if len(Qblist) == 1 and Qblist[0].level == 2:
     #Bloch sphere only if 1qb 2 level
     b = Bloch()
