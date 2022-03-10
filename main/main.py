@@ -43,13 +43,27 @@ c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing f
 
 """ Adding the algorithm steps! """
 steps = []
-steps.append(gf.Add_step(["CZ"], [[0, 1]], [pi]))
-steps.append(gf.Add_step(["CNOT"], [[0, 1]], [pi]))
-steps.append(gf.Add_step(["PX", "PY"], [0, 1], [pi, pi/2]))
-steps.append(gf.Add_step(["PX", "HD"], [0, 1], [pi, 0]))
+steps.append(gf.Add_step(["PY", "PY"], [0, 1], [pi, pi]))
+#steps.append(gf.Add_step(["CZ"], [[0, 1]], [pi]))
+#steps.append(gf.Add_step(["PY","PX"], [0,1], [pi/2,pi]))
+#steps.append(gf.Add_step(["HD","PX"], [0,1], [0,pi]))
+#steps.append(gf.Add_step(["VPZ"], [0], [pi]))
+#steps.append(gf.Add_step(["HD"], [0], [pi/2]))
+#steps.append(gf.Add_step(["PZ"], [0], [pi/2]))
 
 args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "U": U}
 tic = time.perf_counter() # Start stopwatch in order to print the run time
 result = mA.main_algorithm(args)
 toc = time.perf_counter() # Stop stopwatch
 print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
+
+#Used for testing
+#print(psi0)
+#print(result[-1])
+# Bloch sphere only if 1qb 2 level
+# b = Bloch()
+# vec1 = psi0
+# vec2 = result[-1]
+# b.add_states(vec1)
+# b.add_states(vec2)
+# b.make_sphere()
