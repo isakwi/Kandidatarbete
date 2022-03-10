@@ -23,6 +23,7 @@ def PY(Qblist, target):
     Returns a Qobj that operates on qubit[target] with the gate"""
     sy = [qeye(Qb.level) for Qb in Qblist]
     sy[target] = 1j * (destroy(Qblist[target].level) - create(Qblist[target].level))
+    #Hmm.. *(-1) to get positive rotations.. but to make HD correct this def^ (KDs) is correct /Ed
     return tensor(sy)
 
 def PM(Qblist, target):
@@ -41,6 +42,7 @@ def PZ(Qblist, target):
     Returns a Qobj that operates on qubit[target] with the gate"""
     sz = [qeye(Qb.level) for Qb in Qblist]
     sz[target] = create(Qblist[target].level)*destroy(Qblist[target].level)
+    #If we intend this to rotate around z-axis it should be defined differently.. but I guess we us VPZ for that?
     return tensor(sz)
 
 def AnHarm(Qblist, target):
