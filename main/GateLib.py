@@ -24,6 +24,7 @@ def PY(Qblist, target):
     sy = [qeye(Qb.level) for Qb in Qblist]
     sy[target] = 1j * (destroy(Qblist[target].level) - create(Qblist[target].level))
     #Hmm.. *(-1) to get positive rotations.. but to make HD correct this def^ (KDs) is correct /Ed
+    #Guess we will have to ask KD about it
     return tensor(sy)
 
 def PM(Qblist, target):
@@ -43,6 +44,7 @@ def PZ(Qblist, target):
     sz = [qeye(Qb.level) for Qb in Qblist]
     sz[target] = create(Qblist[target].level)*destroy(Qblist[target].level)
     #If we intend this to rotate around z-axis it should be defined differently.. but I guess we us VPZ for that?
+    #Yes probably,
     return tensor(sz)
 
 def AnHarm(Qblist, target):
@@ -186,6 +188,7 @@ if __name__ == "__main__":
 
 
     # Test specific sigmaz
+    # But not the same as inbuilt sigmaz()?
     sz1 = sm1.dag()*sm1
     sz = PZ(Qblist,1)
     if sz1 == sz:
@@ -194,3 +197,6 @@ if __name__ == "__main__":
         print("Specific sigz doesn't work")
         print(sz1)
         print(sz)
+
+
+

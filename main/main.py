@@ -1,6 +1,6 @@
 """ Main program, this is the one you should run! """
 import time
-
+import matplotlib.pyplot as plt
 import read_data as rd
 import Qb_class as Qb
 import numpy as np
@@ -43,7 +43,7 @@ c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing f
 
 """ Adding the algorithm steps! """
 steps = []
-steps.append(gf.Add_step(["PY", "PY"], [0, 1], [pi, pi]))
+steps.append(gf.Add_step(["PY", "PX"], [0, 0], [pi/3, pi/2]))
 #steps.append(gf.Add_step(["CZ"], [[0, 1]], [pi]))
 #steps.append(gf.Add_step(["PY","PX"], [0,1], [pi/2,pi]))
 #steps.append(gf.Add_step(["HD","PX"], [0,1], [0,pi]))
@@ -58,12 +58,17 @@ toc = time.perf_counter() # Stop stopwatch
 print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
 
 #Used for testing
-#print(psi0)
-#print(result[-1])
-# Bloch sphere only if 1qb 2 level
-# b = Bloch()
-# vec1 = psi0
-# vec2 = result[-1]
-# b.add_states(vec1)
-# b.add_states(vec2)
-# b.make_sphere()
+"""Why is it not the same to have 2 gates in same step on same qubit compared to 
+having the same gates divided on two steps? Which one will work: Virtual z gates and dividing 
+the algorithm in steps or z gates with very short pulse and having the whole algorithm?"""
+print(psi0)
+print(result[-1])
+if len(Qblist) == 1 and Qblist[0].level == 2:
+    #Bloch sphere only if 1qb 2 level
+    b = Bloch()
+    vec1 = psi0
+    vec2 = result[-1]
+    b.add_states(vec1)
+    b.add_states(vec2)
+    b.make_sphere()
+    plt.show()
