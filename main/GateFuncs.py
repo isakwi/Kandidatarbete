@@ -9,10 +9,11 @@ Contains:
 """
 
 import GateLib
-from qutip import *
+from qutip import * # Will probably only need 
 import numpy as np
 import Qb_class as Qb
 from Envelope import *
+import sys # For terminating upon error. We will see if this is a good way to do it
 
 """
 Class for creating each step in an algorithm. 
@@ -31,16 +32,27 @@ Function for creating a Hamiltonian from a given step in the algorithm
 def CreateHfromStep(step, Qblist):
     """ Create two lists of Qobj from a step in the step_list, one for virtual and one for real gates
     Also return a tlist depending on what gates there are in the step """
-    H_real = []  # Try to make H pre defined in size!!!
+    H_real = []  # Try to make H pre defined in size!!! 
+    # Might be hard to do since we don't know how many gates will be real
     H_virt = []
-    tmax = 20e-9
+    tmax = 20e-9 # Defaults to time for single qubit gate
     for i in range(len(step.name)):
-        y = eval("GateLib." + step.name[i])
+        try: 
+            y = eval("GateLib." + step.name[i]) # Calls the gate corresponding to the step.name[i]
+        except Exception as error:
+            print('A gate you are trying to perform cannot be executed. \
+            \nQNAS only handles gates avaliable at Chalmers quantum computer')
+            raise 
+            sys.exit(1) # Stops the program
+        """The error handling is probably not very good. I know one should be more specific in which errors
+        to handle in each except, but all the errors in the try block must come from step.name[i] (given that
+        the code works as it should), so this should be pretty safe.         
+        """
         if step.name[i] in ["VPZ"]:  # Check virtual gates
             H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
         elif step.name[i] in ["2qubitgates"]:  # Check 2q gates
             H_real.append(y(Qblist, step.Tar_Con[i]))
-            tmax = 200e-9
+            tmax = 200e-9 # If there is a 2qb gate the maximal time changes to match that
         elif step.name[i] in ["HD"]:
             step.angle[i] = np.pi/2
             H = GateLib.HD(Qblist, step.Tar_Con[i])
@@ -48,7 +60,7 @@ def CreateHfromStep(step, Qblist):
             H_virt.append(H[1])
         else:  # Else append as 1q gate
             H_real.append(y(Qblist, step.Tar_Con[i]))
-    return [H_real, H_virt, tmax]
+    return [H_real, H_virt, tmax] 
 
 
 def TimeDepend(step, gates, t_max):
@@ -86,7 +98,7 @@ if __name__ == "__main__":
     Qblist.append(Qb.Qubit(2, [], [], []))
 
     steps = []
-    steps.append(Add_step(["PX", "PY", "VPZ"], [0, 1, 1], [5, 5, 5]))
+    steps.append(Add_step(["Fake Gate", "PY", "VPZ"], [0, 1, 1], [5, 5, 5]))
     hej_real, hej_virt, tlist = CreateHfromStep(steps[0], Qblist)
     #print(hej_real)
     print(tlist)
@@ -99,12 +111,3 @@ steps.append(Add_step(name=["PX", "PX"], Tar_Con = [0,1], angle = [np.pi, 0]))
 H = CreateHFromSteps(steps[0],2,2)
 
 """
-
-"(Not sure if ths is relevant anymore)"
-
-"For future reference, Add Gates could probably be written on this sort of form"
-# H = H_anh
-# for i in len(gate):
-#     H= H + QobjEvo([gate[i],TimeFunc(tlist, inputs[i])], tlist=tlist)
-
-
