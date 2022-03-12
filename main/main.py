@@ -11,10 +11,10 @@ import main_Algorithm as mA
 pi = np.pi
 
 # Parameters, eventually the number of qubits and the levels will be read from OpenQASM instead!
-n, ntraj, relax, depha, inter, therma, l = rd.read_data()  # Parameters
+n, ntraj, relax, depha, therma, l = rd.read_data()  # Parameters
 Qblist = []
 for i in range(0, n):  # Creates list with all qubits, for now the desig and init_vec are empty
-    Qblist.append(Qb.Qubit(l[i], [relax[i], depha[i], inter[i], therma[i]], [], []))
+    Qblist.append(Qb.Qubit(l[i], [relax[i], depha[i], therma[i]], [], []))
 
 # Parameters for gates
 """ Maybe we can remove this? """
@@ -43,11 +43,11 @@ c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing f
 
 """ Adding the algorithm steps! """
 steps = []
-steps.append(gf.Add_step(["PY", "PM", "PY", "PX", "PX", "HD"], [0, 1, 2, 3, 4, 5, 6], [pi/2, pi/4, pi, pi/8, pi/16, pi/2, 0]))
-steps.append(gf.Add_step(["PY", "PX", "PY", "PX", "PX", "HD"], [0, 1, 2, 3, 4, 5, 6], [pi/2, pi/4, pi, pi/8, pi/16, pi/2, 0]))
+#steps.append(gf.Add_step(["PY", "PM", "PY", "PX", "PX", "HD"], [0, 1, 2, 3, 4, 5, 6], [pi/2, pi/4, pi, pi/8, pi/16, pi/2, 0]))
+#steps.append(gf.Add_step(["PY", "PX", "PY", "PX", "PX", "HD"], [0, 1, 2, 3, 4, 5, 6], [pi/2, pi/4, pi, pi/8, pi/16, pi/2, 0]))
 #steps.append(gf.Add_step(["CZ"], [[0, 1]], [pi]))
 #steps.append(gf.Add_step(["PY","PX"], [0,1], [pi/2,pi]))
-steps.append(gf.Add_step(["HD","PX"], [2,4], [0,pi]))
+steps.append(gf.Add_step(["PX"], [0], [pi]))
 #steps.append(gf.Add_step(["VPZ"], [0], [pi]))
 #steps.append(gf.Add_step(["HD"], [0], [pi/2]))
 #steps.append(gf.Add_step(["PZ"], [0], [pi/2]))

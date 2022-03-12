@@ -1,5 +1,5 @@
 import pandas as pd
-
+import sys
 
 def read_data():
     """Function that reads qubit number from user and qubit parameters from a .csv file
@@ -41,7 +41,6 @@ def read_data():
     # Read the file
     relax = []
     depha = []
-    inter = []
     therma = []
     levels = []
     try:
@@ -50,15 +49,14 @@ def read_data():
         for i in range(0, n):
             relax.append(arr[i, 1])
             depha.append(arr[i, 2])
-            inter.append(arr[i, 3])
-            therma.append(arr[i, 4])
-            levels.append(int(arr[i, 5]))
-    except:
+            therma.append(arr[i, 3])
+            levels.append(int(arr[i, 4]))
+    except Exception as error:
         print("Something is wrong with the csv file!")
-        quit()
-    return n, ntraj, relax, depha, inter, therma, levels
+        raise sys.exit(1)
+    return n, ntraj, relax, depha, therma, levels
 
 
 ## Troubleshooting
 if __name__ == "__main__":
-    n, traj, relax, depha, inter, therma, levels = read_data()
+    n, traj, relax, depha, therma, levels = read_data()

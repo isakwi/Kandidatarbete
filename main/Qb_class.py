@@ -15,7 +15,7 @@ from qutip import *
  Beta= driving frequency
  level= number of energy levels for qubit
  noisert_vec = vector of rates of noises, 
- noisert_vec = [decoherence rate, dephasing rate, interaction rate, thermal noise rate]
+ noisert_vec = [decoherence rate, dephasing rate, thermal noise rate]
  desig = [x,y] is the spacial coordinate of the qubits on the chip given as coordinates in a plane, will be used to
  calculate if cubits can interact with each other
  init_cvec = array of coefficients for the initial state (first index represents coefficient for state |00...>) 

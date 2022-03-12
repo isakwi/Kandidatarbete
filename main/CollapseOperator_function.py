@@ -40,8 +40,6 @@ def create_c_ops(Qblist):
             c_ops.append(math.sqrt(Qblist[i].noisert_vec[0]) * gl.PM(Qblist, i))
         if Qblist[i].noisert_vec[1] > 0.0:  # Dephasing
             c_ops.append(math.sqrt(Qblist[i].noisert_vec[1]) * gl.PZ(Qblist, i)/2)
-        #if Qblist[i].noisert_vec[2] > 0.0:  # Interaction
-            #c_ops.append(math.sqrt(Qblist[i].noisert_vec[2]) * 1)  # Need to use [X,Y] here together with the rate
-        #if Qblist[i].noisert_vec[3] > 0.0:  # Thermal
+        #if Qblist[i].noisert_vec[2] > 0.0:  # Thermal
             #c_ops.append(math.sqrt(Qblist[i].noisert_vec[3]) * gl.PM(Qblist, i).dag())  # Not sure about the thermal rates
     return c_ops
