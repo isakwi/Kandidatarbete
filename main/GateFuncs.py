@@ -42,7 +42,7 @@ def CreateHfromStep(step, Qblist, t_max):
         sys.exit(1)  # Stops the program
     for i in range(len(step.name)):
         try: 
-            y = eval("GateLib." + step.name[i]) # Calls the gate corresponding to the step.name[i]
+            y = eval("GateLib." + step.name[i])  # Calls the gate corresponding to the step.name[i]
         except Exception as error:
             print('Error: A gate you are trying to perform cannot be executed. \
             \nQNAS only handles gates avaliable at Chalmers quantum computer')

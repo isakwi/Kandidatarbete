@@ -61,4 +61,4 @@ def read_data():
 
 ## Troubleshooting
 if __name__ == "__main__":
-    n, relax, depha, inter, therma, levels = read_data()
+    n, traj, relax, depha, inter, therma, levels = read_data()
