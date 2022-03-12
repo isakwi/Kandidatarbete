@@ -114,7 +114,7 @@ def CZ_old(Qblist, Tar_Con):
 
 def CZ(Qblist, Tar_Con):
     """Create a controlled-Z gate, for up to 4-level qubits
-    It depends only on the lowest to states though"""
+    It depends only on the lowest two states though"""
     target = Tar_Con[0] #index of the targeted qubit
     control = Tar_Con[1] #index of the controlling qubit
     lvl = Qblist[control].level
