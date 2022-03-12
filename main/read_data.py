@@ -20,6 +20,23 @@ def read_data():
                 print("You didn't enter an integer between 1 and 15!")
         except ValueError:
             print("That's not a whole number!")
+    # Input for number of trajectories
+    cont = False
+    while cont == False:
+        ntraj = input("\nEnter number of trajectories (no input => 500): ")
+        if ntraj == (""):
+            ntraj = 500
+            cont = True
+        else:
+            try:
+                ntraj = int(ntraj)
+                if type(ntraj)==int:
+                    cont = True
+            except ValueError:
+                print("That's not a whole number. Try again!")
+
+
+
 
     # Read the file
     relax = []
@@ -39,7 +56,7 @@ def read_data():
     except:
         print("Something is wrong with the csv file!")
         quit()
-    return n, relax, depha, inter, therma, levels
+    return n, ntraj, relax, depha, inter, therma, levels
 
 
 ## Troubleshooting

@@ -29,18 +29,22 @@ class Add_step:
 Function for creating a Hamiltonian from a given step in the algorithm
 """
 
-def CreateHfromStep(step, Qblist):
+def CreateHfromStep(step, Qblist, t_max):
     """ Create two lists of Qobj from a step in the step_list, one for virtual and one for real gates
-    Also return a tlist depending on what gates there are in the step """
+    Also return a tlist depending on what gates there are in the step
+    t_max[0] = max for 1qb gate (~20ns) and t_max[1] = max for 2ab gate (~200ns)"""
     H_real = []  # Try to make H pre defined in size!!! 
     # Might be hard to do since we don't know how many gates will be real
     H_virt = []
-    tmax = 20e-9 # Defaults to time for single qubit gate
+    tmax = t_max[0] # Defaults to time for single qubit gate
+    if len(step.name) > len(Qblist):
+        print('Error: More gates than qubits have been put to a single depth.')
+        sys.exit(1)  # Stops the program
     for i in range(len(step.name)):
         try: 
             y = eval("GateLib." + step.name[i]) # Calls the gate corresponding to the step.name[i]
         except Exception as error:
-            print('A gate you are trying to perform cannot be executed. \
+            print('Error: A gate you are trying to perform cannot be executed. \
             \nQNAS only handles gates avaliable at Chalmers quantum computer')
             raise 
             sys.exit(1) # Stops the program
@@ -52,7 +56,7 @@ def CreateHfromStep(step, Qblist):
             H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
         elif step.name[i] in ["2qubitgates"]:  # Check 2q gates
             H_real.append(y(Qblist, step.Tar_Con[i]))
-            tmax = 200e-9 # If there is a 2qb gate the maximal time changes to match that
+            tmax = t_max[1] # If there is a 2qb gate the maximal time changes to match that
         elif step.name[i] in ["HD"]:
             step.angle[i] = np.pi/2
             H = GateLib.HD(Qblist, step.Tar_Con[i])

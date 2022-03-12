@@ -33,16 +33,15 @@ def main_algorithm(args):
     c_ops = args["c_ops"]
     psi0 = args["psi0"]
     Qblist = args["Qblist"]
+    t_max = args["t_max"]
     U = args["U"]
-    if "ntraj" in args:
-        ntraj = args["ntraj"]
-    else:
-        ntraj = 500
+    ntraj = args["ntraj"]
+
 
     H0 = anharmonicity(U, Qblist) # + ZZ_Interaction(Qblist)
 
     ## Do first iteration for ntraj trajectories to split the mcsolve
-    gates = gf.CreateHfromStep(steps[0], Qblist)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
+    gates = gf.CreateHfromStep(steps[0], Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
     H = gf.TimeDepend(steps[0], gates[0], gates[2])[0] + H0
     virtualgates = gates[1]
     tlist = gf.TimeDepend(steps[0], gates[0], gates[2])[1]
@@ -54,7 +53,7 @@ def main_algorithm(args):
 
 
     for i in range(1,len(steps)): #each step except the first one
-        gates = gf.CreateHfromStep(steps[i], Qblist)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
+        gates = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
         H = gf.TimeDepend(steps[i], gates[0], gates[2])[0] + H0
         virtualgates = gates[1]
         tlist = gf.TimeDepend(steps[i], gates[0], gates[2])[1]
