@@ -18,7 +18,7 @@ def ZZ_interaction(Qblist):
         eyeqb = eye_vec.copy()
         """Needs to change this since Anton said that interaction only will be given as a matrix
         From what I understand we wont need to check the position and how close qubits are
-        if we have that matrix?"""
+        if we have that matrix? It will just work as the other c_ops?"""
 
         if qb[1].noisert_vec[2] > 0.0: # checks to see if there is any noise and adds sigmaz for qubit
             eyeqb[qb[0]] = destroy(qb[1].level).dag() * destroy(qb[1].level)
