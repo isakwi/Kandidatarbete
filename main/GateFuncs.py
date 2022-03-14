@@ -53,7 +53,7 @@ def CreateHfromStep(step, Qblist, t_max):
         """
         if step.name[i] in ["VPZ"]:  # Check virtual gates
             H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
-        elif step.name[i] in ["2qubitgates"]:  # Check 2q gates
+        elif step.name[i] in ["CZ", "CSWAP","CZnew"]:  # Check 2q gates
             H_real.append(y(Qblist, step.Tar_Con[i]))
             tmax = t_max[1] # If there is a 2qb gate the maximal time changes to match that
         elif step.name[i] in ["HD"]:
