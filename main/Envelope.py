@@ -26,7 +26,9 @@ def TimeFunc (t, args):
     t_st = args[2]  # Start time for drive 
     if t_m < 100*1e-9:   # Python makes t_max not quite 200ns for 2qb.
         beta = 2*np.pi/t_m    #Drive strength
-    else: beta = 4*np.pi/t_m  #Drive strength should corespond to 2π drive angle for 2qb gates
-    t_d = t_m * ang/np.pi # Drive time for specified angle
+        t_d = t_m * ang / np.pi  # Drive time for specified angle
+    else:
+        beta = 4*np.pi/t_m  #Drive strength should corespond to 2π drive angle for 2qb gates
+        t_d = t_m
     return EnvelopeFunc(t, beta, t_m, t_d, t_st)
 
