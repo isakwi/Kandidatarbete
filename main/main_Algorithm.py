@@ -46,7 +46,10 @@ def main_algorithm(args):
     virtualgates = gates[1]
     tlist = gf.TimeDepend(steps[0], gates[0], gates[2])[1]
     output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj)
-    psi0 = output.states[:, -1].tolist()
+    if c_ops == []:
+        psi0 = output.states[-1] #If all noise rates=0, qutip uses sesolve instead of mcsolve => only one state
+    else:
+        psi0 = output.states[:, -1].tolist()
     for vgate in virtualgates:
         psi_temp = parfor(mcsolving.virtgate, psi0,vgate=vgate)
         psi0 = psi_temp
