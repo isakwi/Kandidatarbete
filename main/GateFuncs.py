@@ -47,9 +47,6 @@ def CreateHfromStep(step, Qblist, t_max):
             print('Error: A gate you are trying to perform cannot be executed. \
             \nQNAS only handles gates avaliable at Chalmers quantum computer')
             raise sys.exit(1) # Stops the program
-        if type(step.Tar_Con[i])==list and max(step.Tar_Con[i]) > len(Qblist)-1 or type(step.Tar_Con[i])==int and step.Tar_Con[i] > len(Qblist)-1:
-            print('Error: Qubit outside of the number of qubits is being targeted by Tar_Con')
-            sys.exit(1)  # Stops the program
         """The error handling is probably not very good. I know one should be more specific in which errors
         to handle in each except, but all the errors in the try block must come from step.name[i] (given that
         the code works as it should), so this should be pretty safe.         
