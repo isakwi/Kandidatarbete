@@ -128,6 +128,21 @@ def CZ(Qblist, Tar_Con):
     CZ = tensor(CZ_list_0) + tensor(CZ_list_1) #we make Kronecker products and add them up
     return CZ
 
+def CZnew(Qblist, Tar_Con):
+    """
+    H = |11><02|+|02><11| or |11><20|+|20><11|
+    so only for 3level right?"""
+    k11 = tensor(basis(3, 1), basis(3, 1))
+    k02 = tensor(basis(3, 2), basis(3, 0))
+    H = k11 * k02.dag() + k02 * k11.dag()
+
+    cz = [qeye(Qb.level) for Qb in Qblist]
+    target = Tar_Con[0]  # index of the targeted qubit
+    control = Tar_Con[1]  # index of the controlling qubit
+    del(cz[max(Tar_Con)])  # Make room for the cz gate
+    del(cz[min(Tar_Con)])  # Make room for the cz gate
+    return gate_expand_2toN(H,len(Qblist),cz,control,target) # Found this function on qutip web and modified it a bit
+
 def Cnot_2qb (Qblist, targetlist, controlvalue):
     Cnotvec = [qeye(Qb.level) for Qb in Qblist] * Qblist[targetlist[0]].level
     state_con =[]
@@ -148,6 +163,59 @@ def Cnot_2qb (Qblist, targetlist, controlvalue):
 
     return Cnot
 
+
+def gate_expand_2toN(U, N, cz, control=None, target=None, targets=None):
+    #FOUND THIS AT QUTIP! Noice
+    """
+    Create a Qobj representing a two-qubit gate that act on a system with N
+    qubits.
+    Parameters
+    ----------
+    U : Qobj
+        The two-qubit gate
+    N : integer
+        The number of qubits in the target space.
+    control : integer
+        The index of the control qubit.
+    target : integer
+        The index of the target qubit.
+    targets : list
+        List of target qubits.
+    Returns
+    -------
+    gate : qobj
+        Quantum object representation of N-qubit gate.
+    """
+
+    if targets is not None:
+        control, target = targets
+
+    if control is None or target is None:
+        raise ValueError("Specify value of control and target")
+
+    if N < 2:
+        raise ValueError("integer N must be larger or equal to 2")
+
+    if control >= N or target >= N:
+        raise ValueError("control and not target must be integer < integer N")
+
+    if control == target:
+        raise ValueError("target and not control cannot be equal")
+
+    p = list(range(N))
+
+    if target == 0 and control == 1:
+        p[control], p[target] = p[target], p[control]
+
+    elif target == 0:
+        p[1], p[target] = p[target], p[1]
+        p[1], p[control] = p[control], p[1]
+
+    else:
+        p[1], p[target] = p[target], p[1]
+        p[0], p[control] = p[control], p[0]
+
+    return tensor([U] + cz).permute(p)
 
 
 
