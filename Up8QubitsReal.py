@@ -40,9 +40,9 @@ INPUTS:
 """
 
 MaxNoOfQubits = 8  
-NoOfQubits = 4 # Choose how many qubits you want to run No more than 8
-inputs = [[np.pi, t_1q, 10*1e-9],   # [drive angle0, maxgate time 0, drive start 0],
-          [np.pi/2,t_1q, 0     ],   # [drive angle1...] 
+NoOfQubits = 2 # Choose how many qubits you want to run No more than 8
+inputs = [[np.pi*2, t_2q, 0* 10*1e-9],   # [drive angle0, maxgate time 0, drive start 0],
+          [np.pi/2*0,t_2q, 0     ],   # [drive angle1...] 
           [np.pi/3,t_1q, 4*1e-8],
           [np.pi/4,t_1q, 2*1e-8],
           [np.pi/5,t_1q, 0     ],
@@ -50,7 +50,7 @@ inputs = [[np.pi, t_1q, 10*1e-9],   # [drive angle0, maxgate time 0, drive start
           [np.pi/7,t_1q, 0     ],
           [np.pi*2,t_1q, 0     ]]
 
-Qubitstates0 =np.zeros(NoOfQubits) #Initial state of qubits (all = 0), change as you please
+Qubitstates0 =np.ones(NoOfQubits) #Initial state of qubits (all = 0), change as you please
 
 
 T1 = 50*1e-6 # relax time
@@ -64,7 +64,7 @@ ntraj = 10
 
 #%%
 
-tlist=np.linspace(0,1*6e-8,101)
+tlist=np.linspace(0,6*1e-7,101)
 
 psi0 = basis(3,int(Qubitstates0[0]))
 for j in range(NoOfQubits-1):
@@ -97,8 +97,9 @@ def TensorifyOperator(Q, NoOfQubits):
 
 
 # Create list of gates that could run on each qubit. That is gate[0] => operate on qubit1, gate[3] => operate on qubit4
-gate=DimensionifyOperator((a+a.dag()), NoOfQubits, np.ones(NoOfQubits))
+#gate=DimensionifyOperator((a+a.dag()), NoOfQubits, np.ones(NoOfQubits))
 
+gate=tensor(basis(3,1),basis(3,1))*tensor(basis(3,2),basis(3,0)).dag()+tensor(basis(3,2),basis(3,0))*tensor(basis(3,1),basis(3,1)).dag()
 
 #Anharmonicity 
 H_anh  = 0
@@ -107,6 +108,27 @@ for i in range(NoOfQubits):
     H_anh = H_anh + H_anhh[i]
 
 #%%Timefuncs
+
+# def EnvelopeFunc (t, beta, t_m, t_d, t_st): 
+#     # Models the drive pulse as E(t) = A*cos^2(tπ/t_d - π/2), 
+#     # Used in the time functions Et# which are used in H = QobjEvo 
+#     # beta = drive strength
+#     # t_m = t_max gate time (~ ang=π)
+#     # t_d =drive time, 
+#     # t_st = start time 
+#     E    = beta/2*np.sin((t-t_st)*np.pi/t_d)**2
+#     return E*np.heaviside(t_st+t_d-t,1)*np.heaviside(t-t_st,1)
+
+
+# def TimeFunc (t, args): 
+#     # To be called from QobjEvo([gate[i],TimeFunc(tlist, inputs[i])], tlist=tlist)
+#     # where inputs[i] is an array of dim3 with values for i:th qubit
+#     ang  = args[0]  # Drive angle 
+#     t_m  = args[1]  # Max gate time (~ ang=π)
+#     t_st = args[2]  # Start time for drive 
+#     beta = 2*np.pi/t_m    #Drive strength
+#     t_d = t_m * ang/np.pi # Drive time for specified angle
+#     return EnvelopeFunc(t, beta, t_m, t_d, t_st)
 
 def EnvelopeFunc (t, beta, t_m, t_d, t_st): 
     # Models the drive pulse as E(t) = A*cos^2(tπ/t_d - π/2), 
@@ -121,24 +143,50 @@ def EnvelopeFunc (t, beta, t_m, t_d, t_st):
 
 def TimeFunc (t, args): 
     # To be called from QobjEvo([gate[i],TimeFunc(tlist, inputs[i])], tlist=tlist)
-    # where inputs[i] is an array of dim3 with values for i:th qubit
+    # where inputs[i] is an array of vals for i:th qubit
     ang  = args[0]  # Drive angle 
     t_m  = args[1]  # Max gate time (~ ang=π)
     t_st = args[2]  # Start time for drive 
-    beta = 2*np.pi/t_m    #Drive strength
-    t_d = t_m * ang/np.pi # Drive time for specified angle
+    if t_m < 100*1e-9:   # Python makes t_max not quite 200ns for 2qb.
+        beta = 2*np.pi/t_m    #Drive strength
+        t_d = t_m * ang / np.pi  # Drive time for specified angle
+    else:
+        beta = 4*np.pi/t_m  #Drive strength should corespond to 2π drive angle for 2qb gates
+        t_d = t_m *ang/(2*np.pi)
     return EnvelopeFunc(t, beta, t_m, t_d, t_st)
+
+
+
 
 
 #%% Time dependance of H 
 
 H = H_anh
-for i in range(NoOfQubits):
-    H= H + QobjEvo([gate[i],TimeFunc(tlist, inputs[i])], tlist=tlist)
+#for i in range(len(gate)):
+#    H= H + QobjEvo([gate[i],TimeFunc(tlist, inputs[i])], tlist=tlist)
+H= H + QobjEvo([gate,TimeFunc(tlist, inputs[0])], tlist=tlist)
 
 #%% Expectations and collapse operators 
 
-e_ops=DimensionifyOperator(a.dag()*a, NoOfQubits, np.ones(MaxNoOfQubits))
+hejhej=Qobj([[0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,1,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,np.sqrt(2),0,0],
+        [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0]])
+hejhejhej=Qobj([[0,0,0],
+                [0,0,0],
+                [0,0,2]])
+print(hejhej)
+hejh = tensor(Qobj([[0,0,0],
+             [0,1,0],
+             [0,0,0]]), qeye(3))
+hhej=tensor(hejhejhej,qeye(3))+hejh
+
+e_ops=hhej #DimensionifyOperator(a.dag()*a, NoOfQubits, np.ones(MaxNoOfQubits))
 
 c_ops1 = DimensionifyOperator(a, NoOfQubits, np.sqrt(relax_rate))
 c_ops2 = DimensionifyOperator(qeye(3), NoOfQubits, np.sqrt(dephas_rate))
@@ -156,12 +204,12 @@ else:
 #%%
 fig, [fig1,fig2] = plt.subplots(2,1, sharex=True,figsize=(7,7))
 for i in range(NoOfQubits):
-    fig1.plot(tlist, result.expect[i], label='Qb'+str(i+1)+ '~ drive: '+ str(round((inputs[i][0]/np.pi),3)) +' π')
+    fig1.plot(tlist, result.expect[0], label='Qb'+str(i+1)+ '~ drive: '+ str(round((inputs[i][0]/np.pi),3)) +' π')
 fig1.set_ylabel('Ockupation prob')
 fig1.set_xlabel('t')
 fig1.grid()
 fig1.legend(loc='upper right')
-fig1.axis([0,tlist[-1],0,1.65])
+fig1.axis([0,tlist[-1],0,2.05])
 fig1.title.set_text('Qubit states')
 
 for i in range(NoOfQubits):
