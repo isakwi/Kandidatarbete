@@ -39,12 +39,11 @@ def main_algorithm(args):
 
 
     H0 = anharmonicity(U, Qblist) # + ZZ_Interaction(Qblist)
-
     ## Do first iteration for ntraj trajectories to split the mcsolve
     gates = gf.CreateHfromStep(steps[0], Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
-    H = gf.TimeDepend(steps[0], gates[0], gates[2])[0] + H0
+    Htd, tlist = gf.TimeDepend(steps[0], gates[0], gates[2], Qblist, U)
+    H = Htd + H0
     virtualgates = gates[1]
-    tlist = gf.TimeDepend(steps[0], gates[0], gates[2])[1]
     output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj)
     if c_ops == []:
         psi0 = output.states[-1] #If all noise rates=0, qutip uses sesolve instead of mcsolve => only one state
@@ -58,9 +57,9 @@ def main_algorithm(args):
     if c_ops != []:
         for i in range(1,len(steps)): #each step except the first one
             gates = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
-            H = gf.TimeDepend(steps[i], gates[0], gates[2])[0] + H0
+            Htd, tlist = gf.TimeDepend(steps[i], gates[0], gates[2], Qblist, U)
+            H = Htd + H0
             virtualgates = gates[1]
-            tlist = gf.TimeDepend(steps[i], gates[0], gates[2])[1]
             psi_temp = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
             psi0 = psi_temp
             for vgate in virtualgates:
@@ -69,9 +68,9 @@ def main_algorithm(args):
     else:
         for i in range(1,len(steps)): #each step except the first one
             gates = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
-            H = gf.TimeDepend(steps[i], gates[0], gates[2])[0] + H0
+            Htd, tlist = gf.TimeDepend(steps[i], gates[0], gates[2], Qblist, U)
+            H = Htd + H0
             virtualgates = gates[1]
-            tlist = gf.TimeDepend(steps[i], gates[0], gates[2])[1]
             psi_temp = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj)
             psi0 = psi_temp
             for vgate in virtualgates:
