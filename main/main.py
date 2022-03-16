@@ -47,8 +47,8 @@ steps = []
 #steps.append(gf.Add_step(["PY", "PX", "PY", "PX", "PX", "HD"], [0, 1, 2, 3, 4, 5, 6], [pi/2, pi/4, pi, pi/8, pi/16, pi/2, 0]))
 #steps.append(gf.Add_step(["PY"], [0], [pi]))
 #steps.append(gf.Add_step(["HD"], [0], [0]))
-#steps.append(gf.Add_step(["PX","PY"], [0,1], [pi,pi]))
-steps.append(gf.Add_step(["CZnew"], [[1, 2]], [2*pi]))
+steps.append(gf.Add_step(["PX","PY"], [0,1], [pi,pi]))
+#steps.append(gf.Add_step(["CZnew"], [[1, 2]], [2*pi]))
 #steps.append(gf.Add_step(["VPZ"], [0], [pi]))
 #steps.append(gf.Add_step(["HD"], [0], [pi/2]))
 #steps.append(gf.Add_step(["PZ"], [0], [pi/2]))
@@ -62,11 +62,11 @@ print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
 #Used for testing
 print(psi0)
 if type(result) == list : # Basically, if noises (mcsolve)
-    print(result[-1]) # Prints one of the final states
+    print(result[-1].tidyup(atol=1e-4)) # Prints one of the final states
 elif type(result)== Qobj:
-        print(result)
+        print(result.tidyup(atol=1e-4))
 else:
-    print(result.states[-1]) #If no noises sesolve => only one state
+    print(result.states[-1].tidyup(atol=1e-4)) #If no noises sesolve => only one state
 if len(Qblist) == 1 and Qblist[0].level == 2:
     #Bloch sphere only if 1qb 2 level
     b = Bloch()
