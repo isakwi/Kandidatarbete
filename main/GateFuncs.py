@@ -70,7 +70,7 @@ def CreateHfromStep(step, Qblist, t_max):
     return [H_real, H_virt, tmax] 
 
 
-def TimeDepend(step, gates, t_max):
+def TimeDepend(step, gates, t_max, Qblist, U):
     angles = step.angle  # [ang1, ang2, ang3...]
     # Create tlist
 
@@ -90,7 +90,10 @@ def TimeDepend(step, gates, t_max):
 
     args=np.zeros(3)
     #Create time dep H from angles
-    H = 0
+    H=0
+    for i in range(len(step.name)):
+        if step.name[i] in ['CZnew']:
+            H=U*(-GateLib.AnHarm(Qblist, step.Tar_Con[i][0])-GateLib.AnHarm(Qblist, step.Tar_Con[i][1]))
     for i in range(len(gates)):
         gate = gates[i]
         args[0] = angles[i]  # Drive angle
