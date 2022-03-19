@@ -163,6 +163,30 @@ def Cnot_2qb (Qblist, targetlist, controlvalue):
 
     return Cnot
 
+def iswap(Qblist, Tar_Con):
+    """
+    Since this is a symmetric swap, both qubits are targets and controls
+    To avoid enumeration of the tar/con qubits, they are still called "target" and "control"
+    Takes help from the gate_expand_2toN function
+    Quantum object representing the iSWAP gate.
+    Returns
+    -------
+    iswap_gate : qobj
+        Quantum object representation of iSWAP gate
+    """
+    target = Tar_Con[0]  # index of the targeted qubit
+    control = Tar_Con[1]  # index of the controlling qubit
+    tarLevel = Qblist[target].level
+    conLevel = Qblist[control].level
+    k01 = tensor(basis(conLevel, 0), basis(tarLevel, 1))
+    k10 = tensor(basis(conLevel, 1), basis(tarLevel, 0))
+    H = 1j * (k01 * k10.dag() + k01 * k10.dag())
+    iSwap = [qeye(Qb.level) for Qb in Qblist]
+    del (iSwap[max(Tar_Con)])  # Make room for the iSwap gate
+    del (iSwap[min(Tar_Con)])  # Make room for the iSwap gate
+    return gate_expand_2toN(H, len(Qblist), iSwap, control, target)
+
+
 
 def gate_expand_2toN(U, N, cz, control=None, target=None, targets=None):
     #FOUND THIS AT QUTIP! Noice
