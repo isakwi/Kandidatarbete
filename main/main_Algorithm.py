@@ -34,14 +34,13 @@ def main_algorithm(args):
     psi0 = args["psi0"]
     Qblist = args["Qblist"]
     t_max = args["t_max"]
-    U = args["U"]
     ntraj = args["ntraj"]
 
 
-    H0 = anharmonicity(U, Qblist) # + ZZ_Interaction(Qblist)
+    H0 = anharmonicity(Qblist) # + ZZ_Interaction(Qblist)
     ## Do first iteration for ntraj trajectories to split the mcsolve
     gates = gf.CreateHfromStep(steps[0], Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
-    Htd, tlist = gf.TimeDepend(steps[0], gates[0], gates[2], Qblist, U)
+    Htd, tlist = gf.TimeDepend(steps[0], gates[0], gates[2], Qblist)
     H = Htd + H0
     virtualgates = gates[1]
     output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj)
@@ -57,7 +56,7 @@ def main_algorithm(args):
     if c_ops != []:
         for i in range(1,len(steps)): #each step except the first one
             gates = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
-            Htd, tlist = gf.TimeDepend(steps[i], gates[0], gates[2], Qblist, U)
+            Htd, tlist = gf.TimeDepend(steps[i], gates[0], gates[2], Qblist)
             H = Htd + H0
             virtualgates = gates[1]
             psi_temp = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
@@ -68,7 +67,7 @@ def main_algorithm(args):
     else:
         for i in range(1,len(steps)): #each step except the first one
             gates = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
-            Htd, tlist = gf.TimeDepend(steps[i], gates[0], gates[2], Qblist, U)
+            Htd, tlist = gf.TimeDepend(steps[i], gates[0], gates[2], Qblist)
             H = Htd + H0
             virtualgates = gates[1]
             psi_temp = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj)

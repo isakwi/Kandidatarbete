@@ -42,6 +42,7 @@ def read_data():
     relax = []
     depha = []
     therma = []
+    anharm = []
     levels = []
     try:
         data = pd.read_csv("qubit_data.csv", sep=";")
@@ -50,13 +51,14 @@ def read_data():
             relax.append(arr[i, 1])
             depha.append(arr[i, 2])
             therma.append(arr[i, 3])
-            levels.append(int(arr[i, 4]))
+            anharm.append(arr[i, 4])
+            levels.append(int(arr[i, 5]))
     except Exception as error:
         print("Something is wrong with the csv file!")
         raise sys.exit(1)
-    return n, ntraj, relax, depha, therma, levels
+    return n, ntraj, relax, depha, therma, anharm, levels
 
 
 ## Troubleshooting
 if __name__ == "__main__":
-    n, traj, relax, depha, therma, levels = read_data()
+    n, ntraj, relax, depha, therma, anharm, levels = read_data()

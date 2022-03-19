@@ -16,6 +16,7 @@ from qutip import *
  level= number of energy levels for qubit
  noisert_vec = vector of rates of noises, 
  noisert_vec = [decoherence rate, dephasing rate, thermal noise rate]
+ anharmonicity = anharmonicity frequency U in rad/s 
  desig = [x,y] is the spacial coordinate of the qubits on the chip given as coordinates in a plane, will be used to
  calculate if cubits can interact with each other
  init_cvec = array of coefficients for the initial state (first index represents coefficient for state |00...>) 
@@ -23,9 +24,10 @@ from qutip import *
 
 class Qubit:
 
-    def __init__(self, level, noisert_vec, desig, init_cvec):
+    def __init__(self, level, noisert_vec, anharm, desig, init_cvec):
         self.level = level
         self.noisert_vec = noisert_vec
+        self.anharm = anharm
         self.desig = desig
         self.init_cvec = init_cvec
 #function that calculates normalized initial state of qubit from init_cvec
