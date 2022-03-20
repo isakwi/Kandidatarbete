@@ -135,7 +135,13 @@ def CZnew(Qblist, Tar_Con):
     k11 = tensor(basis(3, 1), basis(3, 1))
     k02 = tensor(basis(3, 2), basis(3, 0))
     H = k11 * k02.dag() + k02 * k11.dag()
-
+    #We must add diagonal ones in order to treat all possible states (right???)
+    size = H.shape[0] #H can be represented as an size x size matrix
+    H2 = np.zeros([size, size])
+    for i in range(size):
+        H2[i,i] = np.array_equal(H[i],H[i] * 0) #if this row is all zero, we have to put a 1 at position (i,i) to "do nothing"
+    H2 = Qobj(H2, dims = H.dims)
+    H = H + H2
     cz = [qeye(Qb.level) for Qb in Qblist]
     target = Tar_Con[0]  # index of the targeted qubit
     control = Tar_Con[1]  # index of the controlling qubit
@@ -181,6 +187,13 @@ def iswap(Qblist, Tar_Con):
     k01 = tensor(basis(conLevel, 0), basis(tarLevel, 1))
     k10 = tensor(basis(conLevel, 1), basis(tarLevel, 0))
     H = 1j * (k01 * k10.dag() + k10 * k01.dag())
+    #We must add diagonal ones in order to treat all possible states (right???)
+    size = H.shape[0] #H can be represented as an size x size matrix
+    H2 = np.zeros([size, size])
+    for i in range(size):
+        H2[i,i] = np.array_equal(H[i],H[i] * 0) #if this row is all zero, we have to put a 1 at position (i,i) to "do nothing"
+    H2 = Qobj(H2, dims = H.dims)
+    H = H + H2
     iSwap = [qeye(Qb.level) for Qb in Qblist]
     del (iSwap[max(Tar_Con)])  # Make room for the iSwap gate
     del (iSwap[min(Tar_Con)])  # Make room for the iSwap gate
@@ -238,7 +251,6 @@ def gate_expand_2toN(U, N, cz, control=None, target=None, targets=None):
     else:
         p[1], p[target] = p[target], p[1]
         p[0], p[control] = p[control], p[0]
-
     return tensor([U] + cz).permute(p)
 
 
@@ -251,6 +263,7 @@ if __name__ == "__main__":
     sx1 = tensor(qeye(2), sigmax(), qeye(2))
     Qblist = [Qb.Qubit(2, [], [], [],[]) for i in range(0,3)]
     sx = PX(Qblist,1)
+    print(sx)
     if sx1 == sx:
         print("Specific sigx works!")
     else:
@@ -291,7 +304,6 @@ if __name__ == "__main__":
         print(sz)
 
     # Test iswap
-    Qblist = [Qb.Qubit(3, [], [], [],[]) for i in range(2)]
-    #facit = Qobj([[1,0,0,0,0,0],[0,0,0,0,1j],[0,0,1,0,0],[0,0,0,1,0],[,1j,0,0,0]])
+    Qblist = [Qb.Qubit(2, [], [], [],[]) for i in range(1)] + [Qb.Qubit(2, [], [], [],[])]
     iswap = iswap(Qblist, [0,1])
     print("iSWAP: ", iswap)
