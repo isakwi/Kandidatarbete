@@ -108,11 +108,13 @@ if __name__ == "__main__":
     Qblist = []
     Qblist.append(Qb.Qubit(2, [], [], []))
     Qblist.append(Qb.Qubit(2, [], [], []))
+    Qblist.append(Qb.Qubit(3, [], [], []))
+    Qblist.append(Qb.Qubit(3, [], [], []))
 
     steps = []
-    steps.append(Add_step(["Fake Gate", "PY", "VPZ"], [0, 1, 1], [5, 5, 5]))
-    hej_real, hej_virt, tlist = CreateHfromStep(steps[0], Qblist)
-    #print(hej_real)
+    steps.append(Add_step(["iswap", "PY", "VPZ"], [[0,1], 1, 1], [0, np.pi, np.pi]))
+    hej_real, hej_virt, tlist = CreateHfromStep(steps[0], Qblist, t_max= [20e-9,20e-9,20e-9])
+    print(hej_real)
     print(tlist)
 """
 Ex of usage:

@@ -180,7 +180,7 @@ def iswap(Qblist, Tar_Con):
     conLevel = Qblist[control].level
     k01 = tensor(basis(conLevel, 0), basis(tarLevel, 1))
     k10 = tensor(basis(conLevel, 1), basis(tarLevel, 0))
-    H = 1j * (k01 * k10.dag() + k01 * k10.dag())
+    H = 1j * (k01 * k10.dag() + k10 * k01.dag())
     iSwap = [qeye(Qb.level) for Qb in Qblist]
     del (iSwap[max(Tar_Con)])  # Make room for the iSwap gate
     del (iSwap[min(Tar_Con)])  # Make room for the iSwap gate
@@ -249,7 +249,7 @@ if __name__ == "__main__":
 
     # Test specific sigmax
     sx1 = tensor(qeye(2), sigmax(), qeye(2))
-    Qblist = [Qb.Qubit(2, [], [], []) for i in range(0,3)]
+    Qblist = [Qb.Qubit(2, [], [], [],[]) for i in range(0,3)]
     sx = PX(Qblist,1)
     if sx1 == sx:
         print("Specific sigx works!")
@@ -290,5 +290,8 @@ if __name__ == "__main__":
         print(sz1)
         print(sz)
 
-
-
+    # Test iswap
+    Qblist = [Qb.Qubit(3, [], [], [],[]) for i in range(2)]
+    #facit = Qobj([[1,0,0,0,0,0],[0,0,0,0,1j],[0,0,1,0,0],[0,0,0,1,0],[,1j,0,0,0]])
+    iswap = iswap(Qblist, [0,1])
+    print("iSWAP: ", iswap)
