@@ -8,7 +8,12 @@ import CollapseOperator_function as co
 from qutip import *
 import GateFuncs as gf
 import main_Algorithm as mA
+import benchmarking_main as bm
 pi = np.pi
+
+
+""" True if we are doing the benchmark! """
+benchmark = True
 
 # Parameters, eventually the number of qubits and the levels will be read from OpenQASM instead!
 n, ntraj, relax, depha, therma, anharm, l = rd.read_data()  # Parameters
@@ -37,45 +42,46 @@ def create_psi0(Qblist):
     psi0 = [basis(Qb.level, 0) for Qb in Qblist]
     return tensor(psi0)
 
+if benchmark == True:
+    print("\nDoing the benchmark! :D\n")
+    # Call something like benchmarking_main.py so we don't need as much code here!
+    # Created a file for now
+    # Should it return final state and do calculation here? Or do everything in there:
+    bm.benchmarking(Qblist)
 
-psi0 = create_psi0(Qblist)  # Create initial state with all qubits in ground state
-c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
+else:
 
-""" Adding the algorithm steps! """
-steps = []
-#steps.append(gf.Add_step(["PY", "PM", "PY", "PX", "PX", "HD"], [0, 1, 2, 3, 4, 5, 6], [pi/2, pi/4, pi, pi/8, pi/16, pi/2, 0]))
-#steps.append(gf.Add_step(["PY", "PX", "PY", "PX", "PX", "HD"], [0, 1, 2, 3, 4, 5, 6], [pi/2, pi/4, pi, pi/8, pi/16, pi/2, 0]))
-#steps.append(gf.Add_step(["PY"], [0], [pi]))
-#steps.append(gf.Add_step(["HD"], [0], [0]))
-steps.append(gf.Add_step(["PY","PY"], [1,2], [pi,pi]))
-steps.append(gf.Add_step(["PY", "CZnew"], [0, [1, 2]], [pi/2, 0]))
-#steps.append(gf.Add_step(["VPZ"], [0], [pi]))
-#steps.append(gf.Add_step(["HD"], [2], [pi/2]))
-#steps.append(gf.Add_step(["PZ"], [1], [pi/2]))
+    psi0 = create_psi0(Qblist)  # Create initial state with all qubits in ground state
+    c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
 
-args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj}
-tic = time.perf_counter() # Start stopwatch in order to print the run time
-result = mA.main_algorithm(args)
-toc = time.perf_counter() # Stop stopwatch
-print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
+    """ Adding the algorithm steps! """
+    steps = []
+    steps.append(gf.Add_step(["PY","PY"], [1,2], [pi,pi]))
+    steps.append(gf.Add_step(["PY", "CZnew"], [0, [1, 2]], [pi/2, 0]))
+
+    args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj}
+    tic = time.perf_counter() # Start stopwatch in order to print the run time
+    result = mA.main_algorithm(args)
+    toc = time.perf_counter() # Stop stopwatch
+    print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
 
 
-#Used for testing
-PrintStates = False
-if PrintStates:
-    print(psi0)
-    if type(result) == list : # Basically, if noises (mcsolve)
-        print(result[-1].tidyup(atol=1e-4)) # Prints one of the final states
-    elif type(result) == Qobj:
-        print(result.tidyup(atol=1e-4))
-    else:
-        print(result.states[-1].tidyup(atol=1e-4)) # If no noises sesolve => only one state
-    if len(Qblist) == 1 and Qblist[0].level == 2:
-        # Bloch sphere only if 1qb 2 level
-        b = Bloch()
-        vec1 = psi0
-        vec2 = result[-1]
-        b.add_states(vec1)
-        b.add_states(vec2)
-        b.make_sphere()
-        plt.show()
+    #Used for testing
+    PrintStates = False
+    if PrintStates:
+        print(psi0)
+        if type(result) == list : # Basically, if noises (mcsolve)
+            print(result[-1].tidyup(atol=1e-4)) # Prints one of the final states
+        elif type(result) == Qobj:
+            print(result.tidyup(atol=1e-4))
+        else:
+            print(result.states[-1].tidyup(atol=1e-4)) # If no noises sesolve => only one state
+        if len(Qblist) == 1 and Qblist[0].level == 2:
+            # Bloch sphere only if 1qb 2 level
+            b = Bloch()
+            vec1 = psi0
+            vec2 = result[-1]
+            b.add_states(vec1)
+            b.add_states(vec2)
+            b.make_sphere()
+            plt.show()
