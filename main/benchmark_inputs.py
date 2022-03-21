@@ -5,16 +5,22 @@ import main_Algorithm as ma
 import main as m
 from qutip import *
 import GateLib as gl
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import Qb_class as qbc
 
+
+qb1 = qbc.Qubit(3, [0.01,0.01,0.01], 0.1, [1,1], [1,0,0])
+qb2 = qbc.Qubit(3, [0.01,0.01,0.01], 0.1, [2,2], [1,0,0])
 
 gamma_vec = np.linspace(0, np.pi,20)
-qblist= []
+qblist= [qb1, qb2]
 
 statelist= []
 exp_mat = np.zeros(20,20)
 
 c_ops = colf.create_c_ops(qblist)
-ntraj = 20
+ntraj = 1
 tmax= [20, 200]
 psi0 = m.create_psi0(qblist)
 J = 0.5
@@ -46,6 +52,12 @@ for i in range(0, 20):
         exp_mat[i,j] = np.mean(expect(state))
 
 
+plt.matshow(exp_mat)
+plt.colorbar()
+plt.show()
+
+
+"""
 gamma = [1,1]
 cangle = gamma[0] #cangle = gamma (thought the name was suitable since it comes with \hat{C}
 bangle = gamma[1] #cangle = beta (thought the name was suitable since it comes with \hat{B}
@@ -62,6 +74,7 @@ steps.append(gf.Add_step(["CZnew"], [[1,0]]))
 steps.append(gf.Add_step(["HD"], [1], [0]))
 steps.append(gf.Add_step(["PZ","PZ"], [0,1], [2*cangle*h1, 2*cangle*h2]))
 steps.append(gf.Add_step(["PX","PX"], [0,1], [2*bangle, 2*bangle]))
+"""
 
 
 """
