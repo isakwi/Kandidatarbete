@@ -11,7 +11,6 @@ steps = []
 #First we apply Hadamard to both qubits
 steps.append(gf.Add_step(["HD","HD"], [0,1], [0,0]))
 steps.append(gf.Add_step(["HD"], [1], [0]))
-steps.append(gf.Add_step(["HD"], [1], [0]))
 steps.append(gf.Add_step(["PX"], [1], [2*cangle*J]))
 steps.append(gf.Add_step(["HD"], [1], [0]))
 steps.append(gf.Add_step(["PZ","PZ"], [0,1], [2*cangle*h1, 2*cangle*h2]))
