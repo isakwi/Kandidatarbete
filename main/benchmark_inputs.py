@@ -20,7 +20,7 @@ statelist= []
 exp_mat = np.zeros(20,20)
 
 c_ops = colf.create_c_ops(qblist)
-ntraj = 1
+ntraj = 20
 tmax= [20, 200]
 psi0 = m.create_psi0(qblist)
 J = 0.5
@@ -47,7 +47,6 @@ for i in range(0, 20):
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "qblist": qblist, "tmax": tmax, "ntraj" : ntraj}
 
         state = ma.main_algorithm(args)
-
 
         exp_mat[i,j] = np.mean(expect(state))
 
