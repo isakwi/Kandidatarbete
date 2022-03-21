@@ -1,5 +1,43 @@
 import numpy as np
-import GateFuncs as gf 
+import GateFuncs as gf
+import CollapseOperator_function as colf
+import main_Algorithm as ma
+import main as m
+
+
+
+gamma_vec = np.linspace(0, np.pi,20)
+qblist= []
+
+statelist= []
+
+c_ops = colf.create_c_ops(qblist)
+ntraj = 20
+tmax= [20, 200]
+psi0 = m.create_psi0(qblist)
+J = 0.5
+h1, h2 = -0.5 , 0
+
+
+for i in range(0, 20):
+    cangle = gamma_vec[i]
+    for j in range(0,20):
+        bangle = gamma_vec[j]
+
+        steps = []
+        # First we apply Hadamard to both qubits
+        steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]]))
+        steps.append(gf.Add_step(["PX"], [1], [2 * cangle * J]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["PZ", "PZ"], [0, 1], [2 * cangle * h1, 2 * cangle * h2]))
+        steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle, 2 * bangle]))
+
+        args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "qblist": qblist, "tmax": tmax, "ntraj" : ntraj}
+
+        statelist.append(ma.main_algorithm(args))
 
 gamma = [1,1]
 cangle = gamma[0] #cangle = gamma (thought the name was suitable since it comes with \hat{C}
@@ -11,7 +49,9 @@ steps = []
 #First we apply Hadamard to both qubits
 steps.append(gf.Add_step(["HD","HD"], [0,1], [0,0]))
 steps.append(gf.Add_step(["HD"], [1], [0]))
+steps.append(gf.Add_step(["CZnew"], [[1,0]]))
 steps.append(gf.Add_step(["PX"], [1], [2*cangle*J]))
+steps.append(gf.Add_step(["CZnew"], [[1,0]]))
 steps.append(gf.Add_step(["HD"], [1], [0]))
 steps.append(gf.Add_step(["PZ","PZ"], [0,1], [2*cangle*h1, 2*cangle*h2]))
 steps.append(gf.Add_step(["PX","PX"], [0,1], [2*bangle, 2*bangle]))
