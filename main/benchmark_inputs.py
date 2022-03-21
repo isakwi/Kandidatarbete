@@ -3,13 +3,15 @@ import GateFuncs as gf
 import CollapseOperator_function as colf
 import main_Algorithm as ma
 import main as m
-
+from qutip import *
+import GateLib as gl
 
 
 gamma_vec = np.linspace(0, np.pi,20)
 qblist= []
 
 statelist= []
+exp_mat = np.zeros(20,20)
 
 c_ops = colf.create_c_ops(qblist)
 ntraj = 20
@@ -18,6 +20,7 @@ psi0 = m.create_psi0(qblist)
 J = 0.5
 h1, h2 = -0.5 , 0
 
+ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)
 
 for i in range(0, 20):
     cangle = gamma_vec[i]
@@ -37,7 +40,11 @@ for i in range(0, 20):
 
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "qblist": qblist, "tmax": tmax, "ntraj" : ntraj}
 
-        statelist.append(ma.main_algorithm(args))
+        state = ma.main_algorithm(args)
+
+
+        exp_mat[i,j] = np.mean(expect(state))
+
 
 gamma = [1,1]
 cangle = gamma[0] #cangle = gamma (thought the name was suitable since it comes with \hat{C}
