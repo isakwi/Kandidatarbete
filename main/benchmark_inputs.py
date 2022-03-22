@@ -9,11 +9,13 @@ import matplotlib.cm as cm
 import Qb_class as qbc
 pi = np.pi
 
+c = 0.000001
+
 #qubits
-qb1 = qbc.Qubit(3, [0.01, 0.01, 0.01], -200*1e6 * 2 * pi, [1,1], [1,0,0])
-qb2 = qbc.Qubit(3, [0.01, 0.01, 0.01], -200*1e6 * 2 * pi, [2,2], [1,0,0])
+qb1 = qbc.Qubit(3, [c, c, c], 0.01, [1,1], [1,0,0])
+qb2 = qbc.Qubit(3, [c, c, c], 0.01, [2,2], [1,0,0])
 #list of angles for parameters
-resolution = 1
+resolution = 8
 gamma_vec = np.linspace(0, np.pi,resolution)
 qblist = [qb1, qb2]
 
@@ -22,10 +24,10 @@ exp_mat = np.zeros((resolution, resolution))
 c_ops = colf.create_c_ops(qblist)
 #number of trajectories
 ntraj = 10
-tmax= [20, 200]
+tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist)
 J = 0
-h1, h2 = -0.5, -0.5
+h1, h2 = -1, 0
 
 #Ising hHamiltonian, our cost function is the expectation value of this hamiltonian
 ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)
@@ -43,23 +45,23 @@ for i in range(0, resolution):
         steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
         steps.append(gf.Add_step(["HD"], [1], [0]))
         steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
-        steps.append(gf.Add_step(["PX"], [1], [2 * cangle * J]))
+        steps.append(gf.Add_step(["PX"], [1], [2 * cangle * J+0.0001]))
         steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
         steps.append(gf.Add_step(["HD"], [1], [0]))
-        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle * h1, 2 * cangle * h2]))
-        steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle, 2 * bangle]))
+        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle * h1+0.0001, 2 * cangle * h2+0.0001]))
+        steps.append(gf.Add_step(["PX", "PY"], [0, 1], [2 * bangle + 0.00001, 2 * bangle + 0.00001]))
 #calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj}
 
         state = ma.main_algorithm(args)
 #saving mean value of expectation value in matrix
-        exp_mat[i,j] = np.mean(expect(ham, state))
+        exp_mat[resolution-1-i,j] = np.mean(expect(ham, state))
+        print("h")
 
 #plotting matrix, have to fix axis so it has angles
 plt.matshow(exp_mat)
 plt.colorbar()
 plt.show()
-
 
 """
 gamma = [1,1]
