@@ -13,7 +13,7 @@ pi = np.pi
 
 
 """ True if we are doing the benchmark! """
-benchmark = True
+benchmark = False
 
 # Parameters, eventually the number of qubits and the levels will be read from OpenQASM instead!
 n, ntraj, relax, depha, therma, anharm, l = rd.read_data()  # Parameters
@@ -33,15 +33,6 @@ beta2 = pi/t_2q  # Driving strength for 2q gate
 """Change TimeFunc / Envelope so that it takes beta as parameter?"""
 
 
-def create_psi0(Qblist):
-    """ If the initial states are always 0 for all qubits it might be easier
-        to not have it in the Qubit-class and just have something like this!
-        Can be added to another file to keep things in "main" nice and tidy!
-
-        Creates initial state with all qubits in state 0: """
-    psi0 = [basis(Qb.level, 0) for Qb in Qblist]
-    return tensor(psi0)
-
 if benchmark == True:
     print("\nDoing the benchmark! :D\n")
     # Call something like benchmarking_main.py so we don't need as much code here!
@@ -51,7 +42,7 @@ if benchmark == True:
 
 else:
 
-    psi0 = create_psi0(Qblist)  # Create initial state with all qubits in ground state
+    psi0 = Qb.create_psi0(Qblist)  # Create initial state with all qubits in ground state
     c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
 
     """ Adding the algorithm steps! """
