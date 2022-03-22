@@ -15,7 +15,7 @@ qb2 = qbc.Qubit(3, [0.01,0.01,0.01], 0.1, [2,2], [1,0,0])
 
 #list of angles for parameters
 gamma_vec = np.linspace(0, np.pi,20)
-qblist= [qb1, qb2]
+qblist = [qb1, qb2]
 
 #zeros matrix for saving expectation value of hamiltonian
 exp_mat = np.zeros((220, 20))
@@ -24,7 +24,7 @@ c_ops = colf.create_c_ops(qblist)
 #number of trajectories
 ntraj = 20
 tmax= [20, 200]
-psi0 = m.create_psi0(qblist)
+psi0 = qbc.create_psi0(qblist)
 J = 0.5
 h1, h2 = -0.5, 0
 

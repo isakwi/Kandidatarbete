@@ -73,7 +73,7 @@ def main_algorithm(args):
             psi_temp = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj)
             psi0 = psi_temp
             for vgate in virtualgates:
-                psi_temp =mcsolving.virtgate, psi0, vgate=vgate
+                psi_temp = mcsolving.virtgate, psi0, vgate=vgate
                 psi0 = psi_temp
     return psi0
     
