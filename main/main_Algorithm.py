@@ -37,6 +37,8 @@ def main_algorithm(args):
     ntraj = args["ntraj"]
 
 
+
+
     H0 = anharmonicity(Qblist) # + ZZ_Interaction(Qblist)
     ## Do first iteration for ntraj trajectories to split the mcsolve
     gates = gf.CreateHfromStep(steps[0], Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
