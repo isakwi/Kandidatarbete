@@ -47,16 +47,16 @@ def main_algorithm(args):
     virtualgates = gates[1]
     output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj, progress_bar=None)
     if c_ops == []:
-        psi0 = output.states[-1] #If all noise rates=0, qutip uses sesolve instead of mcsolve => only one state
+        """This doesnt work!!"""
+        psi0 = output.states[:, -1].tolist() #If all noise rates=0, qutip uses sesolve instead of mcsolve => only one state
     else:
         psi0 = output.states[:, -1].tolist()
     for vgate in virtualgates:
-        psi_temp = parfor(mcsolving.virtgate, psi0,vgate=vgate)
+        psi_temp = parfor(mcsolving.virtgate, psi0, vgate=vgate)
         psi0 = psi_temp
     ''' I don't know if we want to have the possibility to run with no noise.. but now we do.. 
     just remove the if statements if we want to remove. Maybe it slows it down, it's before the loops so its probably ok
-    
-    Isak comment: c_ops will never be empty if im thinking correctly, just a bunch of zeros'''
+    '''
     if c_ops != []:
         for i in range(1,len(steps)): #each step except the first one
             gates = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
@@ -77,7 +77,7 @@ def main_algorithm(args):
             psi_temp = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj)
             psi0 = psi_temp
             for vgate in virtualgates:
-                psi_temp = mcsolving.virtgate, psi0, vgate=vgate
+                psi_temp = parfor(mcsolving.virtgate, psi0, vgate=vgate)
                 psi0 = psi_temp
     return psi0
     
