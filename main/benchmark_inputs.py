@@ -7,21 +7,22 @@ import GateLib as gl
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import Qb_class as qbc
+pi = np.pi
 
 #qubits
-qb1 = qbc.Qubit(3, [0.00, 0.00, 0.00], 0.1, [1,1], [1,0,0])
-qb2 = qbc.Qubit(3, [0.00, 0.00, 0.00], 0.1, [2,2], [1,0,0])
+qb1 = qbc.Qubit(3, [0.01, 0.01, 0.01], -200*1e6 * 2 * pi, [1,1], [1,0,0])
+qb2 = qbc.Qubit(3, [0.01, 0.01, 0.01], -200*1e6 * 2 * pi, [2,2], [1,0,0])
 #list of angles for parameters
-resolution = 10
-gamma_vec = np.linspace(0.1, np.pi-0.1,resolution)
+resolution = 1
+gamma_vec = np.linspace(0, np.pi,resolution)
 qblist = [qb1, qb2]
 
 #zeros matrix for saving expectation value of hamiltonian
 exp_mat = np.zeros((resolution, resolution))
 c_ops = colf.create_c_ops(qblist)
 #number of trajectories
-ntraj = 20
-tmax= [20e-9, 200e-9]
+ntraj = 10
+tmax= [20, 200]
 psi0 = qbc.create_psi0(qblist)
 J = 0
 h1, h2 = -0.5, -0.5
@@ -34,7 +35,7 @@ ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.
 #iterating through list of angles and saving expectationvalues in matrix
 for i in range(0, resolution):
     cangle = gamma_vec[i]
-    for j in range(0,resolution):
+    for j in range(0, resolution):
         bangle = gamma_vec[j]
 #steps in algoritm
         steps = []
@@ -87,3 +88,4 @@ we want to do it, but then we can just remove the file // Albin
 I added one step (p = 1) of the gates as they are defined in the paper (PHYS. REV. APPLIED 14, 034010 (2020))
 I am unsure of how we define the angle for the Hadamard, I wrote 0 for now // Axel
 """
+print("Done")

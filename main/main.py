@@ -44,12 +44,12 @@ else:
 
     psi0 = Qb.create_psi0(Qblist)  # Create initial state with all qubits in ground state
     c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
-
+    #c_ops = []
     """ Adding the algorithm steps! """
     steps = []
     steps.append(gf.Add_step(["PY","HD"], [1,2], [pi,0]))
     steps.append(gf.Add_step(["PY", "CZnew"], [0, [1, 2]], [pi/2, 0]))
-    steps.append(gf.Add_step(["VPZ", "PY"], [1, 2], [0, pi]))
+    steps.append(gf.Add_step(["VPZ", "PY"], [1, 2], [pi, pi]))
 
     args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj}
     tic = time.perf_counter() # Start stopwatch in order to print the run time
