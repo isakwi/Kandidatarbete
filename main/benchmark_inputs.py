@@ -2,7 +2,7 @@ import numpy as np
 import GateFuncs as gf
 import CollapseOperator_function as colf
 import main_Algorithm as ma
-import main as m
+
 from qutip import *
 import GateLib as gl
 import matplotlib.pyplot as plt
@@ -41,15 +41,14 @@ for i in range(0, 20):
         # First we apply Hadamard to both qubits
         steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
         steps.append(gf.Add_step(["HD"], [1], [0]))
-        steps.append(gf.Add_step(["CZnew"], [[1, 0]]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]],[[0,0]]))
         steps.append(gf.Add_step(["PX"], [1], [2 * cangle * J]))
-        steps.append(gf.Add_step(["CZnew"], [[1, 0]]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]],[[0,0]]))
         steps.append(gf.Add_step(["HD"], [1], [0]))
         steps.append(gf.Add_step(["PZ", "PZ"], [0, 1], [2 * cangle * h1, 2 * cangle * h2]))
         steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle, 2 * bangle]))
 #calling main_algorithm
-        args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "qblist": qblist, "tmax": tmax, "ntraj" : ntraj}
-
+        args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj}
         state = ma.main_algorithm(args)
 #saving mean value of expectation value in matrix
         exp_mat[i,j] = np.mean(expect(ham, state))

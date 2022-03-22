@@ -57,7 +57,7 @@ def CreateHfromStep(step, Qblist, t_max):
         """
         if step.name[i] in ["VPZ"]:  # Check virtual gates
             H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
-        elif step.name[i] in ["CZ", "CSWAP","CZnew"]:  # Check 2q gates
+        elif step.name[i] in ["CZ", "iSWAP","CZnew"]:  # Check 2q gates
             H_real.append(y(Qblist, step.Tar_Con[i]))
             tmax = t_max[1] # If there is a 2qb gate the maximal time changes to match that
         elif step.name[i] in ["HD"]:
@@ -82,7 +82,7 @@ def TimeDepend(step, gates, t_max, Qblist):
             tlist = np.linspace(0, t_max, 100)  #Maybe make resolution an input ? 100 default
             break"""
     # Find max drive time for 1qb gates ~ largest drive angle
-    if t_max < 100*1e-9:   # Python makes t_max not quite 200ns for 2qb.
+    if t_max < 100*1e-9:   #Python makes t_max not quite 200ns for 2qb, so we add a large safety margin ;).
         t_dmax = t_max * abs(max(angles)) / np.pi  # Drive time for the largest angle in step
         tlist = np.linspace(0, t_dmax, 100) #Maybe make resolution an input ? 100 default
     else:
