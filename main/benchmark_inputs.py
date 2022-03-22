@@ -9,14 +9,14 @@ import matplotlib.cm as cm
 import Qb_class as qbc
 pi = np.pi
 
-c = 0.000001
+c = 0.00
 
 #qubits
-qb1 = qbc.Qubit(3, [c, c, c], 0.01, [1,1], [1,0,0])
-qb2 = qbc.Qubit(3, [c, c, c], 0.01, [2,2], [1,0,0])
+qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [1,1], [1,0,0])
+qb2 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [2,2], [1,0,0])
 #list of angles for parameters
-resolution = 8
-gamma_vec = np.linspace(0, np.pi,resolution)
+resolution = 28
+gamma_vec = np.linspace(0.001, np.pi,resolution)
 qblist = [qb1, qb2]
 
 #zeros matrix for saving expectation value of hamiltonian
@@ -45,18 +45,17 @@ for i in range(0, resolution):
         steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
         steps.append(gf.Add_step(["HD"], [1], [0]))
         steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
-        steps.append(gf.Add_step(["PX"], [1], [2 * cangle * J+0.0001]))
+        #steps.append(gf.Add_step(["PX"], [1], [2 * cangle * J]))
         steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
         steps.append(gf.Add_step(["HD"], [1], [0]))
-        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle * h1+0.0001, 2 * cangle * h2+0.0001]))
-        steps.append(gf.Add_step(["PX", "PY"], [0, 1], [2 * bangle + 0.00001, 2 * bangle + 0.00001]))
+        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle * h1, 2 * cangle * h2+0.000000]))
+        steps.append(gf.Add_step(["PX", "PY"], [0, 1], [2 * bangle, 2 * bangle]))
 #calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj}
 
         state = ma.main_algorithm(args)
 #saving mean value of expectation value in matrix
-        exp_mat[resolution-1-i,j] = np.mean(expect(ham, state))
-        print("h")
+        exp_mat[resolution-1-j,i] = np.mean(expect(ham, state))
 
 #plotting matrix, have to fix axis so it has angles
 plt.matshow(exp_mat)
