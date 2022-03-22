@@ -169,7 +169,7 @@ def Cnot_2qb (Qblist, targetlist, controlvalue):
 
     return Cnot
 
-def iswap(Qblist, Tar_Con):
+def iSWAP(Qblist, Tar_Con):
     """
     Since this is a symmetric swap, both qubits are targets and controls
     To avoid enumeration of the tar/con qubits, they are still called "target" and "control"
@@ -177,7 +177,7 @@ def iswap(Qblist, Tar_Con):
     Quantum object representing the iSWAP gate.
     Returns
     -------
-    iswap_gate : qobj
+    iSWAP_gate : qobj
         Quantum object representation of iSWAP gate
     """
     target = Tar_Con[0]  # index of the targeted qubit
@@ -194,10 +194,10 @@ def iswap(Qblist, Tar_Con):
         H2[i,i] = np.array_equal(H[i],H[i] * 0) #if this row is all zero, we have to put a 1 at position (i,i) to "do nothing"
     H2 = Qobj(H2, dims = H.dims)
     H = H + H2
-    iSwap = [qeye(Qb.level) for Qb in Qblist]
-    del (iSwap[max(Tar_Con)])  # Make room for the iSwap gate
-    del (iSwap[min(Tar_Con)])  # Make room for the iSwap gate
-    return gate_expand_2toN(H, len(Qblist), iSwap, control, target)
+    iSWAP = [qeye(Qb.level) for Qb in Qblist]
+    del (iSWAP[max(Tar_Con)])  # Make room for the iSWAP gate
+    del (iSWAP[min(Tar_Con)])  # Make room for the iSWAP gate
+    return gate_expand_2toN(H, len(Qblist), iSWAP, control, target)
 
 
 
@@ -303,7 +303,9 @@ if __name__ == "__main__":
         print(sz1)
         print(sz)
 
-    # Test iswap
-    Qblist = [Qb.Qubit(2, [], [], [],[]) for i in range(1)] + [Qb.Qubit(2, [], [], [],[])]
-    iswap = iswap(Qblist, [0,1])
-    print("iSWAP: ", iswap)
+    # Test iSWAP
+    Qblist = [Qb.Qubit(2, [], [], [],[]) for i in range(2)] + [Qb.Qubit(2, [], [], [],[])]
+    iSWAP = iSWAP(Qblist, [0,2])
+    print("iSWAP: ", iSWAP)
+
+    print(sx*iSWAP)
