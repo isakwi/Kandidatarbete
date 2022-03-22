@@ -44,7 +44,6 @@ else:
 
     psi0 = Qb.create_psi0(Qblist)  # Create initial state with all qubits in ground state
     c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
-    #c_ops = []
     """ Adding the algorithm steps! """
     steps = []
     steps.append(gf.Add_step(["PY","HD"], [1,2], [pi,0]))
