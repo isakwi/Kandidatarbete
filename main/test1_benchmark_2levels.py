@@ -10,15 +10,33 @@ import Qb_class as qbc
 from bayes_opt import BayesianOptimization
 
 
-qb1 = qbc.Qubit(3, [0.00, 0.00, 0.00], 0.1, [1,1], [1,0,0])
-qb2 = qbc.Qubit(3, [0.00, 0.00, 0.00], 0.1, [2,2], [1,0,0])
+
+c=0.001
+qb1 = qbc.Qubit(3, [c, c, c], 0.1, [1,1], [1,0,0])
+qb2 = qbc.Qubit(3, [c, c, c], 0.1, [2,2], [1,0,0])
 qblist = [qb1, qb2]
 c_ops = colf.create_c_ops(qblist)
 ntraj = 1
-tmax= [20e-9, 200e-9]
+tmax= [20, 200]
 psi0 = qbc.create_psi0(qblist)
-J = 0
-h1, h2 = -0.5, -0.5
+
+problem = 'A'
+
+if problem == 'A':
+    J = 1
+    h1, h2 = -0.5, 0
+elif problem == 'B':
+    J = 0
+    h1, h2 = -1.0, 0
+elif problem == 'C':
+    J = 0
+    h1, h2 = -0.5, -0.5
+elif problem == 'D':
+    J = 1
+    h1, h2 = 0, 0
+
+
+
 
 #Ising hHamiltonian, our cost function is the expectation value of this hamiltonian
 ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)
@@ -59,8 +77,8 @@ pbounds = {'cangle1': (0, np.pi), 'cangle2': (0, np.pi), 'bangle1': (0, np.pi), 
 
 new_optimizer = BayesianOptimization(
     f=circuit,
-    pbounds= pbounds,
+    pbounds=pbounds,
     verbose=2,
-    random_state=0.5,
+    random_state=1
 )
-print(len(new_optimizer.space))
+print(new_optimizer.__class__)
