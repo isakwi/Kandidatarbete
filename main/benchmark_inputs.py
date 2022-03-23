@@ -14,16 +14,18 @@ c = 0.00
 #qubits
 qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [2,2], [1,0,0])
+
+resolution = 4
+
 #list of angles for parameters
-resolution = 28
-gamma_vec = np.linspace(0.001, np.pi,resolution)
+gamma_vec = np.linspace(0, pi, resolution)
 qblist = [qb1, qb2]
 
 #zeros matrix for saving expectation value of hamiltonian
 exp_mat = np.zeros((resolution, resolution))
 c_ops = colf.create_c_ops(qblist)
 #number of trajectories
-ntraj = 1
+ntraj = 100
 tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist)
 J = 0
@@ -45,7 +47,7 @@ for i in range(0, resolution):
         steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
         steps.append(gf.Add_step(["HD"], [1], [0]))
         steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
-        #steps.append(gf.Add_step(["PX"], [1], [2 * cangle * J]))
+        steps.append(gf.Add_step(["PX"], [1], [2 * cangle * J]))
         steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
         steps.append(gf.Add_step(["HD"], [1], [0]))
         steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle * h1, 2 * cangle * h2+0.000000]))
@@ -55,7 +57,7 @@ for i in range(0, resolution):
 
         state = ma.main_algorithm(args)
 #saving mean value of expectation value in matrix
-        exp_mat[resolution-1-j,i] = np.mean(expect(ham, state))
+        exp_mat[resolution-1-j, i] = np.mean(expect(ham, state))
 
 #plotting matrix, have to fix axis so it has angles
 plt.matshow(exp_mat)
