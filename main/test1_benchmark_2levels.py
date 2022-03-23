@@ -44,7 +44,8 @@ ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.
 
 def circuit(cangle1, bangle1, cangle2, bangle2):
     """ Comment from Isak: I fixed so that we don't get integration/divide by 0 error
-    so I think we don't need different circuits for different problems"""
+    so I think we don't need different circuits for different problems
+    ALso think that the double hadamard only is on the first level?"""
     steps = []
 
     if problem == 'A':
