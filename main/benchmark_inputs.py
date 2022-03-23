@@ -9,7 +9,7 @@ import matplotlib.cm as cm
 import Qb_class as qbc
 pi = np.pi
 
-c = 0.00
+c = 0.01
 
 #qubits
 qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [1,1], [1,0,0])
