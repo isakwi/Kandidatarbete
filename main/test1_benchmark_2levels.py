@@ -12,8 +12,8 @@ from bayes_opt import BayesianOptimization
 
 
 c=0.001
-qb1 = qbc.Qubit(3, [c, c, c], 0.1, [1,1], [1,0,0])
-qb2 = qbc.Qubit(3, [c, c, c], 0.1, [2,2], [1,0,0])
+qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * np.pi, [1,1], [1,0,0])
+qb2 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * np.pi, [2,2], [1,0,0])
 qblist = [qb1, qb2]
 c_ops = colf.create_c_ops(qblist)
 ntraj = 1
@@ -44,32 +44,98 @@ ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.
 
 def circuit(cangle1, bangle1, cangle2, bangle2):
     steps = []
-    # First level of the circuit
-    steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
-    steps.append(gf.Add_step(["HD"], [1], [0]))
-    steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
-    steps.append(gf.Add_step(["PX"], [1], [2 * cangle1 * J]))
-    steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
-    steps.append(gf.Add_step(["HD"], [1], [0]))
-    steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle1 * h1, 2 * cangle1 * h2]))
-    steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle1, 2 * bangle1]))
 
-    #second level of circuit
-    steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
-    steps.append(gf.Add_step(["HD"], [1], [0]))
-    steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
-    steps.append(gf.Add_step(["PX"], [1], [2 * cangle2 * J]))
-    steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
-    steps.append(gf.Add_step(["HD"], [1], [0]))
-    steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle2 * h1, 2 * cangle2 * h2]))
-    steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle2, 2 * bangle2]))
+    if problem == 'A':
+        # First level of the circuit
+        steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["PX"], [1], [2 * cangle1 * J]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle1 * h1, 2 * cangle1 * h2+ 0.00001]))
+        steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle1, 2 * bangle1]))
+
+        # second level of circuit
+        steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["PX"], [1], [2 * cangle2 * J]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle2 * h1, 2 * cangle2 * h2+ 0.0001]))
+        steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle2, 2 * bangle2]))
+
+    elif problem == 'B':
+        # First level of the circuit
+        steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        #steps.append(gf.Add_step(["PX"], [1], [2 * cangle1 * J]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle1 * h1, 2 * cangle1 * h2+ 0.0001]))
+        steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle1, 2 * bangle1]))
+
+        # second level of circuit
+        steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        #steps.append(gf.Add_step(["PX"], [1], [2 * cangle2 * J]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle2 * h1, 2 * cangle2 * h2+ 0.00001]))
+        steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle2, 2 * bangle2]))
+
+    elif problem == 'C':
+        # First level of the circuit
+        steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        #steps.append(gf.Add_step(["PX"], [1], [2 * cangle1 * J]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle1 * h1, 2 * cangle1 * h2]))
+        steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle1, 2 * bangle1]))
+
+        # second level of circuit
+        steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        #steps.append(gf.Add_step(["PX"], [1], [2 * cangle2 * J]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle2 * h1, 2 * cangle2 * h2]))
+        steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle2, 2 * bangle2]))
+
+    elif problem == 'D':
+        # First level of the circuit
+        steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["PX"], [1], [2 * cangle1 * J]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        #steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle1 * h1, 2 * cangle1 * h2]))
+        steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle1, 2 * bangle1]))
+
+        # second level of circuit
+        steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["PX"], [1], [2 * cangle2 * J]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        #steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle2 * h1, 2 * cangle2 * h2]))
+        steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle2, 2 * bangle2]))
+
 
     # calling main_algorithm
     args = {"steps": steps, "c_ops": c_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax, "ntraj": ntraj}
     state = ma.main_algorithm(args)
 
-    return np.mean(expect(ham, state))
-
+    return -np.mean(expect(ham, state))
+#returns negative expectation value because Im using the maximazing function of the optimiser
 
 pbounds = {'cangle1': (0, np.pi), 'cangle2': (0, np.pi), 'bangle1': (0, np.pi), 'bangle2': (0, np.pi)}
 
@@ -77,8 +143,14 @@ pbounds = {'cangle1': (0, np.pi), 'cangle2': (0, np.pi), 'bangle1': (0, np.pi), 
 
 new_optimizer = BayesianOptimization(
     f=circuit,
-    pbounds=pbounds,
+    pbounds = pbounds,
     verbose=2,
     random_state=1
 )
 print(new_optimizer.__class__)
+
+new_optimizer.maximize(
+    init_points=4,
+    n_iter=30,
+)
+print('done')
