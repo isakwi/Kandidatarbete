@@ -50,7 +50,7 @@ for i in range(0, resolution):
         steps.append(gf.Add_step(["PX"], [1], [2 * cangle * J]))
         steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
         steps.append(gf.Add_step(["HD"], [1], [0]))
-        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle * h1, 2 * cangle * h2+0.000000]))
+        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle * h1, 2 * cangle * h2]))
         steps.append(gf.Add_step(["PX", "PY"], [0, 1], [2 * bangle, 2 * bangle]))
 #calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj}

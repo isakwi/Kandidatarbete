@@ -47,13 +47,12 @@ def main_algorithm(args):
     virtualgates = gates[1]
     if max(tlist) >= 0.1e-9:
         output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj, progress_bar=None)
-    if c_ops == []:
-        psi0 = [Qobj(output.states[-1])] #If all noise rates=0, qutip uses sesolve instead of mcsolve => only one state
-    else:
-        psi0 = output.states[:, -1].tolist()
+        if c_ops == []:
+            psi0 = [Qobj(output.states[-1])] #If all noise rates=0, qutip uses sesolve instead of mcsolve => only one state
+        else:
+            psi0 = output.states[:, -1].tolist()
     for vgate in virtualgates:
-        psi_temp = parfor(mcsolving.virtgate, psi0, vgate=vgate)
-        psi0 = psi_temp
+        psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
     ''' I don't know if we want to have the possibility to run with no noise.. but now we do.. 
     just remove the if statements if we want to remove. Maybe it slows it down, it's before the loops so its probably ok
     '''
@@ -64,11 +63,9 @@ def main_algorithm(args):
             H = Htd + H0
             virtualgates = gates[1]
             if max(tlist) >= 0.1e-9:
-                psi_temp = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
-            psi0 = psi_temp
+                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
             for vgate in virtualgates:
-                psi_temp = parfor(mcsolving.virtgate, psi0, vgate=vgate)
-                psi0 = psi_temp
+                psi0= parfor(mcsolving.virtgate, psi0, vgate=vgate)
     else:
         for i in range(1,len(steps)): #each step except the first one
             gates = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
@@ -76,10 +73,8 @@ def main_algorithm(args):
             H = Htd + H0
             virtualgates = gates[1]
             if max(tlist) > 0.1e-9:
-                psi_temp = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
-            psi0 = psi_temp
+                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
             for vgate in virtualgates:
-                psi_temp = parfor(mcsolving.virtgate, psi0, vgate=vgate)
-                psi0 = psi_temp
+                psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
     return psi0
     
