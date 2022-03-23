@@ -11,13 +11,13 @@ from bayes_opt import BayesianOptimization
 
 
 
-c=0.001
+c=0.0001
 qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * np.pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * np.pi, [2,2], [1,0,0])
 qblist = [qb1, qb2]
 c_ops = colf.create_c_ops(qblist)
 ntraj = 1
-tmax= [20, 200]
+tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist)
 
 problem = 'A'
@@ -137,7 +137,9 @@ def circuit(cangle1, bangle1, cangle2, bangle2):
     return -np.mean(expect(ham, state))
 #returns negative expectation value because Im using the maximazing function of the optimiser
 
-pbounds = {'cangle1': (0, np.pi), 'cangle2': (0, np.pi), 'bangle1': (0, np.pi), 'bangle2': (0, np.pi)}
+upperb = 10
+lowerb = -10
+pbounds = {'cangle1': (lowerb, upperb), 'cangle2': (lowerb, upperb), 'bangle1': (lowerb, upperb), 'bangle2': (lowerb, upperb)}
 
 
 
@@ -150,7 +152,7 @@ new_optimizer = BayesianOptimization(
 print(new_optimizer.__class__)
 
 new_optimizer.maximize(
-    init_points=4,
-    n_iter=30,
+    init_points=5,
+    n_iter= 30,
 )
 print('done')
