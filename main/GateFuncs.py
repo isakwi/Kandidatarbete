@@ -57,9 +57,9 @@ def CreateHfromStep(step, Qblist, t_max):
         the code works as it should), so this should be pretty safe.         
         """
 
-        if step.name[i] in ["VPZ"]: # and abs(step.angle[i]) >= tol:  # Check virtual gates
+        if step.name[i] in ["VPZ"]:  # Check virtual gates
             H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
-        elif step.name[i] in ["PX", "PY", "PZ", "PM"]:# and step.angle[i] >= tol:
+        elif step.name[i] in ["PX", "PY", "PZ", "PM"]:
             H_real.append(y(Qblist, step.Tar_Con[i]))
         elif step.name[i] in ["CZ", "iSWAP","CZnew"]:  # Check 2q gates
             H_real.append(y(Qblist, step.Tar_Con[i]))
@@ -86,7 +86,6 @@ def TimeDepend(step, gates, t_max, Qblist):
             tlist = np.linspace(0, t_max, 100)  #Maybe make resolution an input ? 100 default
             break"""
     # Find max drive time for 1qb gates ~ largest drive angle
-    tol=1e-4
     if t_max < 100*1e-9:   #Python makes t_max not quite 200ns for 2qb, so we add a large safety margin ;).
         t_dmax = t_max * abs(max(angles)) / np.pi  # Drive time for the largest angle in step
         tlist = np.linspace(0, t_dmax, 100) #Maybe make resolution an input ? 100 default
@@ -95,7 +94,8 @@ def TimeDepend(step, gates, t_max, Qblist):
 
     args=np.zeros(3)
     #Create time dep H from angles
-    tol = 1e-4  # Tolerance for how small angle we can handle, when an angle is "0"
+    tol = np.pi/180  # Tolerance for how small angle we can handle, when an angle is "0"
+                    # Now set to be able to handle at least one degree and upwards
     H=0
     for i in range(len(step.name)):
         if step.name[i] in ['CZnew']:
@@ -103,7 +103,7 @@ def TimeDepend(step, gates, t_max, Qblist):
                 target = step.Tar_Con[i][j]
                 H = H - Qblist[target].anharm*GateLib.AnHarm(Qblist, target)
     for i in range(len(gates)):
-        if abs(angles[i]) >= tol:
+        if abs(angles[i]) >= tol:  # Dont add gates which have a too small angle
             gate = gates[i]
             args[0] = angles[i]  # Drive angle
             args[1] = t_max  # Theoretical max gate time (~ ang=π)

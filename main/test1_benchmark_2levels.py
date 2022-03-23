@@ -43,6 +43,8 @@ ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.
 
 
 def circuit(cangle1, bangle1, cangle2, bangle2):
+    """ Comment from Isak: I fixed so that we don't get integration/divide by 0 error
+    so I think we don't need different circuits for different problems"""
     steps = []
 
     if problem == 'A':
