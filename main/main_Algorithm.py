@@ -46,11 +46,12 @@ def main_algorithm(args):
     H = Htd + H0
     virtualgates = gates[1]
     if max(tlist) >= 1e-11:  # If the tlist is too small we get integration error
-        output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj, progress_bar=None)
-        if c_ops == []:
-            psi0 = [Qobj(output.states[-1])] #If all noise rates=0, qutip uses sesolve instead of mcsolve => only one state
-        else:
+        if c_ops != []:
+            output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj, progress_bar=None)
             psi0 = output.states[:, -1].tolist()
+        else:
+            output = sesolve(H, psi0, tlist, e_ops=[])
+            psi0 = [Qobj(output.states[-1])] #If all noise rates=0, we use sesolve instead of mcsolve => only one state
     for vgate in virtualgates:
         psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
     ''' I don't know if we want to have the possibility to run with no noise.. but now we do.. 
