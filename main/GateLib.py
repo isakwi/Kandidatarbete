@@ -309,3 +309,10 @@ if __name__ == "__main__":
     print("iSWAP: ", iSWAP)
 
     print(sx*iSWAP)
+
+    # Test CZnew
+    Qblist = [Qb.Qubit(3, [], [], [], []) for i in range(1)] + [Qb.Qubit(3, [], [], [], [])]
+    CZnew = CZnew(Qblist, [0, 1])
+    q1 = tensor(basis(3,0), basis(3,2)) # the state |02>
+    q2 = tensor(basis(3,1), basis(3,1)) # the state |11>
+    print("CZ: ", CZnew * q2)

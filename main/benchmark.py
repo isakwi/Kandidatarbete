@@ -28,7 +28,7 @@ c_ops = colf.create_c_ops(qblist)
 ntraj = 100
 tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist)
-problem = 'a'
+problem = 'd'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
