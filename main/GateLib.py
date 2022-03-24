@@ -43,9 +43,10 @@ def PZ(Qblist, target):
     Returns a Qobj that operates on qubit[target] with the gate"""
     sz = [qeye(Qb.level) for Qb in Qblist]
     sz[target] = create(Qblist[target].level)*destroy(Qblist[target].level)
+    sz = VPZ(Qblist, target, np.pi)
     #If we intend this to rotate around z-axis it should be defined differently.. but I guess we us VPZ for that?
     #Yes probably,
-    return tensor(sz)
+    return sz
 
 def AnHarm(Qblist, target):
     """Creates anharmonicty term of correct dimension
