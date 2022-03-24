@@ -13,13 +13,14 @@ pi = np.pi
 qb1 = qbc.Qubit(3, [0.01, 0.01, 0.01], -200*1e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [0.01, 0.01, 0.01], -200*1e6 * 2 * pi, [2,2], [1,0,0])
 #list of angles for parameters
-resolution = 1
+resolution = 4
 gamma_vec = np.linspace(0, np.pi,resolution)
 qblist = [qb1, qb2]
 
 #zeros matrix for saving expectation value of hamiltonian
 exp_mat = np.zeros((resolution, resolution))
 c_ops = colf.create_c_ops(qblist)
+#c_ops = []
 #number of trajectories
 ntraj = 10
 tmax= [20, 200]
@@ -50,7 +51,6 @@ for i in range(0, resolution):
         steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle, 2 * bangle]))
 #calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj}
-
         state = ma.main_algorithm(args)
 #saving mean value of expectation value in matrix
         exp_mat[i,j] = np.mean(expect(ham, state))
