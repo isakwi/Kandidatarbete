@@ -44,15 +44,15 @@ ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.
 
 #steps in the algorithm, only a few of them will have to be updated as we iterate through the angle landscape
 steps = []
-        # First we apply Hadamard to both qubits
-        steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
-        steps.append(gf.Add_step(["HD"], [1], [0]))
-        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
-        steps.append(gf.Add_step(["PX"], [1], [2 * 0 * J]))
-        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
-        steps.append(gf.Add_step(["HD"], [1], [0]))
-        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * 0 * h1, 2 * 0 * h2]))
-        steps.append(gf.Add_step(["PX", "PY"], [0, 1], [2 * 0, 2 * 0]))
+# First we apply Hadamard to both qubits
+steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
+steps.append(gf.Add_step(["HD"], [1], [0]))
+steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+steps.append(gf.Add_step(["PX"], [1], [2 * 0 * J]))
+steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+steps.append(gf.Add_step(["HD"], [1], [0]))
+steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * 0 * h1, 2 * 0 * h2]))
+steps.append(gf.Add_step(["PX", "PY"], [0, 1], [2 * 0, 2 * 0]))
 #iterating through list of angles and saving expectationvalues in matrix
 for i in range(0, resolution):
     cangle = gamma_vec[i]
