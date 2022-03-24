@@ -7,7 +7,7 @@ def mcs(psi,H,tlist,c_ops):
         outstate = (output.states[:, -1])
         return outstate[0]
     else:
-        output = mcsolve(H, psi, tlist, c_ops=c_ops, ntraj=1, progress_bar=None)
+        output = sesolve(H, psi, tlist, e_ops = [])
         outstate = output.states[-1]
         return outstate
     # the virtual gates should be able to apply through matrix multiplication

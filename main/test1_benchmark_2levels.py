@@ -140,8 +140,8 @@ def circuit(cangle1, bangle1, cangle2, bangle2):
     return -np.mean(expect(ham, state))
 #returns negative expectation value because Im using the maximazing function of the optimiser
 
-upperb = 10
-lowerb = -10
+upperb = np.pi
+lowerb = 0
 pbounds = {'cangle1': (lowerb, upperb), 'cangle2': (lowerb, upperb), 'bangle1': (lowerb, upperb), 'bangle2': (lowerb, upperb)}
 
 

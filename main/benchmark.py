@@ -25,7 +25,7 @@ qblist = [qb1, qb2]
 exp_mat = np.zeros((resolution, resolution))
 c_ops = colf.create_c_ops(qblist)
 #number of trajectories
-ntraj = 100
+ntraj = 1
 tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist)
 problem = 'd'
