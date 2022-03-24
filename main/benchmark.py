@@ -9,13 +9,13 @@ import matplotlib.cm as cm
 import Qb_class as qbc
 pi = np.pi
 
-c = 0.01
+c = 0.00
 
 #qubits
 qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [2,2], [1,0,0])
 
-resolution = 4
+resolution = 10
 
 #list of angles for parameters
 gamma_vec = np.linspace(0, pi, resolution)
@@ -28,7 +28,7 @@ c_ops = colf.create_c_ops(qblist)
 ntraj = 100
 tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist)
-problem = 'd'
+problem = 'a'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -40,7 +40,7 @@ elif problem == 'd':
     J, h1, h2 = 1, 0, 0
 
 #Ising hHamiltonian, our cost function is the expectation value of this hamiltonian
-ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)
+ham = -h1 * gl.PZ(qblist, 0) - h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus
 
 
 
@@ -59,7 +59,7 @@ for i in range(0, resolution):
         steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
         steps.append(gf.Add_step(["HD"], [1], [0]))
         steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle * h1, 2 * cangle * h2]))
-        steps.append(gf.Add_step(["PX", "PY"], [0, 1], [2 * bangle, 2 * bangle]))
+        steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle, 2 * bangle]))
 #calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj}
 
