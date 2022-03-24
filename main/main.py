@@ -47,7 +47,7 @@ else:
     """ Adding the algorithm steps! """
     steps = []
     steps.append(gf.Add_step(["PX"], [0], [pi/2]))
-    steps.append(gf.Add_step(["VPZ"], [0], [pi/2]))
+    steps.append(gf.Add_step(["PZ"], [0], [pi/2]))
 
 
     args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj}

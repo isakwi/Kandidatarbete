@@ -15,7 +15,7 @@ c = 0.00
 qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [2,2], [1,0,0])
 
-resolution = 20
+resolution = 4
 
 #list of angles for parameters
 gamma_vec = np.linspace(0, pi, resolution)
@@ -28,7 +28,7 @@ c_ops = colf.create_c_ops(qblist)
 ntraj = 100
 tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist)
-problem = 'a'
+problem = 'b'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -40,7 +40,7 @@ elif problem == 'd':
     J, h1, h2 = 1, 0, 0
 
 #Ising hHamiltonian, our cost function is the expectation value of this hamiltonian
-ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) - J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus
+ham = -h1 * gl.PZ(qblist, 0) - h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
 
 
 

@@ -42,11 +42,14 @@ def PZ(Qblist, target):
     Input is list of qubits and which qubit you want to target with the operator
     Returns a Qobj that operates on qubit[target] with the gate"""
     sz = [qeye(Qb.level) for Qb in Qblist]
-    sz[target] = create(Qblist[target].level)*destroy(Qblist[target].level)
-    sz = VPZ(Qblist, target, np.pi)
+    sz[target] = -2*create(Qblist[target].level)*destroy(Qblist[target].level)
+    #sz[target] = 2*destroy(Qblist[target].level)*create(Qblist[target].level)
+
     #If we intend this to rotate around z-axis it should be defined differently.. but I guess we us VPZ for that?
-    #Yes probably,
-    return sz
+    #Yes probably
+    #But we need it to work for expectation values!!
+    #Made some wack ass solution by multiplying by -2 but not sure if this is legal
+    return tensor(sz)
 
 def AnHarm(Qblist, target):
     """Creates anharmonicty term of correct dimension
