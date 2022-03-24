@@ -15,7 +15,7 @@ c = 0.00
 qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [2,2], [1,0,0])
 
-resolution = 10
+resolution = 20
 
 #list of angles for parameters
 gamma_vec = np.linspace(0, pi, resolution)
