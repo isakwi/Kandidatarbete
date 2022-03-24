@@ -13,7 +13,7 @@ def EnvelopeFunc (t, beta, t_m, t_d, t_st):
     # beta = drive strength
     # t_m = t_max gate time (~ ang=π)
     # t_d =drive time, 
-    # t_st = start time 
+    # t_st = start time
     E    = beta/2*np.sin((t-t_st)*np.pi/t_d)**2
     return E*np.heaviside(t_st+t_d-t,1)*np.heaviside(t-t_st,1)
 

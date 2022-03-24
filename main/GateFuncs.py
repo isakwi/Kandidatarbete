@@ -14,6 +14,7 @@ import numpy as np
 import Qb_class as Qb
 from Envelope import *
 import sys # For terminating upon error. We will see if this is a good way to do it
+import math
 
 """
 Class for creating each step in an algorithm. 
@@ -55,8 +56,11 @@ def CreateHfromStep(step, Qblist, t_max):
         to handle in each except, but all the errors in the try block must come from step.name[i] (given that
         the code works as it should), so this should be pretty safe.         
         """
+
         if step.name[i] in ["VPZ"]:  # Check virtual gates
             H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
+        elif step.name[i] in ["PX", "PY", "PZ", "PM"]:
+            H_real.append(y(Qblist, step.Tar_Con[i]))
         elif step.name[i] in ["CZ", "iSWAP","CZnew"]:  # Check 2q gates
             H_real.append(y(Qblist, step.Tar_Con[i]))
             tmax = t_max[1] # If there is a 2qb gate the maximal time changes to match that
@@ -66,7 +70,7 @@ def CreateHfromStep(step, Qblist, t_max):
             H_real.append(H[0])
             H_virt.append(H[1])
         else:  # Else append as 1q gate
-            H_real.append(y(Qblist, step.Tar_Con[i]))
+            print(f"No gate added")
     return [H_real, H_virt, tmax] 
 
 
@@ -90,6 +94,8 @@ def TimeDepend(step, gates, t_max, Qblist):
 
     args=np.zeros(3)
     #Create time dep H from angles
+    tol = np.pi/180  # Tolerance for how small angle we can handle, when an angle is "0"
+                    # Now set to be able to handle at least one degree and upwards
     H=0
     for i in range(len(step.name)):
         if step.name[i] in ['CZnew']:
@@ -97,11 +103,12 @@ def TimeDepend(step, gates, t_max, Qblist):
                 target = step.Tar_Con[i][j]
                 H = H - Qblist[target].anharm*GateLib.AnHarm(Qblist, target)
     for i in range(len(gates)):
-        gate = gates[i]
-        args[0] = angles[i]  # Drive angle
-        args[1] = t_max  # Theoretical max gate time (~ ang=π)
-        args[2] = 0   # Start time for drive
-        H = H + QobjEvo([[gate, TimeFunc(tlist, args)]], tlist=tlist)
+        if abs(angles[i]) >= tol:  # Dont add gates which have a too small angle
+            gate = gates[i]
+            args[0] = angles[i]  # Drive angle
+            args[1] = t_max  # Theoretical max gate time (~ ang=π)
+            args[2] = 0   # Start time for drive
+            H = H + QobjEvo([[gate, TimeFunc(tlist, args)]], tlist=tlist)
     return [H, tlist]
 
 if __name__ == "__main__":
