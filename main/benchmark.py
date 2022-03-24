@@ -15,7 +15,7 @@ c = 0.01
 qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [2,2], [1,0,0])
 
-resolution = 4
+resolution = 10
 
 #list of angles for parameters
 gamma_vec = np.linspace(0, pi, resolution)
@@ -42,24 +42,25 @@ elif problem == 'd':
 #Ising hHamiltonian, our cost function is the expectation value of this hamiltonian
 ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)
 
-
-
+#steps in the algorithm, only a few of them will have to be updated as we iterate through the angle landscape
+steps = []
+        # First we apply Hadamard to both qubits
+        steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["PX"], [1], [2 * 0 * J]))
+        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+        steps.append(gf.Add_step(["HD"], [1], [0]))
+        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * 0 * h1, 2 * 0 * h2]))
+        steps.append(gf.Add_step(["PX", "PY"], [0, 1], [2 * 0, 2 * 0]))
 #iterating through list of angles and saving expectationvalues in matrix
 for i in range(0, resolution):
     cangle = gamma_vec[i]
     for j in range(0, resolution):
         bangle = gamma_vec[j]
-#steps in algoritm
-        steps = []
-        # First we apply Hadamard to both qubits
-        steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
-        steps.append(gf.Add_step(["HD"], [1], [0]))
-        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
-        steps.append(gf.Add_step(["PX"], [1], [2 * cangle * J]))
-        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
-        steps.append(gf.Add_step(["HD"], [1], [0]))
-        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle * h1, 2 * cangle * h2]))
-        steps.append(gf.Add_step(["PX", "PY"], [0, 1], [2 * bangle, 2 * bangle]))
+        steps[3] = (gf.Add_step(["PX"], [1], [2 * cangle * J]))
+        steps[6] = (gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle * h1, 2 * cangle * h2]))
+        steps[7] = (gf.Add_step(["PX", "PY"], [0, 1], [2 * bangle, 2 * bangle]))
 #calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj}
 
