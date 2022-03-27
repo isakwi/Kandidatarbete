@@ -13,8 +13,8 @@ pi = np.pi
 c = 0.00
 
 #qubits
-qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [1,1], [1,0,0])
-qb2 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * pi, [2,2], [1,0,0])
+qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
+qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
 resolution = 10
 
@@ -27,9 +27,9 @@ exp_mat = np.zeros((resolution, resolution))
 c_ops = colf.create_c_ops(qblist)
 #number of trajectories
 ntraj = 100
-tmax= [20e-9, 200e-9]
+tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist)
-problem = 'd'
+problem = 'c'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -43,7 +43,14 @@ elif problem == 'd':
 #Ising hHamiltonian, our cost function is the expectation value of this hamiltonian
 ham = -h1 * gl.PZ(qblist, 0) - h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
 
+#steps in algoritm (the ones that change will be updated for each step)
+steps = [gf.Add_step("PX",[0],[0]) for i in range(8)] #zero angle rotation, will all be replaced
 
+steps[0] = (gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))# First we apply Hadamard to both qubits
+steps[1] = (gf.Add_step(["HD"], [1], [0]))
+steps[2] = (gf.Add_step(["CZnew"], [[1, 0]], [0]))
+steps[4] = (gf.Add_step(["CZnew"], [[1, 0]], [0]))
+steps[5] = (gf.Add_step(["HD"], [1], [0]))
 
 #iterating through list of angles and saving expectationvalues in matrix
 t0 = time.time()
@@ -51,31 +58,22 @@ for i in range(0, resolution):
     cangle = gamma_vec[i]
     if i > 0:
         t = time.time()
-        print("Time elapsed: ", t-t0)
-        print("Estimated time left: " (resolution-i) * (t-t0)/i)
+        print("Time elapsed: %.2f seconds." %(t-t0))
+        print("Estimated time left: %.2f seconds. \n" %((resolution-i) * (t-t0)/i))
     for j in range(0, resolution):
         bangle = gamma_vec[j]
-#steps in algoritm
-        steps = []
-        # First we apply Hadamard to both qubits
-        steps.append(gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))
-        steps.append(gf.Add_step(["HD"], [1], [0]))
-        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
-        steps.append(gf.Add_step(["PX"], [1], [2 * cangle * J]))
-        steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
-        steps.append(gf.Add_step(["HD"], [1], [0]))
-        steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle * h1, 2 * cangle * h2]))
-        steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle, 2 * bangle]))
+        steps[3] = (gf.Add_step(["PX"], [1], [2 * cangle * J]))
+        steps[6] = (gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * cangle * h1, 2 * cangle * h2]))
+        steps[7] = (gf.Add_step(["PX", "PX"], [0, 1], [2 * bangle, 2 * bangle]))
 #calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj}
-
         state = ma.main_algorithm(args)
 #saving mean value of expectation value in matrix
         exp_mat[j, i] = np.mean(expect(ham, state))  # Beta y-axis and gamma x-axis
 
 #plotting matrix, have to fix axis so it has angles
-#plt.matshow(exp_mat)
-plt.contourf(gamma_vec, gamma_vec, exp_mat)
+plt.matshow(exp_mat)
+#plt.contourf(gamma_vec, gamma_vec, exp_mat)
 plt.colorbar()
 plt.show()
 
