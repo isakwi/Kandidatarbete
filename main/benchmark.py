@@ -4,6 +4,7 @@ import CollapseOperator_function as colf
 import main_Algorithm as ma
 from qutip import *
 import GateLib as gl
+import time
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import Qb_class as qbc
@@ -28,7 +29,7 @@ c_ops = colf.create_c_ops(qblist)
 ntraj = 100
 tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist)
-problem = 'c'
+problem = 'd'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -45,8 +46,13 @@ ham = -h1 * gl.PZ(qblist, 0) - h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl
 
 
 #iterating through list of angles and saving expectationvalues in matrix
+t0 = time.time()
 for i in range(0, resolution):
     cangle = gamma_vec[i]
+    if i > 0:
+        t = time.time()
+        print("Time elapsed: ", t-t0)
+        print("Estimated time left: " (resolution-i) * (t-t0)/i)
     for j in range(0, resolution):
         bangle = gamma_vec[j]
 #steps in algoritm
