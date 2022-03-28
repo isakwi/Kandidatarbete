@@ -73,7 +73,7 @@ for i in range(0, resolution):
 
 #plotting matrix, have to fix axis so it has angles
 #plt.matshow(exp_mat)  # We need to flip the matrix of we use the matshow !
-plt.contourf(gamma_vec, gamma_vec, exp_mat)
+plt.contourf(gamma_vec, gamma_vec, exp_mat)  # This one plots the matrix with angles
 plt.colorbar()
 plt.show()
 

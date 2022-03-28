@@ -71,7 +71,7 @@ def CreateHfromStep(step, Qblist, t_max):
             H_virt.append(H[1])
         else:  # Else append as 1q gate
             print(f"No gate added")
-    return [H_real, H_virt, tmax] 
+    return H_real, H_virt, tmax
 
 
 def TimeDepend(step, gates, t_max, Qblist):
@@ -95,7 +95,7 @@ def TimeDepend(step, gates, t_max, Qblist):
     args=np.zeros(3)
     #Create time dep H from angles
     tol = np.pi/180  # Tolerance for how small angle we can handle, when an angle is "0"
-                    # Now set to be able to handle at least one degree and upwards
+                     # Now set to be able to handle at least one degree and upwards
     H=0
     for i in range(len(step.name)):
         if step.name[i] in ['CZnew']:
@@ -109,7 +109,7 @@ def TimeDepend(step, gates, t_max, Qblist):
             args[1] = t_max  # Theoretical max gate time (~ ang=π)
             args[2] = 0   # Start time for drive
             H = H + QobjEvo([[gate, TimeFunc(tlist, args)]], tlist=tlist)
-    return [H, tlist]
+    return H, tlist
 
 if __name__ == "__main__":
     Qblist = []

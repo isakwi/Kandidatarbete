@@ -37,14 +37,11 @@ def main_algorithm(args):
     ntraj = args["ntraj"]
 
 
-
-
     H0 = anharmonicity(Qblist) # + ZZ_Interaction(Qblist)
     ## Do first iteration for ntraj trajectories to split the mcsolve
-    gates = gf.CreateHfromStep(steps[0], Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
-    Htd, tlist = gf.TimeDepend(steps[0], gates[0], gates[2], Qblist)
+    physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[0], Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
+    Htd, tlist = gf.TimeDepend(steps[0], physicalgates, tmax, Qblist)
     H = Htd + H0
-    virtualgates = gates[1]
     if max(tlist) >= 1e-11:  # If the tlist is too small we get integration error
         if c_ops != []:
             output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj, progress_bar=None)
