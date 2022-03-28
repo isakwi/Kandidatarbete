@@ -16,7 +16,7 @@ c = 0.00
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
-resolution = 10
+resolution = 4
 
 #list of angles for parameters
 gamma_vec = np.linspace(0, pi, resolution)
@@ -29,7 +29,7 @@ c_ops = colf.create_c_ops(qblist)
 ntraj = 100
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist)
-problem = 'c'
+problem = 'b'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -72,8 +72,8 @@ for i in range(0, resolution):
         exp_mat[j, i] = np.mean(expect(ham, state))  # Beta y-axis and gamma x-axis
 
 #plotting matrix, have to fix axis so it has angles
-plt.matshow(exp_mat)
-#plt.contourf(gamma_vec, gamma_vec, exp_mat)
+#plt.matshow(exp_mat)  # We need to flip the matrix of we use the matshow !
+plt.contourf(gamma_vec, gamma_vec, exp_mat)
 plt.colorbar()
 plt.show()
 
@@ -88,6 +88,7 @@ for i in range(len(exp_mat)):
             coord = [i, j]
 print(f"Minimum value is {min} and matrix indices [{coord[0]}, {coord[1]}]")
 print(f"It is located at gamma = {gamma_vec[coord[1]]} and beta at {gamma_vec[coord[0]]}")
+
 
 """
 gamma = [1,1]
