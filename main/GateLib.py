@@ -23,9 +23,7 @@ def PY(Qblist, target):
     Returns a Qobj that operates on qubit[target] with the gate"""
     sy = [qeye(Qb.level) for Qb in Qblist]
     sy[target] = -1j * (destroy(Qblist[target].level) - create(Qblist[target].level))
-    #Hmm.. *(-1) to get positive rotations.. but to make HD correct this def^ (KDs) is correct /Ed
-    #Guess we will have to ask KD about it
-    #Moved minus sign to HD definition...
+    # OBS: Positive rotation, in HD we now use -PY for negative rotation... unclear if this should be so..
     return tensor(sy)
 
 def PM(Qblist, target):
@@ -81,8 +79,7 @@ def HD(Qblist, target):
     """Create Hadamard gate
     Returns two operations, one real and one virtual. The virtual is to be applied after the alg-step
     NOTE: Angle for HD_real is always pi/2 and for HD_virt always pi"""
-    #HD = sqrtm(PY(Qblist, target)) * PZ(Qblist,target) #we don't know if sqrtm works
-    HD_real = -PY(Qblist, target)
+    HD_real = -PY(Qblist, target) # OBS negative PY rotation
     HD_virt = VPZ(Qblist, target, np.pi)
     return [HD_real, HD_virt]
 
