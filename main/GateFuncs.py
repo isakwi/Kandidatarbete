@@ -64,7 +64,8 @@ def CreateHfromStep(step, Qblist, t_max):
         elif step.name[i] in ["CZ", "iSWAP","CZnew"]:  # Check 2q gates
             H_real.append(y(Qblist, step.Tar_Con[i]))
             step.angle[i] = 2*np.pi  # Should it be 2*pi for all 2qb gatess??
-            tmax = t_max[1] # If there is a 2qb gate the maximal time changes to match that
+            step.angle[i] = np.pi *2
+            tmax =t_max[1] # If there is a 2qb gate the maximal time changes to match that
         elif step.name[i] in ["HD"]:
             step.angle[i] = np.pi/2
             H = GateLib.HD(Qblist, step.Tar_Con[i])

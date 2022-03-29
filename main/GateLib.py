@@ -42,8 +42,8 @@ def PZ(Qblist, target):
     Input is list of qubits and which qubit you want to target with the operator
     Returns a Qobj that operates on qubit[target] with the gate"""
     sz = [qeye(Qb.level) for Qb in Qblist]
-    sz[target] = -2*create(Qblist[target].level)*destroy(Qblist[target].level)
-    #sz[target] = 2*destroy(Qblist[target].level)*create(Qblist[target].level)
+    #sz[target] = destroy(Qblist[target].level)*create(Qblist[target].level) - create(Qblist[target].level)*destroy(Qblist[target].level)
+    sz[target] = -2*destroy(Qblist[target].level)*create(Qblist[target].level)
 
     #If we intend this to rotate around z-axis it should be defined differently.. but I guess we us VPZ for that?
     #Yes probably
@@ -100,7 +100,7 @@ def CNOT(Qblist, Tar_Con):
     CNOT = tensor(CNOT_list_0) + tensor(CNOT_list_1)
     return CNOT
 
-def CZ_old(Qblist, Tar_Con):
+def CZ_old(Qblist, Tar_Con):#DO NOT USE THIS
     """Create a controlled-Z gate, so far only for 2-level qubits"""
     target = Tar_Con[0] #index of the targeted qubit
     control = Tar_Con[1] #index of the controlling qubit
@@ -116,7 +116,7 @@ def CZ_old(Qblist, Tar_Con):
     CZ = tensor(CZ_list_0) + tensor(CZ_list_1) #we make Kronecker products and add them up
     return CZ
 
-def CZ(Qblist, Tar_Con):
+def CZ(Qblist, Tar_Con): #DO NOT USE THIS
     """Create a controlled-Z gate, for up to 4-level qubits
     It depends only on the lowest two states though"""
     target = Tar_Con[0] #index of the targeted qubit
@@ -144,9 +144,9 @@ def CZnew(Qblist, Tar_Con):
     H2 = np.zeros([size, size])
     for i in range(size):
         H2[i,i] = np.array_equal(H[i], H[i] * 0) # if this row is all zero, we have to put a 1 at position (i,i) to "do nothing"
-        # What does this do? np.array.equal() returns true or false?
+        # What does this do? np.array.equal() returns true or false? Yes, which python interprets as 1 or 0
     H2 = Qobj(H2, dims = H.dims)
-    H = H + H2
+    #H = (H + H2)
     cz = [qeye(Qb.level) for Qb in Qblist]
     target = Tar_Con[0]  # index of the targeted qubit
     control = Tar_Con[1]  # index of the controlling qubit
@@ -318,8 +318,8 @@ if __name__ == "__main__":
     print(sx*iSWAP)
 
     # Test CZnew
-    Qblist = [Qb.Qubit(3, [], [], [], []) for i in range(1)] + [Qb.Qubit(3, [], [], [], [])]
-    CZnew = CZnew(Qblist, [0, 1])
+    Qblist = [Qb.Qubit(3, [], [], [], []) for i in range(2)] + [Qb.Qubit(3, [], [], [], [])]
+    CZnew = CZnew(Qblist, [0,1])
     q1 = tensor(basis(3,0), basis(3,2)) # the state |02>
     q2 = tensor(basis(3,1), basis(3,1)) # the state |11>
-    print("CZ: ", CZnew * q2)
+    print("CZ: ", CZnew )

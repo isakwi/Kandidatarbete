@@ -30,5 +30,6 @@ def TimeFunc (t, args):
     else:
         beta = 2*np.pi/t_m  #Drive strength should corespond to 2π drive angle for 2qb gates
         t_d = t_m #*ang/(2*np.pi) ? Do we want to drive to different angles? or always 2π ?
+        #todo: make solution for iSWAP where we want pi as angle, either here ore elsewhere in the program
     return EnvelopeFunc(t, beta, t_m, t_d, t_st)
 

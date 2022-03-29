@@ -17,7 +17,7 @@ qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
 gamma_resolution = 6
-beta_resolution = 6
+beta_resolution = 7
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -31,7 +31,7 @@ c_ops = colf.create_c_ops(qblist)
 ntraj = 100
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist)
-problem = 'c'
+problem = 'd'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -43,25 +43,27 @@ elif problem == 'd':
     J, h1, h2 = 1, 0, 0
 
 # Ising hHamiltonian, our cost function is the expectation value of this hamiltonian
-ham = -h1 * gl.PZ(qblist, 0) - h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
+ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) - J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
 
 # steps in algoritm (the ones that change will be updated for each step)
-steps = [gf.Add_step("PX",[0],[0]) for i in range(8)]  # zero angle rotation, will all be replaced
+steps = [gf.Add_step(["PX"],[0],[0.1]) for i in range(8)]  # zero angle rotation, will all be replaced
 
 steps[0] = (gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))  # First we apply Hadamard to both qubits
 steps[1] = (gf.Add_step(["HD"], [1], [0]))
-steps[2] = (gf.Add_step(["CZnew"], [[1, 0]], [0]))
-steps[4] = (gf.Add_step(["CZnew"], [[1, 0]], [0]))
+steps[2] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
+steps[4] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps[5] = (gf.Add_step(["HD"], [1], [0]))
 
 # iterating through list of angles and saving expectation values in matrix
+t00 = time.time()
 t0 = time.time()
 for i in range(0, gamma_resolution):
     gamma = gamma_vec[i]
     if i > 0:
         t = time.time()
-        print("Time elapsed: %.2f seconds." %(t-t0))
-        print("Estimated time left: %.2f seconds. \n" %((gamma_resolution-i) * (t-t0)/i))  # Change here
+        print("Time elapsed: %.2f seconds." %(t-t00))
+        print("Estimated time left: %.2f seconds. \n" %((gamma_resolution-i) * (t-t0)))  # Change here
+        t0 = t
     for j in range(0, beta_resolution):
         beta = beta_vec[j]
         steps[3] = (gf.Add_step(["PX"], [1], [2 * gamma * J]))
@@ -92,24 +94,6 @@ for i in range(len(exp_mat)):
 print(f"Minimum value is {minima} and matrix indices [{coord[0]}, {coord[1]}]")
 print(f"It is located at gamma = {gamma_vec[coord[1]]} and beta at {beta_vec[coord[0]]}")
 
-"""
-gamma = [1,1]
-cangle = gamma[0] #cangle = gamma (thought the name was suitable since it comes with \hat{C}
-bangle = gamma[1] #cangle = beta (thought the name was suitable since it comes with \hat{B}
-J = 0.5
-h1, h2 = -0.5 , 0
-
-steps = []
-#First we apply Hadamard to both qubits
-steps.append(gf.Add_step(["HD","HD"], [0,1], [0,0]))
-steps.append(gf.Add_step(["HD"], [1], [0]))
-steps.append(gf.Add_step(["CZnew"], [[1,0]]))
-steps.append(gf.Add_step(["PX"], [1], [2*cangle*J]))
-steps.append(gf.Add_step(["CZnew"], [[1,0]]))
-steps.append(gf.Add_step(["HD"], [1], [0]))
-steps.append(gf.Add_step(["PZ","PZ"], [0,1], [2*cangle*h1, 2*cangle*h2]))
-steps.append(gf.Add_step(["PX","PX"], [0,1], [2*bangle, 2*bangle]))
-"""
 
 
 """
