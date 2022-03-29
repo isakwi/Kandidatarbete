@@ -56,20 +56,18 @@ def main_algorithm(args):
     '''
     if c_ops != []:
         for i in range(1,len(steps)): #each step except the first one
-            gates = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
-            Htd, tlist = gf.TimeDepend(steps[i], gates[0], gates[2], Qblist)
+            physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
+            Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
-            virtualgates = gates[1]
             if max(tlist) >= 1e-11:
                 psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
             for vgate in virtualgates:
                 psi0= parfor(mcsolving.virtgate, psi0, vgate=vgate)
     else:
         for i in range(1,len(steps)): #each step except the first one
-            gates = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
-            Htd, tlist = gf.TimeDepend(steps[i], gates[0], gates[2], Qblist)
+            physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
+            Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
-            virtualgates = gates[1]
             if max(tlist) > 1e-11:
                 psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
             for vgate in virtualgates:
