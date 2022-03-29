@@ -43,7 +43,7 @@ def PZ(Qblist, target):
     Returns a Qobj that operates on qubit[target] with the gate"""
     sz = [qeye(Qb.level) for Qb in Qblist]
     #sz[target] = destroy(Qblist[target].level)*create(Qblist[target].level) - create(Qblist[target].level)*destroy(Qblist[target].level)
-    sz[target] = -2*destroy(Qblist[target].level)*create(Qblist[target].level)
+    sz[target] = create(Qblist[target].level) * destroy(Qblist[target].level)
 
     #If we intend this to rotate around z-axis it should be defined differently.. but I guess we us VPZ for that?
     #Yes probably
@@ -198,7 +198,7 @@ def iSWAP(Qblist, Tar_Con):
     for i in range(size):
         H2[i,i] = np.array_equal(H[i],H[i] * 0) #if this row is all zero, we have to put a 1 at position (i,i) to "do nothing"
     H2 = Qobj(H2, dims = H.dims)
-    H = H + H2
+    #H = H + H2
     iSWAP = [qeye(Qb.level) for Qb in Qblist]
     del (iSWAP[max(Tar_Con)])  # Make room for the iSWAP gate
     del (iSWAP[min(Tar_Con)])  # Make room for the iSWAP gate
