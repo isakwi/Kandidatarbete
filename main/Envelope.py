@@ -14,7 +14,7 @@ def EnvelopeFunc (t, beta, t_m, t_d, t_st):
     # t_m = t_max gate time (~ ang=π)
     # t_d =drive time, 
     # t_st = start time
-    E    = beta/2*np.sin((t-t_st)*np.pi/t_d)**2
+    E    = beta*np.sin((t-t_st)*np.pi/t_d)**2
     return E*np.heaviside(t_st+t_d-t,1)*np.heaviside(t-t_st,1)
 
 
@@ -25,10 +25,10 @@ def TimeFunc (t, args):
     t_m  = args[1]  # Max gate time (~ ang=π)
     t_st = args[2]  # Start time for drive 
     if t_m < 100*1e-9:   # Python makes t_max not quite 200ns for 2qb.
-        beta = 2*np.pi/t_m    #Drive strength
+        beta = np.pi/t_m    #Drive strength
         t_d = t_m * ang / np.pi  # Drive time for specified angle
     else:
-        beta = 4*np.pi/t_m  #Drive strength should corespond to 2π drive angle for 2qb gates
+        beta = 2*np.pi/t_m  #Drive strength should corespond to 2π drive angle for 2qb gates
         t_d = t_m #*ang/(2*np.pi) ? Do we want to drive to different angles? or always 2π ?
     return EnvelopeFunc(t, beta, t_m, t_d, t_st)
 
