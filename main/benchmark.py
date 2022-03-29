@@ -8,6 +8,7 @@ import time
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import Qb_class as qbc
+import matplotlib as mpl
 pi = np.pi
 
 c = 0.00
@@ -16,8 +17,8 @@ c = 0.00
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
-gamma_resolution = 6
-beta_resolution = 7
+gamma_resolution = 10
+beta_resolution = 10
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -43,7 +44,8 @@ elif problem == 'd':
     J, h1, h2 = 1, 0, 0
 
 # Ising hHamiltonian, our cost function is the expectation value of this hamiltonian
-ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) - J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
+ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
+# Changed the sign of J again and then it kinda worked
 
 # steps in algoritm (the ones that change will be updated for each step)
 steps = [gf.Add_step(["PX"],[0],[0.1]) for i in range(8)]  # zero angle rotation, will all be replaced
@@ -78,7 +80,7 @@ for i in range(0, gamma_resolution):
 # plotting matrix
 # plt.matshow(exp_mat)  # We need to flip the matrix of we use the matshow
 # Do this by putting exp_mat[beta_resolution-1-j, i] = np.mean(expect(ham, state)) in for loops!) !
-plt.contourf(gamma_vec, beta_vec, exp_mat)  # This one plots the matrix with angles
+plt.contourf(gamma_vec, beta_vec, exp_mat, cmap = plt.get_cmap("PiYG"))  # This one plots the matrix with angles
 plt.colorbar()
 plt.show()
 
