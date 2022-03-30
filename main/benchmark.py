@@ -8,6 +8,7 @@ import time
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import Qb_class as qbc
+import sys
 import matplotlib as mpl
 pi = np.pi
 
@@ -32,8 +33,7 @@ c_ops = colf.create_c_ops(qblist)
 ntraj = 100
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundtstae
-problem = 'a'
-
+problem = 'e'
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
 elif problem == 'b':
@@ -42,6 +42,8 @@ elif problem == 'c':
     J, h1, h2 = 0, -1/2, -1/2
 elif problem == 'd':
     J, h1, h2 = 1, 0, 0
+else:
+    raise ValueError("You must do problem \'a\', \'b\', \'c\' or \'d\'")
 
 # Ising hHamiltonian, our cost function is the expectation value of this hamiltonian
 ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
