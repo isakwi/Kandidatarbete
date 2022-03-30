@@ -33,7 +33,7 @@ c_ops = colf.create_c_ops(qblist)
 ntraj = 100
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundtstae
-problem = 'e'
+problem = 'b'
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
 elif problem == 'b':

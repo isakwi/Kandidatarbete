@@ -25,7 +25,7 @@ def TimeFunc (t, args):
     t_m  = args[1]  # Max gate time (~ ang=π)
     t_st = args[2]  # Start time for drive 
     if t_m < 100*1e-9:   # Python makes t_max not quite 200ns for 2qb.
-        beta = np.pi/t_m    #Drive strength
+        beta = np.pi/t_m    #Drive strength - pi drive angle for 1 qb gates
         t_d = t_m * ang / np.pi  # Drive time for specified angle
     else:
         beta = 2*np.pi/t_m  #Drive strength should corespond to 2π drive angle for 2qb gates
