@@ -86,8 +86,8 @@ plt.show()
 # Only finds one minimum though, not if there are many
 minima = exp_mat[0][0]
 coord = [0, 0]
-for i in range(len(exp_mat)):
-    for j in range(len(exp_mat)):
+for i in range(len(beta_vec)):
+    for j in range(len(gamma_vec)):
         if exp_mat[i][j] < minima:
             minima = exp_mat[i][j]
             coord = [i, j]
