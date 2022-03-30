@@ -19,8 +19,8 @@ qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
 
-gamma_resolution = 4
-beta_resolution = 6
+gamma_resolution = 10
+beta_resolution = 10
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -83,7 +83,7 @@ for i in range(0, gamma_resolution):
 # plotting matrix
 # plt.matshow(exp_mat, cmap = plt.get_cmap('PiYG'))  # We need to flip the matrix of we use the matshow
 # Do this by putting exp_mat[beta_resolution-1-j, i] = np.mean(expect(ham, state)) in for loops!) !
-plt.contourf(gamma_vec, beta_vec, exp_mat, cmap = plt.get_cmap('PiYG'))  # This one plots the matrix with angles
+plt.contourf(gamma_vec, beta_vec, exp_mat, 400, cmap = plt.get_cmap('PiYG'))  # This one plots the matrix with angles
 plt.colorbar()
 plt.show()
 
