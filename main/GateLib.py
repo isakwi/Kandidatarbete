@@ -26,6 +26,17 @@ def PY(Qblist, target):
     # OBS: Positive rotation, in HD we now use -PY for negative rotation... unclear if this should be so..
     return tensor(sy)
 
+def RPY(Qblist, target):
+    """REVERSED SIGMAY, TO BE USED IN HADAMARD
+    Creates specific sigmay gate, maybe better than to create all gates? Then
+    you can use only the operators you need.
+    Input is list of qubits and which qubit you want to target with the operator
+    Returns a Qobj that operates on qubit[target] with the gate"""
+    rsy = [qeye(Qb.level) for Qb in Qblist]
+    rsy[target] = 1j* (destroy(Qblist[target].level) - create(Qblist[target].level))
+    # OBS: Positive rotation, in HD we now use -PY for negative rotation... unclear if this should be so..
+    return tensor(rsy)
+
 def PM(Qblist, target):
     """Creates specific sigma- gate, maybe better than to create all gates? Then
     you can use only the operators you need.
@@ -79,7 +90,7 @@ def HD(Qblist, target):
     """Create Hadamard gate
     Returns two operations, one real and one virtual. The virtual is to be applied after the alg-step
     NOTE: Angle for HD_real is always pi/2 and for HD_virt always pi"""
-    HD_real = -PY(Qblist, target) # OBS negative PY rotation
+    HD_real = RPY(Qblist, target) # OBS negative PY rotation, that's why we call RPY
     HD_virt = VPZ(Qblist, target, np.pi)
     return [HD_real, HD_virt]
 
@@ -320,4 +331,4 @@ if __name__ == "__main__":
     CZnew = CZnew(Qblist, [0,1])
     q1 = tensor(basis(3,0), basis(3,2)) # the state |02>
     q2 = tensor(basis(3,1), basis(3,1)) # the state |11>
-    print("CZ: ", CZnew )
+    print("CZ: ", CZnew)

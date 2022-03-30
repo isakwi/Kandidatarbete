@@ -18,8 +18,9 @@ c = 0.00
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
-gamma_resolution = 10
-beta_resolution = 11
+
+gamma_resolution = 4
+beta_resolution = 6
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -53,7 +54,7 @@ ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.
 steps = [gf.Add_step(["PX"],[0],[0.1]) for i in range(8)]  # zero angle rotation, will all be replaced
 
 steps[0] = (gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))  # First we apply Hadamard to both qubits
-steps[1] = (gf.Add_step(["HD"], [1], [0]))
+steps[1] = (gf.Add_step([ "HD"], [ 1], [0]))  # Then we apply Hadamard to the second qubit
 steps[2] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps[4] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps[5] = (gf.Add_step(["HD"], [1], [0]))
