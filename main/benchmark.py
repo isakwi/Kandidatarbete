@@ -75,15 +75,12 @@ for i in range(0, gamma_resolution):
 # calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj}
         state = ma.main_algorithm(args)
-        print(state)
 # saving mean value of expectation value in matrix
         exp_mat[j, i] = np.mean(expect(ham, state))  # Beta y-axis and gamma x-axis
 
 # plotting matrix
 # plt.matshow(exp_mat, cmap = plt.get_cmap('PiYG'))  # We need to flip the matrix of we use the matshow
 # Do this by putting exp_mat[beta_resolution-1-j, i] = np.mean(expect(ham, state)) in for loops!) !
-
-plt.contourf(gamma_vec, beta_vec, exp_mat, cmap = plt.get_cmap("PiYG"))  # This one plots the matrix with angles
 
 plt.contourf(gamma_vec, beta_vec, exp_mat, cmap = plt.get_cmap('PiYG'))  # This one plots the matrix with angles
 
