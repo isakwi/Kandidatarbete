@@ -42,11 +42,7 @@ def PZ(Qblist, target):
     Returns a Qobj that operates on qubit[target] with the gate"""
     sz = [qeye(Qb.level) for Qb in Qblist]
     #sz[target] = destroy(Qblist[target].level)*create(Qblist[target].level) - create(Qblist[target].level)*destroy(Qblist[target].level)
-<<<<<<< HEAD
-    sz[target] = create(Qblist[target].level)*destroy(Qblist[target].level)
-=======
     sz[target] = create(Qblist[target].level) * destroy(Qblist[target].level)
->>>>>>> e42616e38d8d2b89d030024a879a6faa97220dba
 
     #If we intend this to rotate around z-axis it should be defined differently.. but I guess we us VPZ for that?
     #Yes probably
