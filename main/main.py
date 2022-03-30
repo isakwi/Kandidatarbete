@@ -32,7 +32,7 @@ beta1 = pi/t_1q  # Driving strength for 1q gate
 beta2 = pi/t_2q  # Driving strength for 2q gate
 """Change TimeFunc / Envelope so that it takes beta as parameter?"""
 
-psi0 = Qb.create_psi0(Qblist)  # Create initial state with all qubits in ground state
+psi0 = Qb.create_psi0(Qblist, 0)  # Create initial state with all qubits in ground state
 c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
 """ Adding the algorithm steps! """
 steps = []
