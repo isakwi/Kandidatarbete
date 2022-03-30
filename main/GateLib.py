@@ -22,9 +22,8 @@ def PY(Qblist, target):
     Input is list of qubits and which qubit you want to target with the operator
     Returns a Qobj that operates on qubit[target] with the gate"""
     sy = [qeye(Qb.level) for Qb in Qblist]
-    sy[target] = 1j * (destroy(Qblist[target].level) - create(Qblist[target].level))
-    #Hmm.. *(-1) to get positive rotations.. but to make HD correct this def^ (KDs) is correct /Ed
-    #Guess we will have to ask KD about it
+    sy[target] = -1j * (destroy(Qblist[target].level) - create(Qblist[target].level))
+    # OBS: Positive rotation, in HD we now use -PY for negative rotation... unclear if this should be so..
     return tensor(sy)
 
 def PM(Qblist, target):
@@ -43,7 +42,11 @@ def PZ(Qblist, target):
     Returns a Qobj that operates on qubit[target] with the gate"""
     sz = [qeye(Qb.level) for Qb in Qblist]
     #sz[target] = destroy(Qblist[target].level)*create(Qblist[target].level) - create(Qblist[target].level)*destroy(Qblist[target].level)
+<<<<<<< HEAD
     sz[target] = create(Qblist[target].level)*destroy(Qblist[target].level)
+=======
+    sz[target] = create(Qblist[target].level) * destroy(Qblist[target].level)
+>>>>>>> e42616e38d8d2b89d030024a879a6faa97220dba
 
     #If we intend this to rotate around z-axis it should be defined differently.. but I guess we us VPZ for that?
     #Yes probably
@@ -80,8 +83,7 @@ def HD(Qblist, target):
     """Create Hadamard gate
     Returns two operations, one real and one virtual. The virtual is to be applied after the alg-step
     NOTE: Angle for HD_real is always pi/2 and for HD_virt always pi"""
-    #HD = sqrtm(PY(Qblist, target)) * PZ(Qblist,target) #we don't know if sqrtm works
-    HD_real = PY(Qblist, target)
+    HD_real = -PY(Qblist, target) # OBS negative PY rotation
     HD_virt = VPZ(Qblist, target, np.pi)
     return [HD_real, HD_virt]
 
@@ -198,7 +200,7 @@ def iSWAP(Qblist, Tar_Con):
     for i in range(size):
         H2[i,i] = np.array_equal(H[i],H[i] * 0) #if this row is all zero, we have to put a 1 at position (i,i) to "do nothing"
     H2 = Qobj(H2, dims = H.dims)
-    H = H + H2
+    #H = H + H2
     iSWAP = [qeye(Qb.level) for Qb in Qblist]
     del (iSWAP[max(Tar_Con)])  # Make room for the iSWAP gate
     del (iSWAP[min(Tar_Con)])  # Make room for the iSWAP gate

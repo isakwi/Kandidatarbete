@@ -46,12 +46,12 @@ class Qubit:
 
         return init_state
 
-def create_psi0(Qblist):
+def create_psi0(Qblist, groundstate):
     """ If the initial states are always 0 for all qubits it might be easier
         to not have it in the Qubit-class and just have something like this!
         Can be added to another file to keep things in "main" nice and tidy!
 
             Creates initial state with all qubits in state 0: """
-    psi0 = [basis(Qb.level, 0) for Qb in Qblist]
+    psi0 = [basis(Qb.level, groundstate) for Qb in Qblist]
     return tensor(psi0)
 
