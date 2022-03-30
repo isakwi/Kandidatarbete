@@ -18,8 +18,8 @@ qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
 
-gamma_resolution = 10
-beta_resolution = 10
+gamma_resolution = 40
+beta_resolution = 40
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -33,7 +33,7 @@ c_ops = colf.create_c_ops(qblist)
 ntraj = 100
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
-problem = 'b'
+problem = 'a'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -78,7 +78,6 @@ for i in range(0, gamma_resolution):
 # calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj}
         state = ma.main_algorithm(args)
-        print(state)
 # saving mean value of expectation value in matrix
         exp_mat[j, i] = np.mean(expect(ham, state))  # Beta y-axis and gamma x-axis
 
