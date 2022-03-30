@@ -30,7 +30,7 @@ c_ops = colf.create_c_ops(qblist)
 # number of trajectories
 ntraj = 100
 tmax= [50e-9, 271e-9]
-psi0 = qbc.create_psi0(qblist)
+psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundtstae
 problem = 'a'
 
 if problem == 'a':
