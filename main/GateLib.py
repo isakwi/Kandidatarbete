@@ -54,11 +54,10 @@ def PZ(Qblist, target):
     sz = [qeye(Qb.level) for Qb in Qblist]
     #sz[target] = destroy(Qblist[target].level)*create(Qblist[target].level) - create(Qblist[target].level)*destroy(Qblist[target].level)
     sz[target] = 2 * create(Qblist[target].level) * destroy(Qblist[target].level) - qeye(Qblist[target].level)
+    #Maybe -1 instead of -qeye()...?
 
     #If we intend this to rotate around z-axis it should be defined differently.. but I guess we us VPZ for that?
     #Yes probably
-    #But we need it to work for expectation values!!
-    #Made some wack ass solution by multiplying by -2 but not sure if this is legal
     return tensor(sz)
 
 def AnHarm(Qblist, target):

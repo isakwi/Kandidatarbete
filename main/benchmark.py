@@ -17,8 +17,8 @@ qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
 
-gamma_resolution = 6
-beta_resolution = 6
+gamma_resolution = 4
+beta_resolution = 4
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -83,11 +83,13 @@ for i in range(0, gamma_resolution):
 # plotting matrix
 # plt.matshow(exp_mat, cmap = plt.get_cmap('PiYG'))  # We need to flip the matrix of we use the matshow
 # Do this by putting exp_mat[beta_resolution-1-j, i] = np.mean(expect(ham, state)) in for loops!) !
+
+
 fig, ax = plt.subplots()
-cs = ax.contourf(gamma_vec, beta_vec, exp_mat, 400, cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1)
+cs = ax.contourf(gamma_vec, beta_vec, exp_mat, 400, cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1, levels=np.linspace(-1,1,217))
 # This one plots the matrix with angles
-"""TO DO: FIX COLORBAR RANGE TO -1 : 1"""
-cbar = fig.colorbar(cs)
+#### TO DO: FIX COLORBAR RANGE TO -1 : 1
+cbar = fig.colorbar(cs, ticks=np.linspace(-1,1,9))
 ax.set_title(f'Cost function F($\gamma$, \u03B2) for problem {problem}')
 ax.set_xlabel("$\gamma_1$")
 ax.set_ylabel("\u03B2$_1$")
@@ -95,6 +97,7 @@ labels = ["0", "$\pi$/2", "$\pi$"]
 plt.xticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
 plt.yticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
 plt.show()
+
 
 # Find minima manually, will be fast for small matrices, like in the benchmark!
 # Only finds one minimum though, not if there are many
