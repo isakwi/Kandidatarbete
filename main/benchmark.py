@@ -88,7 +88,6 @@ for i in range(0, gamma_resolution):
 fig, ax = plt.subplots()
 cs = ax.contourf(gamma_vec, beta_vec, exp_mat, 400, cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1, levels=np.linspace(-1,1,217))
 # This one plots the matrix with angles
-#### TO DO: FIX COLORBAR RANGE TO -1 : 1
 cbar = fig.colorbar(cs, ticks=np.linspace(-1,1,9))
 ax.set_title(f'Cost function F($\gamma$, \u03B2) for problem {problem}')
 ax.set_xlabel("$\gamma_1$")
