@@ -11,16 +11,16 @@ import Qb_class as qbc
 import matplotlib as mpl
 pi = np.pi
 
-c = 0.01
+c = 0.00
 
 # qubits
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
-betaplot = True #make this true if we want 1D plots as well
+betaplot = False #make this true if we want 1D plots as well
 
-gamma_resolution = 61
-beta_resolution = 61
+gamma_resolution = 6
+beta_resolution = 6
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -33,7 +33,7 @@ if betaplot:
     state_mat = list([[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)])
 c_ops = colf.create_c_ops(qblist)
 # number of trajectories
-ntraj = 100
+ntraj = 1
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
 problem = 'a'
@@ -89,15 +89,17 @@ for i in range(0, gamma_resolution):
 # plotting matrix
 # plt.matshow(exp_mat, cmap = plt.get_cmap('PiYG'))  # We need to flip the matrix of we use the matshow
 # Do this by putting exp_mat[beta_resolution-1-j, i] = np.mean(expect(ham, state)) in for loops!) !
-fig, (ax, ax2) = plt.subplots(2)
-cs = ax.contourf(gamma_vec, beta_vec, exp_mat, 400, cmap = plt.get_cmap('PiYG'))  # This one plots the matrix with angles
-cbar = fig.colorbar(cs)
+fig, ax = plt.subplots()
+cs = ax.contourf(gamma_vec, beta_vec, exp_mat, 400, cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1, levels=np.linspace(-1,1,345))
+# This one plots the matrix with angles
+cbar = fig.colorbar(cs, ticks=np.linspace(-1,1,9))
 ax.set_title(f'Cost function F($\gamma$, \u03B2) for problem {problem}')
 ax.set_xlabel("$\gamma_1$")
 ax.set_ylabel("\u03B2$_1$")
 labels = ["0", "$\pi$/2", "$\pi$"]
 plt.xticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
 plt.yticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
+plt.show()
 
 
 # Find minima manually, will be fast for small matrices, like in the benchmark!
