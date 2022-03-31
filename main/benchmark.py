@@ -10,15 +10,15 @@ import Qb_class as qbc
 import matplotlib as mpl
 pi = np.pi
 
-c = 0.01
+c = 0.00
 
 # qubits
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
 
-gamma_resolution = 61
-beta_resolution = 61
+gamma_resolution = 6
+beta_resolution = 6
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -32,7 +32,7 @@ c_ops = colf.create_c_ops(qblist)
 ntraj = 100
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
-problem = 'a'
+problem = 'b'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -84,7 +84,9 @@ for i in range(0, gamma_resolution):
 # plt.matshow(exp_mat, cmap = plt.get_cmap('PiYG'))  # We need to flip the matrix of we use the matshow
 # Do this by putting exp_mat[beta_resolution-1-j, i] = np.mean(expect(ham, state)) in for loops!) !
 fig, ax = plt.subplots()
-cs = ax.contourf(gamma_vec, beta_vec, exp_mat, 400, cmap = plt.get_cmap('PiYG'))  # This one plots the matrix with angles
+cs = ax.contourf(gamma_vec, beta_vec, exp_mat, 400, cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1)
+# This one plots the matrix with angles
+"""TO DO: FIX COLORBAR RANGE TO -1 : 1"""
 cbar = fig.colorbar(cs)
 ax.set_title(f'Cost function F($\gamma$, \u03B2) for problem {problem}')
 ax.set_xlabel("$\gamma_1$")
