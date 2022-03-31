@@ -127,11 +127,11 @@ if betaplot:
     oz = [np.abs(amp) ** 2 for amp in oz]
     oo = [state[4, 0] for state in state_vec]  # |11>
     oo = [np.abs(amp) ** 2 for amp in oo]
-    ax2.plot(beta_vec, zz, 'o', label="|00>")
-    ax2.plot(beta_vec, zo, 'o', label="|01>")
-    ax2.plot(beta_vec, oz, 'o', label="|10>")
-    ax2.plot(beta_vec, oo, 'o', label="|11>")
-    ax2.plot(beta_vec, cost_vec, 'o', label="F")
+    ax2.plot(beta_vec, zz, 'yo', label="P(|00>)")
+    ax2.plot(beta_vec, zo, 'ro', label="P(|01>)")
+    ax2.plot(beta_vec, oz, 'go', label="P(|10>)")
+    ax2.plot(beta_vec, oo, 'ko', label="P(|11>)")
+    ax2.plot(beta_vec, cost_vec, 'mo', label="F")
     ax2.legend()
     ax.set_title('Problem {problem}')
     imStr = "betaplot" + str(problem) + ".pdf"
