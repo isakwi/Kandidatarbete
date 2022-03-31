@@ -32,47 +32,38 @@ beta1 = pi/t_1q  # Driving strength for 1q gate
 beta2 = pi/t_2q  # Driving strength for 2q gate
 """Change TimeFunc / Envelope so that it takes beta as parameter?"""
 
-
-if benchmark == True:
-    print("\nDoing the benchmark! :D\n")
-    # Call something like benchmarking_main.py so we don't need as much code here!
-    # Created a file for now
-    # Should it return final state and do calculation here? Or do everything in there:
-    bm.benchmarking(Qblist)
-
-else:
-
-    psi0 = Qb.create_psi0(Qblist)  # Create initial state with all qubits in ground state
-    c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
-    """ Adding the algorithm steps! """
-    steps = []
-    steps.append(gf.Add_step(["PX","HD"], [1,2], [pi,0]))
-    steps.append(gf.Add_step(["PY", "CZnew"], [0, [1, 2]], [pi/2, 0]))
-    steps.append(gf.Add_step(["VPZ", "PY"], [1, 2], [pi, pi]))
-
-    args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj}
-    tic = time.perf_counter() # Start stopwatch in order to print the run time
-    result = mA.main_algorithm(args)
-    toc = time.perf_counter() # Stop stopwatch
-    print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
+psi0 = Qb.create_psi0(Qblist, 0)  # Create initial state with all qubits in ground state
+c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
+""" Adding the algorithm steps! """
+steps = []
+steps.append(gf.Add_step(["PX"], [0], [pi]))
 
 
-    #Used for testing
-    PrintStates = False
-    if PrintStates:
-        print(psi0)
-        if type(result) == list : # Basically, if noises (mcsolve)
-            print(result[-1].tidyup(atol=1e-4)) # Prints one of the final states
-        elif type(result) == Qobj:
-            print(result.tidyup(atol=1e-4))
-        else:
-            print(result.states[-1].tidyup(atol=1e-4)) # If no noises sesolve => only one state
-        if len(Qblist) == 1 and Qblist[0].level == 2:
-            # Bloch sphere only if 1qb 2 level
-            b = Bloch()
-            vec1 = psi0
-            vec2 = result[-1]
-            b.add_states(vec1)
-            b.add_states(vec2)
-            b.make_sphere()
-            plt.show()
+args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj}
+tic = time.perf_counter() # Start stopwatch in order to print the run time
+result = mA.main_algorithm(args)
+toc = time.perf_counter() # Stop stopwatch
+print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
+
+
+#Used for testing
+PrintStates = True
+if PrintStates:
+    print(f"Initial state: {psi0}")
+    if type(result) == list : # Basically, if noises (mcsolve)
+        print(f"Final state: {result[-1].tidyup(atol=1e-4)}") # Prints one of the final states
+        vec2 = result[-1]
+    elif type(result) == Qobj:
+        print(f"Final state: {result.tidyup(atol=1e-4)}")
+        vec2 = result
+    else:
+        print(f"Final state: {result.states[-1].tidyup(atol=1e-4)}") # If no noises sesolve => only one state
+        vec2 = result[-1]
+    if len(Qblist) == 1 and Qblist[0].level == 2:
+        # Bloch sphere only if 1qb 2 level
+        b = Bloch()
+        vec1 = psi0
+        b.add_states(vec1)
+        b.add_states(vec2)
+        b.make_sphere()
+        plt.show()

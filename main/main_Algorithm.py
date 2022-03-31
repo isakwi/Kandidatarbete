@@ -37,47 +37,40 @@ def main_algorithm(args):
     ntraj = args["ntraj"]
 
 
-
-
     H0 = anharmonicity(Qblist) # + ZZ_Interaction(Qblist)
     ## Do first iteration for ntraj trajectories to split the mcsolve
-    gates = gf.CreateHfromStep(steps[0], Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
-    Htd, tlist = gf.TimeDepend(steps[0], gates[0], gates[2], Qblist)
+    physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[0], Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
+    Htd, tlist = gf.TimeDepend(steps[0], physicalgates, tmax, Qblist)
     H = Htd + H0
-    virtualgates = gates[1]
-    output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj, progress_bar=None)
-    if c_ops == []:
-        """This doesnt work!!"""
-        psi0 = [Qobj(output.states[-1])] #If all noise rates=0, qutip uses sesolve instead of mcsolve => only one state
-    else:
-        psi0 = output.states[:, -1].tolist()
+    if max(tlist) >= 1e-11:  # If the tlist is too small we get integration error
+        if c_ops != []:
+            output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj, progress_bar=None)
+            psi0 = output.states[:, -1].tolist()
+        else:
+            output = sesolve(H, psi0, tlist, e_ops=[])
+            psi0 = [Qobj(output.states[-1])] #If all noise rates=0, we use sesolve instead of mcsolve => only one state
     for vgate in virtualgates:
-        psi_temp = parfor(mcsolving.virtgate, psi0, vgate=vgate)
-        psi0 = psi_temp
+        psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
     ''' I don't know if we want to have the possibility to run with no noise.. but now we do.. 
     just remove the if statements if we want to remove. Maybe it slows it down, it's before the loops so its probably ok
     '''
     if c_ops != []:
         for i in range(1,len(steps)): #each step except the first one
-            gates = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
-            Htd, tlist = gf.TimeDepend(steps[i], gates[0], gates[2], Qblist)
+            physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
+            Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
-            virtualgates = gates[1]
-            psi_temp = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
-            psi0 = psi_temp
+            if max(tlist) >= 1e-11:
+                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
             for vgate in virtualgates:
-                psi_temp = parfor(mcsolving.virtgate, psi0, vgate=vgate)
-                psi0 = psi_temp
+                psi0= parfor(mcsolving.virtgate, psi0, vgate=vgate)
     else:
         for i in range(1,len(steps)): #each step except the first one
-            gates = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
-            Htd, tlist = gf.TimeDepend(steps[i], gates[0], gates[2], Qblist)
+            physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
+            Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
-            virtualgates = gates[1]
-            psi_temp = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
-            psi0 = psi_temp
+            if max(tlist) > 1e-11:
+                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
             for vgate in virtualgates:
-                psi_temp = parfor(mcsolving.virtgate, psi0, vgate=vgate)
-                psi0 = psi_temp
+                psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
     return psi0
     
