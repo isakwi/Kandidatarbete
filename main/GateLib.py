@@ -58,6 +58,8 @@ def PZ(Qblist, target):
 
     #If we intend this to rotate around z-axis it should be defined differently.. but I guess we us VPZ for that?
     #Yes probably
+    #But we need it to work for expectation values!!
+    #Made some wack ass solution by multiplying by -2 but not sure if this is legal
     return tensor(sz)
 
 def AnHarm(Qblist, target):
