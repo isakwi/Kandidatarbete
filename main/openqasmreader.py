@@ -17,12 +17,16 @@ circuit.h(0)
 circuit.h(1)
 circuit.h(0)
 
+
+"""creates text file from openqasm circuit"""
 def create_file(circ):
     file = circ.qasm(formatted=True, filename='circfile.txt')
 
     return file
 
 
+"""takes in openqasm circuit and returns array cointaining the gates in order and what qubits  
+they are applied on"""
 
 def get_arr(circ):
 
@@ -35,10 +39,13 @@ def get_arr(circ):
 
 array = get_arr(circuit)
 
-
+"""splits string in to array of its charachters"""
 def splitc(word):
     return [char for char in word]
 
+"""function that takes in array of strings (generated from openqasm file),
+and returns array of the order of wich qubits gets a gate applied on it, can be used to determine 
+what gates should be in each level when they are added as steps"""
 
 def get_qb_order(arr):
     arrc = arr[3:]
@@ -49,21 +56,13 @@ def get_qb_order(arr):
         charlist= splitc(stp[1])
 
         for word in charlist:
-            #print(word)
-            #tar = []
 
             if word.isdigit():
-                #print(word)
+
                 tar.append(int(word))
-                #print(tar)
+
         qo_arr.append(tar)
-        #print(qo_arr)
     return qo_arr
-
-
-            #qo_arr.append(tar)
-
-
 
 qovec = get_qb_order(array)
 
