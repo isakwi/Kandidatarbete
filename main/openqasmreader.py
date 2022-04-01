@@ -2,6 +2,8 @@ import numpy as np
 
 from qutip import *
 import qiskit
+import GateLib as gl
+import GateFuncs as gf
 
 """basic inital idea: take in qasmfile and convert the steps to a array of strings [gate1 q[n],...,] and then extract
 an array that contains the order of gates being applied to qubits, use this array to determine wich gates should 
@@ -67,3 +69,27 @@ def get_qb_order(arr):
 qovec = get_qb_order(array)
 
 print(qovec)
+
+def what_gate(arr, step):
+    arrc = arr[3:]
+    frst_wrd = arrc[step].split()[0]
+    qb_ord = get_qb_order(arr)
+
+    for qb in enumerate(qb_ord):
+
+    #if frst_wrd == 'h':
+     #   gate =
+
+def order_level(arr):
+    qb_ord = get_qb_order(arr)
+
+    for qb in enumerate(qb_ord):
+        for
+
+
+    return levelvec
+
+
+
+
+
