@@ -50,7 +50,7 @@ def main_algorithm(args):
         t += tdrive
         tmaxarray.append(tmax)
         physicalgatesarray.append(physicalgates)
-    tlist = np.linspace(0,t,100*len(steps))
+    tlist = np.linspace(0,t,10*len(steps)) #Eventuellt kör bara med 10.
     del t_st[-1]
     for i in range(len(steps)):
         Htd = gf.TimeDepend(steps[i], physicalgatesarray[i], td[i], Qblist, t_st[i], tlist, tmaxarray[i])

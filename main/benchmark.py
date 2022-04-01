@@ -11,7 +11,7 @@ import Qb_class as qbc
 import matplotlib as mpl
 pi = np.pi
 
-c = 0.00
+c = 0.01
 
 # qubits
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
@@ -19,8 +19,8 @@ qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
 betaplot = False #make this true if we want 1D plots as well
 
-gamma_resolution = 6
-beta_resolution = 6
+gamma_resolution = 20
+beta_resolution = 20
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -33,7 +33,7 @@ if betaplot:
     state_mat = list([[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)])
 c_ops = colf.create_c_ops(qblist)
 # number of trajectories
-ntraj = 1
+ntraj = 100
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
 problem = 'a'
