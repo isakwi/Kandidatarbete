@@ -10,6 +10,8 @@ be in the same level when adding them as steps."""
 
 circuit = qiskit.QuantumCircuit(2)
 circuit.h(0)
+circuit.h(0)
+circuit.cx(0, 1)
 circuit.h(1)
 circuit.h(0)
 circuit.h(1)
@@ -43,19 +45,20 @@ def get_qb_order(arr):
     qo_arr = []
 
     for stp in enumerate(arrc):
-        #tar =[]
+        tar =[]
         charlist= splitc(stp[1])
 
         for word in charlist:
             #print(word)
-            tar = []
+            #tar = []
 
             if word.isdigit():
                 #print(word)
                 tar.append(int(word))
                 #print(tar)
-            qo_arr.append(tar)
-            print(qo_arr)
+        qo_arr.append(tar)
+        #print(qo_arr)
+    return qo_arr
 
 
             #qo_arr.append(tar)
