@@ -72,10 +72,16 @@ def CreateHfromStep(step, Qblist, t_max):
             H_virt.append(H[1])
         else:  # Else append as 1q gate
             print(f"No gate added")
-    return H_real, H_virt, tmax
+
+        angles = step.angle
+        if tmax < 100e-9:
+            td = tmax*abs(max(angles))/np.pi
+        else:
+            td = tmax
+    return H_real, H_virt, tmax, td
 
 
-def TimeDepend(step, gates, t_max, Qblist):
+def TimeDepend(step, gates, td, Qblist, t_st, tlist, t_max):
     angles = step.angle  # [ang1, ang2, ang3...]
     # Create tlist
 
@@ -87,11 +93,6 @@ def TimeDepend(step, gates, t_max, Qblist):
             tlist = np.linspace(0, t_max, 100)  #Maybe make resolution an input ? 100 default
             break"""
     # Find max drive time for 1qb gates ~ largest drive angle
-    if t_max < 100*1e-9:   #Python makes t_max not quite 200ns for 2qb, so we add a large safety margin ;).
-        t_dmax = t_max * abs(max(angles)) / np.pi  # Drive time for the largest angle in step
-        tlist = np.linspace(0, t_dmax, 100) #Maybe make resolution an input ? 100 default
-    else:
-        tlist = np.linspace(0,t_max,100)
 
     args=np.zeros(3)
     #Create time dep H from angles
@@ -107,10 +108,10 @@ def TimeDepend(step, gates, t_max, Qblist):
         if abs(angles[i]) >= tol:  # Dont add gates which have a too small angle
             gate = gates[i]
             args[0] = angles[i]  # Drive angle
-            args[1] = t_max  # Theoretical max gate time (~ ang=π)
-            args[2] = 0   # Start time for drive
+            args[1] = t_max  # Max gate time
+            args[2] = t_st   # Start time for drive
             H = H + QobjEvo([[gate, TimeFunc(tlist, args)]], tlist=tlist)
-    return H, tlist
+    return H
 
 if __name__ == "__main__":
     Qblist = []
