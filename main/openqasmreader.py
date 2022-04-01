@@ -9,6 +9,11 @@ be in the same level when adding them as steps."""
 
 
 circuit = qiskit.QuantumCircuit(2)
+circuit.h(0)
+circuit.h(1)
+circuit.h(0)
+circuit.h(1)
+circuit.h(0)
 
 def create_file(circ):
     file = circ.qasm(formatted=True, filename='circfile.txt')
@@ -25,3 +30,38 @@ def get_arr(circ):
     arr = np.array(str_arr)
 
     return arr
+
+array = get_arr(circuit)
+
+
+def splitc(word):
+    return [char for char in word]
+
+
+def get_qb_order(arr):
+    arrc = arr[3:]
+    qo_arr = []
+
+    for stp in enumerate(arrc):
+        #tar =[]
+        charlist= splitc(stp[1])
+
+        for word in charlist:
+            #print(word)
+            tar = []
+
+            if word.isdigit():
+                #print(word)
+                tar.append(int(word))
+                #print(tar)
+            qo_arr.append(tar)
+            print(qo_arr)
+
+
+            #qo_arr.append(tar)
+
+
+
+qovec = get_qb_order(array)
+
+print(qovec)
