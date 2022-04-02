@@ -45,13 +45,16 @@ def main_algorithm(args):
     ## Do first iteration for ntraj trajectories to split the mcsolve
     for step in steps:
         physicalgates, virtualgates, tmax, tdrive = gf.CreateHfromStep(step, Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
-        t_st.append(tdrive)
         td.append(tdrive)
         t += tdrive
+        t_st.append(t)
         tmaxarray.append(tmax)
         physicalgatesarray.append(physicalgates)
     tlist = np.linspace(0,t,10*len(steps)) #Eventuellt kör bara med 10.
     del t_st[-1]
+    #print(t)
+    #print(td)
+    #print(t_st)
     for i in range(len(steps)):
         Htd = gf.TimeDepend(steps[i], physicalgatesarray[i], td[i], Qblist, t_st[i], tlist, tmaxarray[i])
         H = Htd + H
@@ -62,8 +65,8 @@ def main_algorithm(args):
         else:
             output = sesolve(H, psi0, tlist, e_ops=[])
             psi0 = [Qobj(output.states[-1])] #If all noise rates=0, we use sesolve instead of mcsolve => only one state
-    for vgate in virtualgates:
-        psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
+    #for vgate in virtualgates:
+    #    psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
     ''' I don't know if we want to have the possibility to run with no noise.. but now we do.. 
     just remove the if statements if we want to remove. Maybe it slows it down, it's before the loops so its probably ok
     '''
