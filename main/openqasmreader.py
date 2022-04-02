@@ -10,14 +10,17 @@ an array that contains the order of gates being applied to qubits, use this arra
 be in the same level when adding them as steps."""
 
 
-circuit = qiskit.QuantumCircuit(2)
+circuit = qiskit.QuantumCircuit(3)
 circuit.h(0)
-circuit.h(0)
+circuit.h(1)
 circuit.cx(0, 1)
-circuit.h(1)
-circuit.h(0)
-circuit.h(1)
-circuit.h(0)
+#circuit.h(0)
+#circuit.cx(1, 0)
+#circuit.h(2)
+#circuit.cx(2, 1)
+#circuit.h(0)
+#circuit.h(1)
+#circuit.h(0)
 
 
 """creates text file from openqasm circuit"""
@@ -42,7 +45,7 @@ def get_arr(circ):
 array = get_arr(circuit)
 
 """splits string in to array of its charachters"""
-def splitc(word):
+def split_char(word):
     return [char for char in word]
 
 """function that takes in array of strings (generated from openqasm file),
@@ -55,7 +58,7 @@ def get_qb_order(arr):
 
     for stp in enumerate(arrc):
         tar =[]
-        charlist= splitc(stp[1])
+        charlist= split_char(stp[1])
 
         for word in charlist:
 
@@ -68,28 +71,45 @@ def get_qb_order(arr):
 
 qovec = get_qb_order(array)
 
-print(qovec)
+#print(qovec)
 
-def what_gate(arr, step):
+"""def what_gate(arr, step):
     arrc = arr[3:]
     frst_wrd = arrc[step].split()[0]
     qb_ord = get_qb_order(arr)
 
     for qb in enumerate(qb_ord):
+        print(0)
+"""
 
-    #if frst_wrd == 'h':
-     #   gate =
+"""function that takes in array of strings and returns array of qubits in their levels in the circuit
+"""
 
 def order_level(arr):
     qb_ord = get_qb_order(arr)
+    ol_arr=[]
+    levelvec=[]
 
-    for qb in enumerate(qb_ord):
-        for
+    for qub in enumerate(qb_ord):
+        if qub[0]==0:
+            ol_arr.append(qub[1])
+        elif qub[1] in levelvec[qub[0]-1] != True:
+            ol_arr.append(qub[1])
 
-
+        #print(ol_arr)
+        for tar in enumerate(qub[1]):
+            #print(tar[1])
+            for qb in enumerate(qb_ord[qub[0]:]):
+                exist = tar[1] in qb[1]
+                if exist != True:
+                    ol_arr.append(qb[1])
+        levelvec.append(ol_arr.copy())
+        ol_arr.clear()
     return levelvec
 
 
+nivvec = order_level(array)
 
+print(nivvec)
 
 
