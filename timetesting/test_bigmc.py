@@ -33,7 +33,7 @@ ntraj = 100
 tmax= [50e-9, 271e-9]
 t_st = 0
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
-problem = 'b'
+problem = 'a'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -55,11 +55,11 @@ ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.
 # steps in algoritm (the ones that change will be updated for each step)
 steps = [gf.Add_step(["PX"],[0],[0.1]) for i in range(7)]  # zero angle rotation, will all be replaced
 
-steps[0] = (gf.Add_step(["PX", "PX"], [0, 1], [0, 0]))  # First we apply Hadamard to both qubits
-steps[1] = (gf.Add_step([ "PX"], [ 1], [0]))  # Then we apply Hadamard to the second qubit
+steps[0] = (gf.Add_step(["PX", "PX"], [0, 1], [pi/2, pi/2]))  # First we apply Hadamard to both qubits
+steps[1] = (gf.Add_step(["PX"], [ 1], [pi/2]))  # Then we apply Hadamard to the second qubit
 steps[2] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps[4] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
-steps[5] = (gf.Add_step(["HD"], [1], [0]))
+steps[5] = (gf.Add_step(["PY"], [1], [pi/2]))
 
 # iterating through list of angles and saving expectation values in matrix
 t00 = time.time()
