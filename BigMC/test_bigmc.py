@@ -29,7 +29,7 @@ qblist = [qb1, qb2]
 exp_mat = np.zeros((beta_resolution, gamma_resolution))
 c_ops = colf.create_c_ops(qblist)
 # number of trajectories
-ntraj = 5000
+ntraj = 10
 tmax= [50e-9, 271e-9]
 t_st = 0
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
@@ -86,6 +86,8 @@ for i in range(0, gamma_resolution):
 # Do this by putting exp_mat[beta_resolution-1-j, i] = np.mean(expect(ham, state)) in for loops!) !
 
 
+print("Time elapsed: %.2f seconds." %(time.time()-tstart))
+
 fig, ax = plt.subplots()
 cs = ax.contourf(gamma_vec, beta_vec, exp_mat, 400, cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1, levels=np.linspace(-1,1,345))
 # This one plots the matrix with angles
@@ -121,4 +123,3 @@ I added one step (p = 1) of the gates as they are defined in the paper (PHYS. RE
 I am unsure of how we define the angle for the Hadamard, I wrote 0 for now // Axel
 """
 print("\nDone")
-print("Time elapsed: %.2f seconds." %(time.time()-tstart))
