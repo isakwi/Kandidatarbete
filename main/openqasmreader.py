@@ -13,7 +13,7 @@ be in the same level when adding them as steps."""
 circuit = qiskit.QuantumCircuit(3)
 circuit.h(0)
 circuit.h(1)
-#circuit.cx(0, 1)
+circuit.cx(0, 1)
 circuit.h(1)
 #circuit.cx(1, 0)
 #circuit.h(2)
@@ -88,41 +88,68 @@ qovec = get_qb_order(array)
 def order_level(arr):
     qb_ord = get_qb_order(arr)
     ol_arr=[]
-    levelvec=[]
+    levelvec=[[]]
     totlen=0
+    level=0
 
     for qub in enumerate(qb_ord):
+
+        for el in enumerate(levelvec[0]):
+            totlen = len(el[1]) + totlen
+            #print(totlen)
+            #print(levelvec)
+
+        if totlen >= len(qb_ord):
+            print('done')
+            break
+
+
         if qub[0] == 0:
-            ol_arr.append(qub[1])
+            #ol_arr.append(qub[1])
             slqb_arr = qb_ord[1:]
             #print(slqb_arr)
 
-        elif qub[1] in levelvec[qub[0]-1] != True:
+        elif qub[1] in levelvec[0][level-1] != True:   #levelvec[qub[0]-1]
             ol_arr.append(qub[1])
 
         #print(ol_arr)
         for tar in enumerate(qub[1]):
+
+            if qub[0] == 0:
+                ol_arr.append(qub[1])
+                #slqb_arr = qb_ord[1:]
+                # print(slqb_arr)
+
             #print(tar[1])
             for qb in enumerate(slqb_arr[qub[0]+1:]):
                 exist = tar[1] in qb[1]
                 #print(exist)
                 #print(qb[1])
 
-            for el in enumerate(levelvec):
+
+
+            """for el in enumerate(levelvec):
                 totlen = len(el[1]) + totlen
                 print(totlen)
                 print(levelvec)
 
-                if totlen >= len(qb_ord):
-                    break
+            if totlen >= len(qb_ord):
+                break
+"""
+            if exist != True:       #append to ol_arr[level]
+                ol_arr.append(qb[1])
+                #print(qb[1])
+            else:
+                level = level + 1
+                print(level)
 
-                if exist != True:
-                    ol_arr.append(qb[1])
-                    #print(qb[1])
-        levelvec.append(ol_arr.copy())
+        if qub[0] == 0:
+            levelvec[0].append(ol_arr.copy())
+        else:
+            levelvec[0].append(ol_arr.copy())
         ol_arr.clear()
         totlen=0
-    return levelvec
+    return levelvec[0]
 
 nivvec = order_level(array)
 
