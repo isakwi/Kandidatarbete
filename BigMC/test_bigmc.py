@@ -17,8 +17,8 @@ c = 0.01
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
-gamma_resolution = 10
-beta_resolution = 10
+gamma_resolution = 5
+beta_resolution = 5
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -29,7 +29,7 @@ qblist = [qb1, qb2]
 exp_mat = np.zeros((beta_resolution, gamma_resolution))
 c_ops = colf.create_c_ops(qblist)
 # number of trajectories
-ntraj = 10
+ntraj = 5000
 tmax= [50e-9, 271e-9]
 t_st = 0
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
