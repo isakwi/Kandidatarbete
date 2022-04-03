@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import Qb_class as qbc
 import matplotlib as mpl
 pi = np.pi
-
+tstart=time.time()
 c = 0.01
 
 # qubits
@@ -120,4 +120,5 @@ we want to do it, but then we can just remove the file // Albin
 I added one step (p = 1) of the gates as they are defined in the paper (PHYS. REV. APPLIED 14, 034010 (2020))
 I am unsure of how we define the angle for the Hadamard, I wrote 0 for now // Axel
 """
-print("Done")
+print("\nDone")
+print("Time elapsed: %.2f seconds." %(time.time()-tstart))

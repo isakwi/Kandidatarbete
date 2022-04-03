@@ -13,8 +13,8 @@ be in the same level when adding them as steps."""
 circuit = qiskit.QuantumCircuit(3)
 circuit.h(0)
 circuit.h(1)
-circuit.cx(0, 1)
-#circuit.h(0)
+#circuit.cx(0, 1)
+circuit.h(1)
 #circuit.cx(1, 0)
 #circuit.h(2)
 #circuit.cx(2, 1)
@@ -89,24 +89,40 @@ def order_level(arr):
     qb_ord = get_qb_order(arr)
     ol_arr=[]
     levelvec=[]
+    totlen=0
 
     for qub in enumerate(qb_ord):
-        if qub[0]==0:
+        if qub[0] == 0:
             ol_arr.append(qub[1])
+            slqb_arr = qb_ord[1:]
+            #print(slqb_arr)
+
         elif qub[1] in levelvec[qub[0]-1] != True:
             ol_arr.append(qub[1])
 
         #print(ol_arr)
         for tar in enumerate(qub[1]):
             #print(tar[1])
-            for qb in enumerate(qb_ord[qub[0]:]):
+            for qb in enumerate(slqb_arr[qub[0]+1:]):
                 exist = tar[1] in qb[1]
+                #print(exist)
+                #print(qb[1])
+
+            for el in enumerate(levelvec):
+                totlen = len(el[1]) + totlen
+                print(totlen)
+                print(levelvec)
+
+                if totlen >= len(qb_ord):
+                    break
+
                 if exist != True:
                     ol_arr.append(qb[1])
+                    #print(qb[1])
         levelvec.append(ol_arr.copy())
         ol_arr.clear()
+        totlen=0
     return levelvec
-
 
 nivvec = order_level(array)
 
