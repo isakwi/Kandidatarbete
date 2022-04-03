@@ -95,6 +95,7 @@ def TimeDepend(step, gates, td, Qblist, t_st, tlist, t_max):
     # Find max drive time for 1qb gates ~ largest drive angle
 
     args=np.zeros(3)
+    args2 = np.zeros(2)
     #Create time dep H from angles
     tol = np.pi/180  # Tolerance for how small angle we can handle, when an angle is "0"
                      # Now set to be able to handle at least one degree and upwards
@@ -102,8 +103,11 @@ def TimeDepend(step, gates, td, Qblist, t_st, tlist, t_max):
     for i in range(len(step.name)):
         if step.name[i] in ['CZnew']:
             for j in range(2): # Removing anharmonicity for the gates targeted by CZ
+                #OBS: Has to be time dependant in BigMC solution
                 target = step.Tar_Con[i][j]
-                H = H - Qblist[target].anharm*GateLib.AnHarm(Qblist, target)
+                args2[0] = t_max  # Max gate time
+                args2[1] = t_st  # Start time for drive
+                H = H - QobjEvo([[Qblist[target].anharm*GateLib.AnHarm(Qblist, target),TimeFunc2(tlist,args2)]],tlist=tlist)
     for i in range(len(gates)):
         if abs(angles[i]) >= tol:  # Dont add gates which have a too small angle
             gate = gates[i]
