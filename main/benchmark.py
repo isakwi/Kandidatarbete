@@ -86,6 +86,8 @@ for i in range(0, gamma_resolution):
         if betaplot:
             state_mat[j][i] = state[0].data
 
+print("Time elapsed: %.2f seconds." %(time.time()-tstart))
+
 # plotting matrix
 # plt.matshow(exp_mat, cmap = plt.get_cmap('PiYG'))  # We need to flip the matrix of we use the matshow
 # Do this by putting exp_mat[beta_resolution-1-j, i] = np.mean(expect(ham, state)) in for loops!) !
@@ -146,4 +148,3 @@ I added one step (p = 1) of the gates as they are defined in the paper (PHYS. RE
 I am unsure of how we define the angle for the Hadamard, I wrote 0 for now // Axel
 """
 print("\nDone")
-print("Time elapsed: %.2f seconds." %(time.time()-tstart))

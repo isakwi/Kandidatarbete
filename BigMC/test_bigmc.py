@@ -17,8 +17,8 @@ c = 0.01
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
-gamma_resolution = 10
-beta_resolution = 10
+gamma_resolution = 5
+beta_resolution = 5
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -86,6 +86,8 @@ for i in range(0, gamma_resolution):
 # Do this by putting exp_mat[beta_resolution-1-j, i] = np.mean(expect(ham, state)) in for loops!) !
 
 
+print("Time elapsed: %.2f seconds." %(time.time()-tstart))
+
 fig, ax = plt.subplots()
 cs = ax.contourf(gamma_vec, beta_vec, exp_mat, 400, cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1, levels=np.linspace(-1,1,345))
 # This one plots the matrix with angles
@@ -121,4 +123,3 @@ I added one step (p = 1) of the gates as they are defined in the paper (PHYS. RE
 I am unsure of how we define the angle for the Hadamard, I wrote 0 for now // Axel
 """
 print("\nDone")
-print("Time elapsed: %.2f seconds." %(time.time()-tstart))
