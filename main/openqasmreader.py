@@ -12,9 +12,11 @@ be in the same level when adding them as steps."""
 
 circuit = qiskit.QuantumCircuit(3)
 circuit.h(0)
-circuit.h(1)
-circuit.cx(0, 1)
-circuit.h(1)
+circuit.h(0)
+circuit.h(0)
+circuit.h(0)
+#circuit.cx(0, 1)
+#circuit.h(1)
 #circuit.cx(1, 0)
 #circuit.h(2)
 #circuit.cx(2, 1)
@@ -91,8 +93,8 @@ def order_level(arr):
     levelvec=[[]]
     totlen=0
     level=0
-
     for qub in enumerate(qb_ord):
+
 
         for el in enumerate(levelvec[0]):
             totlen = len(el[1]) + totlen
@@ -103,11 +105,11 @@ def order_level(arr):
             print('done')
             break
 
-
         if qub[0] == 0:
             #ol_arr.append(qub[1])
             slqb_arr = qb_ord[1:]
             #print(slqb_arr)
+            print('here')
 
         elif qub[1] in levelvec[0][level-1] != True:   #levelvec[qub[0]-1]
             ol_arr.append(qub[1])
@@ -151,9 +153,9 @@ def order_level(arr):
         totlen=0
     return levelvec[0]
 
-nivvec = order_level(array)
+#nivvec = order_level(array)
 
-print(nivvec)
+#print(nivvec)
 
 
 
@@ -168,15 +170,17 @@ def order_level2(array):
     for qub in enumerate(qb_ord):
         totlen = 0
         exist1 = False
+        exist2 = False
+        #print('new it')
+
 
         for el in enumerate(levelvec):
             totlen = totlen + len(levelvec[el[0]])
+        #print(totlen)
 
         if totlen >= len(qb_ord):
             print('done')
             break
-
-
 
 
         if qub[0] == 0:
@@ -184,13 +188,18 @@ def order_level2(array):
             slqb_arr = qb_ord[1:]
             # print(slqb_arr)
 
-        for t in enumerate(qub[1]):            # test if gate should be applied in new level
-            for p in enumerate(levelvec[level-1]):
-                if t[1] in p[1]:
-                    exist1 = True
+        if qub[0] != 0:
+            print(levelvec)
+            print(level)
+
+            for t in enumerate(qub[1]):            # test if gate should be applied in new level
+                for p in enumerate(levelvec[level-2]):
+                    if t[1] in p[1]:
+                        exist1 = True
 
         if exist1:
             ol_arr.append(qub[1])
+            print('new level')
 
         for tar in enumerate(qub[1]):
             exist2 = False
@@ -199,20 +208,43 @@ def order_level2(array):
                 ol_arr.append(qub[1])
                 #slqb_arr = qb_ord[1:]
                 # print(slqb_arr)
+                print(ol_arr)
+
 
             for qb in enumerate(slqb_arr[qub[0]+1:]):
                 if tar[1] in qb[1]:
                     exist2 = True
 
-            if exist2 != True:       #append to ol_arr[level]
-                ol_arr.append(qb[1])
-                #print(qb[1])
-            else:
-                level = level + 1
-                print(level)
+                if exist2 != True:       #append to ol_arr[level]
+                    ol_arr.append(qb[1])
+                    #print(qb[1])
+                    print('appended')
+                else:
+                    level = level + 1
+                    print('here')
+                    #print(level)
+                    if qub[0] == 0:
+                        levelvec.append(ol_arr.copy())
+                        #print('appended')
+                        #print(levelvec)
+
+                    break
+
+
+                if qub[0] == 0:
+                    levelvec.append(ol_arr.copy())
+                else:
+                    levelvec.append(ol_arr.copy())
+                #ol_arr.clear()
+
+
+    return levelvec
 
 
 
+nivvec2 = order_level2(array)
+
+print(nivvec2)
 
 
 
