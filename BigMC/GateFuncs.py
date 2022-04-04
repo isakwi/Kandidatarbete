@@ -72,10 +72,16 @@ def CreateHfromStep(step, Qblist, t_max):
             H_virt.append(H[1])
         else:  # Else append as 1q gate
             print(f"No gate added")
-    return H_real, H_virt, tmax
+
+        angles = step.angle
+        if tmax < 100e-9:
+            td = tmax*abs(max(angles))/np.pi
+        else:
+            td = tmax
+    return H_real, H_virt, tmax, td
 
 
-def TimeDepend(step, gates, t_max, Qblist):
+def TimeDepend(step, gates, td, Qblist, t_st, tlist, t_max):
     angles = step.angle  # [ang1, ang2, ang3...]
     # Create tlist
 
@@ -87,14 +93,9 @@ def TimeDepend(step, gates, t_max, Qblist):
             tlist = np.linspace(0, t_max, 100)  #Maybe make resolution an input ? 100 default
             break"""
     # Find max drive time for 1qb gates ~ largest drive angle
-    if t_max < 100*1e-9:   #Python makes t_max not quite 200ns for 2qb, so we add a large safety margin ;).
-        t_dmax = t_max * abs(max(angles)) / np.pi  # Drive time for the largest angle in step
-        tlist = np.linspace(0, t_dmax, 10) #Maybe make resolution an input? Doesn't really matter.
-                                        # Only specifies times where to store the states/e_ops
-    else:
-        tlist = np.linspace(0,t_max,10)
 
     args=np.zeros(3)
+    args2 = np.zeros(2)
     #Create time dep H from angles
     tol = np.pi/180  # Tolerance for how small angle we can handle, when an angle is "0"
                      # Now set to be able to handle at least one degree and upwards
@@ -102,16 +103,19 @@ def TimeDepend(step, gates, t_max, Qblist):
     for i in range(len(step.name)):
         if step.name[i] in ['CZnew']:
             for j in range(2): # Removing anharmonicity for the gates targeted by CZ
+                #OBS: Has to be time dependant in BigMC solution
                 target = step.Tar_Con[i][j]
-                H = H - Qblist[target].anharm*GateLib.AnHarm(Qblist, target)
+                args2[0] = t_max  # Max gate time
+                args2[1] = t_st  # Start time for drive
+                H = H - QobjEvo([[Qblist[target].anharm*GateLib.AnHarm(Qblist, target),TimeFunc2(tlist,args2)]],tlist=tlist)
     for i in range(len(gates)):
         if abs(angles[i]) >= tol:  # Dont add gates which have a too small angle
             gate = gates[i]
             args[0] = angles[i]  # Drive angle
-            args[1] = t_max  # Theoretical max gate time (~ ang=π)
-            args[2] = 0   # Start time for drive
+            args[1] = t_max  # Max gate time
+            args[2] = t_st   # Start time for drive
             H = H + QobjEvo([[gate, TimeFunc(tlist, args)]], tlist=tlist)
-    return H, tlist
+    return H
 
 if __name__ == "__main__":
     Qblist = []

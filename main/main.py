@@ -7,7 +7,10 @@ import numpy as np
 import CollapseOperator_function as co
 from qutip import *
 import GateFuncs as gf
+
 import main_Algorithm as mA
+import main_Alg_parfortest as mA
+
 import benchmarking_main as bm
 pi = np.pi
 

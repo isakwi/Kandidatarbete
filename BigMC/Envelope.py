@@ -30,6 +30,12 @@ def TimeFunc (t, args):
     else:
         beta = 2*np.pi/t_m  #Drive strength should corespond to 2π drive angle for 2qb gates
         t_d = t_m #*ang/(2*np.pi) ? Do we want to drive to different angles? or always 2π ?
-        #todo: make solution for iSWAP where we want pi as angle, either here ore elsewhere in the program
     return EnvelopeFunc(t, beta, t_m, t_d, t_st)
 
+def TimeFunc2 (t, args):
+    # Basically a square envelope for turning of the anharmonicity
+    # To be called from QobjEvo([gate[i],TimeFunc2(tlist, inputs[i])], tlist=tlist)
+    # where inputs[i] is an array of vals for i:th qubit
+    t_m  = args[0]  # gate time
+    t_st = args[1]  # Start time for drive
+    return np.heaviside(t_st+t_m-t,1)*np.heaviside(t-t_st,1)
