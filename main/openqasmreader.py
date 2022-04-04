@@ -156,3 +156,63 @@ nivvec = order_level(array)
 print(nivvec)
 
 
+
+
+def order_level2(array):
+    qb_ord = get_qb_order(array)
+    ol_arr =[]
+    levelvec = [] # each level is array containing array of targets
+    totlen = 0
+    level = 0
+
+    for qub in enumerate(qb_ord):
+        totlen = 0
+        exist1 = False
+
+        for el in enumerate(levelvec):
+            totlen = totlen + len(levelvec[el[0]])
+
+        if totlen >= len(qb_ord):
+            print('done')
+            break
+
+
+
+
+        if qub[0] == 0:
+            # ol_arr.append(qub[1])
+            slqb_arr = qb_ord[1:]
+            # print(slqb_arr)
+
+        for t in enumerate(qub[1]):            # test if gate should be applied in new level
+            for p in enumerate(levelvec[level-1]):
+                if t[1] in p[1]:
+                    exist1 = True
+
+        if exist1:
+            ol_arr.append(qub[1])
+
+        for tar in enumerate(qub[1]):
+            exist2 = False
+
+            if qub[0] == 0:
+                ol_arr.append(qub[1])
+                #slqb_arr = qb_ord[1:]
+                # print(slqb_arr)
+
+            for qb in enumerate(slqb_arr[qub[0]+1:]):
+                if tar[1] in qb[1]:
+                    exist2 = True
+
+            if exist2 != True:       #append to ol_arr[level]
+                ol_arr.append(qb[1])
+                #print(qb[1])
+            else:
+                level = level + 1
+                print(level)
+
+
+
+
+
+
