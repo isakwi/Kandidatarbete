@@ -227,12 +227,11 @@ def order_level2(array):
                         levelvec.append(ol_arr.copy())
                         #print('appended')
                         #print(levelvec)
-
                     break
 
-
                 if qub[0] == 0:
-                    levelvec.append(ol_arr.copy())
+                    print('burh')
+                    #levelvec.append(ol_arr.copy())
                 else:
                     levelvec.append(ol_arr.copy())
                 #ol_arr.clear()
