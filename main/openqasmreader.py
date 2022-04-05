@@ -14,7 +14,7 @@ circuit = qiskit.QuantumCircuit(3)
 circuit.h(1)
 circuit.h(0)
 circuit.h(0)
-circuit.h(0)
+circuit.h(1)
 #circuit.cx(0, 1)
 #circuit.h(1)
 #circuit.cx(1, 0)
@@ -179,7 +179,7 @@ def order_level2(array, depth):
             totlen = totlen + len(levelvec[el[0]])
         #print(totlen)
 
-        if totlen >= len(qb_ord):
+        if totlen >= len(qb_ord) : #or level +1>= depth
             print('done')
             break
 
@@ -204,14 +204,18 @@ def order_level2(array, depth):
                         exist1 = True
         print(exist1)
         if exist1:
+            print('bajs',qub[1])
 
-            ol_arr.append(qub[1])
+            ol_arr =[qub[1]]
+            #ol_arr.append(qub[1])
+            print(ol_arr, qub[1])
             print('new level')
         print('nu')
         print(levelvec)
         print('du')
-        print(levelvec[level+1])
-        for tar in enumerate(levelvec[level +1]): # var qub[1]
+        #print(levelvec[level+1])
+        print(level)
+        for tar in enumerate(levelvec[level +1]): # var qub[1]  sen levelvec[level +1]
             exist2 = False
             print(tar[1])
             print('doing tar')
@@ -250,7 +254,9 @@ def order_level2(array, depth):
                         # print(level)
 
                         levelvec[level] = (ol_arr.copy())
-                        levelvec[level+1] = [qb[1]]
+                        #levelvec[level+1] = [qb[1]]
+                        ol_arr = [qb[1]]
+                        levelvec[level + 1] = ol_arr
 
                         #print('appended')
                         print(levelvec)
@@ -260,12 +266,23 @@ def order_level2(array, depth):
 
             else:
                 print('nu vi har')
+                print(ol_arr)
+                print(levelvec)
+                print(level+1)
+
                 for qb in enumerate(ol_arr): #slqb_arr[qub[0]:] sen ol_arr
                     #print(ol_arr)
                     #print('here wtf')
-                    if tar[1] in qb[1]:
+                    #print(qb[1])
+                    print(tar[1], qb[1])
+
+                for elt in enumerate(qb[1]):
+                    print('korpa')
+                    if elt[1] in tar[1]:  # var tar[1] in qb[1]
                         exist2 = True
-                    print(exist2)
+                    for pr in enumerate(ol_arr):
+                        if elt[1] in pr[1]:
+                            exist2 = True
 
 
                     if exist2 != True:       #append to ol_arr[level]
@@ -277,6 +294,11 @@ def order_level2(array, depth):
                         print('already existed in level B')
                         #print(level)
                         levelvec[level] = ol_arr.copy()
+                        if level+1 < depth:
+                            levelvec[level + 1] = [qb[1]]
+                        print(levelvec)
+                        print('dinmamma')
+                        ol_arr.clear()
                         break
                 else:
                     continue
