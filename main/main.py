@@ -8,8 +8,9 @@ import CollapseOperator_function as co
 from qutip import *
 import GateFuncs as gf
 
-import main_Algorithm as mA
-import main_Alg_parfortest as mA
+"One of these should be used."
+import main_Algorithm as mA # The main algorithm as we first wrote it
+#import main_Alg_parfortest as mA # The main algorithm using parfor for all steps
 
 import benchmarking_main as bm
 pi = np.pi
