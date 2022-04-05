@@ -134,11 +134,21 @@ def TimeDependVirt(step, angles, gates, td, Qblist, t_st, tlist, t_max):
     for i in range(len(gates)):
         if abs(angles[i]) >= tol:  # Dont add gates which have a too small angle
             gate = gates[i]
-            tmax = 1e-9
+            idx = findStartIndex(tlist, t_st + td)
+            tmax = tlist[idx+10]-tlist[idx]
             args[0] = tmax  # Max gate time, creates short but strong pulse
             args[1] = t_st + td   # Start time for drive, starts at the last step
             H = H + QobjEvo([[gate, 1/(tmax*2)*angles[i]*TimeFunc2(tlist, args)]], tlist=tlist)
     return H
+
+def findStartIndex(tlist, tstart):
+    tnew = tlist - tstart
+    minima = min(abs(tnew))
+    if minima in tnew:
+        return np.where(tnew == minima)[0][0]
+    else:
+        return np.where(tnew == -minima)[0][0]
+
 
 if __name__ == "__main__":
     Qblist = []
