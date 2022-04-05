@@ -40,25 +40,32 @@ def main_algorithm(args):
     td = []
     tmaxarray = []
     physicalgatesarray = []
+    physicalgatesangles = []
+    virtualgatesarray = []
+    virtualgatesangles = []
 
     H = anharmonicity(Qblist) # + ZZ_Interaction(Qblist)
     ## Do first iteration for ntraj trajectories to split the mcsolve
     for step in steps:
-        physicalgates, virtualgates, tmax, tdrive = gf.CreateHfromStep(step, Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
+        physicalgates, pgangles, virtualgates, vgangles, tmax, tdrive = gf.CreateHfromStep(step, Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, tdrive IN THAT ORDER
         td.append(tdrive)
-        t += tdrive
+        t += tdrive + 2e-9
         t_st.append(t)
         tmaxarray.append(tmax)
         physicalgatesarray.append(physicalgates)
-    tlist = np.linspace(0,t,10*len(steps)) #Eventuellt kör bara med 10.
+        physicalgatesangles.append(pgangles)
+        virtualgatesarray.append(virtualgates)
+        virtualgatesangles.append(vgangles)
+    tlist = np.linspace(0,t,round(1*t*1e9)) #Eventuellt kör bara med 10.
     del t_st[-1]
     #print(t)
     #print(td)
     #print(t_st)
     for i in range(len(steps)):
-        Htd = gf.TimeDepend(steps[i], physicalgatesarray[i], td[i], Qblist, t_st[i], tlist, tmaxarray[i])
-        H = Htd + H
-    if max(tlist) >= 1e-11:  # If the tlist is too small we get integration error
+        Htd = gf.TimeDepend(steps[i], physicalgatesangles[i], physicalgatesarray[i], td[i], Qblist, t_st[i], tlist, tmaxarray[i])
+        Hvirt = gf.TimeDependVirt(steps[i], virtualgatesangles[i], virtualgatesarray[i], td[i], Qblist, t_st[i], tlist, tmaxarray[i])
+        H = Htd + Hvirt + H
+    if max(tlist) >= 1e-15:  # If the tlist is too small we get integration error
         if c_ops != []:
             output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj, progress_bar=None)
             psi0 = output.states[:, -1].tolist()
