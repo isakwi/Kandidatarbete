@@ -16,9 +16,7 @@ c = 0.01
 # qubits
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
-
 betaplot = True #make this true if we want 1D plots as well
-plt.rcParams['text.usetex'] = True
 
 gamma_resolution = 6
 beta_resolution = 6
@@ -102,7 +100,7 @@ ax.set_ylabel("\u03B2$_1$")
 labels = ["0", "$\pi$/2", "$\pi$"]
 plt.xticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
 plt.yticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
-
+plt.show()
 
 
 # Find minima manually, will be fast for small matrices, like in the benchmark!
@@ -140,13 +138,13 @@ if betaplot:
     #Title if you want, uncomment then
     #ax2.set_title('Problem {problem}')
     ax2.set_xlabel(r"$\beta$")
-    ax2.set_ylabel(r"$Cost function or probability of occupation$")
+    ax2.set_ylabel("Cost function or probability of occupation")
 
     #saves in the current directory, you can add a path before the name: "path/betaplot"...
     imStr = "betaplot" + str(problem).upper() + ".pdf"
-    #plt.show()
-    fig.savefig(imStr, format="pdf", bbox_inches="tight")
-plt.show()
+    plt.show()
+
+fig.savefig(imStr, format="pdf", bbox_inches="tight")
 """
 This is meant to be a file to easily implement the benchmark. I don't know if this is how 
 we want to do it, but then we can just remove the file // Albin
