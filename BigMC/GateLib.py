@@ -53,7 +53,7 @@ def PZ(Qblist, target):
     Returns a Qobj that operates on qubit[target] with the gate"""
     sz = [qeye(Qb.level) for Qb in Qblist]
     #sz[target] = destroy(Qblist[target].level)*create(Qblist[target].level) - create(Qblist[target].level)*destroy(Qblist[target].level)
-    sz[target] = 2 * create(Qblist[target].level) * destroy(Qblist[target].level) - qeye(Qblist[target].level)
+    sz[target] = -(2 * create(Qblist[target].level) * destroy(Qblist[target].level) - qeye(Qblist[target].level))
     #Maybe -1 instead of -qeye()...?
 
     #If we intend this to rotate around z-axis it should be defined differently.. but I guess we us VPZ for that?
@@ -90,7 +90,7 @@ def HD(Qblist, target):
     Returns two operations, one real and one virtual. The virtual is to be applied after the alg-step
     NOTE: Angle for HD_real is always pi/2 and for HD_virt always pi"""
     HD_real = RPY(Qblist, target) # OBS negative PY rotation, that's why we call RPY
-    HD_virt = VPZ(Qblist, target, np.pi)
+    HD_virt = PZ(Qblist, target)
     return [HD_real, HD_virt]
 
 def CNOT(Qblist, Tar_Con):

@@ -34,10 +34,12 @@ def CreateHfromStep(step, Qblist, t_max):
     """ Create two lists of Qobj from a step in the step_list, one for virtual and one for real gates
     Also return a tlist depending on what gates there are in the step
     t_max[0] = max for 1qb gate (~20ns) and t_max[1] = max for 2ab gate (~200ns)"""
-    H_real = []  # Try to make H pre defined in size!!! 
+    H_real = []  # Try to make H pre defined in size!!!
+    real_angles = []
     # Might be hard to do since we don't know how many gates will be real
     H_virt = []
-    tmax = t_max[0] # Defaults to time for single qubit gate
+    virt_angles = []
+    tmax = t_max[0] # Defaults to time for virtual gate
     if len(step.name) > len(Qblist):
         print('Error: More gates than qubits have been put to a single depth.')
         sys.exit(1)  # Stops the program
@@ -58,31 +60,36 @@ def CreateHfromStep(step, Qblist, t_max):
         """
 
         if step.name[i] in ["VPZ"]:  # Check virtual gates
-            H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
-        elif step.name[i] in ["PX", "PY", "PZ", "PM"]:
+            #H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
+            H_virt.append(GateLib.PZ(Qblist, step.Tar_Con[i]))
+            virt_angles.append(step.angle[i])
+        elif step.name[i] in ["PX", "PY", "PZ", "PM", "RPY"]:
             H_real.append(y(Qblist, step.Tar_Con[i]))
+            real_angles.append(step.angle[i])
         elif step.name[i] in ["CZ", "iSWAP","CZnew"]:  # Check 2q gates
             H_real.append(y(Qblist, step.Tar_Con[i]))
             step.angle[i] = 2*np.pi  # Should it be 2*pi for all 2qb gatess??
+            real_angles.append(step.angle[i])
             tmax =t_max[1] # If there is a 2qb gate the maximal time changes to match that
         elif step.name[i] in ["HD"]:
-            step.angle[i] = np.pi/2
+            tmax = tmax  # We need to first do real gate then virtual
+            real_angles.append(np.pi/2)
+            virt_angles.append(np.pi)
             H = GateLib.HD(Qblist, step.Tar_Con[i])
             H_real.append(H[0])
             H_virt.append(H[1])
         else:  # Else append as 1q gate
             print(f"No gate added")
 
-        angles = step.angle
+        angles = real_angles + virt_angles
         if tmax < 100e-9:
             td = tmax*abs(max(angles))/np.pi
         else:
             td = tmax
-    return H_real, H_virt, tmax, td
+    return H_real, real_angles, H_virt, virt_angles, tmax, td
 
 
-def TimeDepend(step, gates, td, Qblist, t_st, tlist, t_max):
-    angles = step.angle  # [ang1, ang2, ang3...]
+def TimeDepend(step, angles, gates, td, Qblist, t_st, tlist, t_max):
     # Create tlist
 
     # Find theoretical max drive time ~ π rotation
@@ -109,12 +116,27 @@ def TimeDepend(step, gates, td, Qblist, t_st, tlist, t_max):
                 args2[1] = t_st  # Start time for drive
                 H = H - QobjEvo([[Qblist[target].anharm*GateLib.AnHarm(Qblist, target),TimeFunc2(tlist,args2)]],tlist=tlist)
     for i in range(len(gates)):
-        if abs(angles[i]) >= tol:  # Dont add gates which have a too small angle
+        if abs(angles[i]) >= tol:  # Skip gates which have a too small angle
             gate = gates[i]
             args[0] = angles[i]  # Drive angle
             args[1] = t_max  # Max gate time
             args[2] = t_st   # Start time for drive
             H = H + QobjEvo([[gate, TimeFunc(tlist, args)]], tlist=tlist)
+    return H
+
+def TimeDependVirt(step, angles, gates, td, Qblist, t_st, tlist, t_max):
+
+    args=np.zeros(2)
+    #Create time dep H from angles
+    tol = np.pi/180  # Tolerance for how small angle we can handle, when an angle is "0"
+                     # Now set to be able to handle at least one degree and upwards
+    H=0
+    for i in range(len(gates)):
+        if abs(angles[i]) >= tol:  # Dont add gates which have a too small angle
+            gate = gates[i]
+            args[0] = 1e-9  # Max gate time, creates short but strong pulse
+            args[1] = t_st + td   # Start time for drive, starts at the last step
+            H = H + QobjEvo([[gate, 1e9/2*angles[i]*TimeFunc2(tlist, args)]], tlist=tlist)
     return H
 
 if __name__ == "__main__":
