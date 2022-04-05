@@ -17,8 +17,8 @@ c = 0.01
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
-gamma_resolution = 10
-beta_resolution = 10
+gamma_resolution = 6
+beta_resolution = 6
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -51,15 +51,15 @@ INPUTS:
     Choose drive angle and drive start for each qubit
 
 """
-ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
+ham = -h1 * gl.PZ(qblist, 0) - h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
 # steps in algoritm (the ones that change will be updated for each step)
-steps = [gf.Add_step(["PX"],[0],[0.1]) for i in range(7)]  # zero angle rotation, will all be replaced
+steps = [gf.Add_step(["PX"],[0],[0.1]) for i in range(8)]  # zero angle rotation, will all be replaced
 
-steps[0] = (gf.Add_step(["PX", "PX"], [0, 1], [pi/2, pi/2]))  # First we apply Hadamard to both qubits
-steps[1] = (gf.Add_step(["PX"], [ 1], [pi/2]))  # Then we apply Hadamard to the second qubit
+steps[0] = (gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))  # First we apply Hadamard to both qubits
+steps[1] = (gf.Add_step(["HD"], [ 1], [0]))  # Then we apply Hadamard to the second qubit
 steps[2] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps[4] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
-steps[5] = (gf.Add_step(["PY"], [1], [pi/2]))
+steps[5] = (gf.Add_step(["HD"], [1], [0]))
 
 # iterating through list of angles and saving expectation values in matrix
 t00 = time.time()
@@ -74,7 +74,8 @@ for i in range(0, gamma_resolution):
     for j in range(0, beta_resolution):
         beta = beta_vec[j]
         steps[3] = (gf.Add_step(["PX"], [1], [2 * gamma * J]))
-        steps[6] = (gf.Add_step(["PX", "PX"], [0, 1], [2 * beta, 2 * beta]))
+        steps[6] = (gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * gamma * h1, 2 * gamma * h2]))
+        steps[7] = (gf.Add_step(["PX", "PX"], [0, 1], [2 * beta, 2 * beta]))
 # calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "t_st": t_st}
         state = ma.main_algorithm(args)
