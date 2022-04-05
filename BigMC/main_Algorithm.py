@@ -56,7 +56,7 @@ def main_algorithm(args):
         physicalgatesangles.append(pgangles)
         virtualgatesarray.append(virtualgates)
         virtualgatesangles.append(vgangles)
-    tlist = np.linspace(0,t,round(1*t*1e9)) #Eventuellt kör bara med 10.
+    tlist = np.linspace(0,t,round(10*t*1e9)) #Eventuellt kör bara med 10.
     del t_st[-1]
     #print(t)
     #print(td)
