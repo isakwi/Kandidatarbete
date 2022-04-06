@@ -42,7 +42,7 @@ def CreateHfromStep(step, Qblist, t_max):
     tmax = t_max[0] # Defaults to time for virtual gate
     if len(step.name) > len(Qblist):
         print('Error: More gates than qubits have been put to a single depth.')
-        sys.exit(1)  # Stops the program
+        sys.exit(1)  # Stops the program with an abnormal exit code (the program did not run as it should have
     for i in range(len(step.name)):
         try: 
             y = eval("GateLib." + step.name[i])  # Calls the gate corresponding to the step.name[i]
@@ -53,7 +53,7 @@ def CreateHfromStep(step, Qblist, t_max):
         if type(step.Tar_Con[i]) == list and max(step.Tar_Con[i]) > len(Qblist) - 1 or type(step.Tar_Con[i]) == int and \
                 step.Tar_Con[i] > len(Qblist) - 1:
             print('Error: Qubit outside of the number of qubits is being targeted by Tar_Con')
-            sys.exit(1)  # Stops the program
+            sys.exit(1)  # Stops the program with the same exit code as above 
         if step.angle[i] < 0:
             print("Warning! Negative angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected, will be converted to ' + str(round((step.angle[i]/np.pi+2),3)) + "π")
             step.angle[i]=step.angle[i] + 2*np.pi
