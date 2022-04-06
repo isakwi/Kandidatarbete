@@ -52,7 +52,7 @@ def CreateHfromStep(step, Qblist, t_max):
                 step.Tar_Con[i] > len(Qblist) - 1:
             print('Error: Qubit outside of the number of qubits is being targeted by Tar_Con')
             sys.exit(1)  # Stops the program
-        if step.angle[i] < 0:
+        if step.angle[i] < 0 and step.name[i] not in ["VPZ"]:
             print("Warning! Negative angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i]/np.pi+2),3)) + "π")
             step.angle[i]=step.angle[i] + 2*np.pi
         """The error handling is probably not very good. I know one should be more specific in which errors
