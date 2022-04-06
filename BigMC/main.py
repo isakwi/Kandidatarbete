@@ -8,11 +8,7 @@ import CollapseOperator_function as co
 from qutip import *
 import GateFuncs as gf
 
-"One of these should be used."
-import main_Algorithm as mA # The main algorithm as we first wrote it
-#import main_Alg_parfortest as mA # The main algorithm using parfor for all steps
-
-import benchmarking_main as bm
+import main_Algorithm as mA
 pi = np.pi
 
 
@@ -27,8 +23,8 @@ for i in range(0, n):  # Creates list with all qubits, for now the desig and ini
     Qblist.append(Qb.Qubit(l[i], [relax[i], depha[i], therma[i]], anharm[i], [], []))
 # Parameters for gates
 """ Maybe we can remove this? """
-t_1q = 20e-9  # Max time for 1 qubit gate
-t_2q = 200e-9  # Max time for 2 qubit gate
+t_1q = 50e-9  # Max time for 1 qubit gate
+t_2q = 271e-9  # Max time for 2 qubit gate
 w_01 = 4*1e9 * 2 * pi   # Qubit frequency (4-5 GHz)
 w_d = w_01
 #U = -200*1e6 * 2 * pi   # Anhormonicity (only if levels > 2 ) (150-250 MHz) Moved to qb class
@@ -40,7 +36,13 @@ psi0 = Qb.create_psi0(Qblist, 0)  # Create initial state with all qubits in grou
 c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
 """ Adding the algorithm steps! """
 steps = []
-steps.append(gf.Add_step(["PX"], [0], [pi]))
+steps.append(gf.Add_step(["HD"], [0], [pi/2]))
+steps.append(gf.Add_step(["VPZ"], [0], [pi/2]))
+
+
+
+
+#steps.append(gf.Add_step(["HD"], [0], [pi/2]))
 
 
 args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj}

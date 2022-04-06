@@ -40,30 +40,42 @@ def main_algorithm(args):
     td = []
     tmaxarray = []
     physicalgatesarray = []
+    physicalgatesangles = []
+    virtualgatesarray = []
+    virtualgatesangles = []
 
     H = anharmonicity(Qblist) # + ZZ_Interaction(Qblist)
     ## Do first iteration for ntraj trajectories to split the mcsolve
     for step in steps:
-        physicalgates, virtualgates, tmax, tdrive = gf.CreateHfromStep(step, Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
-        t_st.append(tdrive)
+        physicalgates, pgangles, virtualgates, vgangles, tmax, tdrive = gf.CreateHfromStep(step, Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, tdrive IN THAT ORDER
         td.append(tdrive)
-        t += tdrive
+        t += tdrive + 2e-9
+        t_st.append(t)
         tmaxarray.append(tmax)
         physicalgatesarray.append(physicalgates)
-    tlist = np.linspace(0,t,100*len(steps))
+        physicalgatesangles.append(pgangles)
+        virtualgatesarray.append(virtualgates)
+        virtualgatesangles.append(vgangles)
+    tlist = np.linspace(0,t,round(10*t*1e9)) #Eventuellt kör bara med 10.
     del t_st[-1]
+    #print(t)
+    #print(td)
+    #print(t_st)
     for i in range(len(steps)):
-        Htd = gf.TimeDepend(steps[i], physicalgatesarray[i], td[i], Qblist, t_st[i], tlist, tmaxarray[i])
-        H = Htd + H
-    if max(tlist) >= 1e-11:  # If the tlist is too small we get integration error
+        Htd = gf.TimeDepend(steps[i], physicalgatesangles[i], physicalgatesarray[i], td[i], Qblist, t_st[i], tlist, tmaxarray[i])
+        Hvirt = gf.TimeDependVirt(steps[i], virtualgatesangles[i], virtualgatesarray[i], td[i], Qblist, t_st[i], tlist, tmaxarray[i])
+        H = Htd + Hvirt + H
+    if max(tlist) >= 1e-15:  # If the tlist is too small we get integration error
         if c_ops != []:
             output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj, progress_bar=None)
             psi0 = output.states[:, -1].tolist()
         else:
             output = sesolve(H, psi0, tlist, e_ops=[])
             psi0 = [Qobj(output.states[-1])] #If all noise rates=0, we use sesolve instead of mcsolve => only one state
-    for vgate in virtualgates:
-        psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
+    else:
+        raise Exception("At least one of the tlists is too small and cannot be intergrated over.")
+    #for vgate in virtualgates:
+    #    psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
     ''' I don't know if we want to have the possibility to run with no noise.. but now we do.. 
     just remove the if statements if we want to remove. Maybe it slows it down, it's before the loops so its probably ok
     '''

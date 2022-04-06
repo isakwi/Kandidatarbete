@@ -10,15 +10,15 @@ import matplotlib.pyplot as plt
 import Qb_class as qbc
 import matplotlib as mpl
 pi = np.pi
-
+tstart=time.time()
 c = 0.01
 
 # qubits
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
-gamma_resolution = 6
-beta_resolution = 6
+gamma_resolution = 10
+beta_resolution = 10
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -29,11 +29,11 @@ qblist = [qb1, qb2]
 exp_mat = np.zeros((beta_resolution, gamma_resolution))
 c_ops = colf.create_c_ops(qblist)
 # number of trajectories
-ntraj = 100
+ntraj = 10
 tmax= [50e-9, 271e-9]
 t_st = 0
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
-problem = 'b'
+problem = 'a'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -51,12 +51,12 @@ INPUTS:
     Choose drive angle and drive start for each qubit
 
 """
-ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
+ham = -h1 * gl.PZ(qblist, 0) - h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
 # steps in algoritm (the ones that change will be updated for each step)
-steps = [gf.Add_step(["PX"],[0],[0.1]) for i in range(7)]  # zero angle rotation, will all be replaced
+steps = [gf.Add_step(["PX"],[0],[0.1]) for i in range(8)]  # zero angle rotation, will all be replaced
 
-steps[0] = (gf.Add_step(["PX", "PX"], [0, 1], [0, 0]))  # First we apply Hadamard to both qubits
-steps[1] = (gf.Add_step([ "PX"], [ 1], [0]))  # Then we apply Hadamard to the second qubit
+steps[0] = (gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))  # First we apply Hadamard to both qubits
+steps[1] = (gf.Add_step(["HD"], [ 1], [0]))  # Then we apply Hadamard to the second qubit
 steps[2] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps[4] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps[5] = (gf.Add_step(["HD"], [1], [0]))
@@ -74,7 +74,8 @@ for i in range(0, gamma_resolution):
     for j in range(0, beta_resolution):
         beta = beta_vec[j]
         steps[3] = (gf.Add_step(["PX"], [1], [2 * gamma * J]))
-        steps[6] = (gf.Add_step(["PX", "PX"], [0, 1], [2 * beta, 2 * beta]))
+        steps[6] = (gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * gamma * h1, 2 * gamma * h2]))
+        steps[7] = (gf.Add_step(["PX", "PX"], [0, 1], [2 * beta, 2 * beta]))
 # calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "t_st": t_st}
         state = ma.main_algorithm(args)
@@ -85,6 +86,8 @@ for i in range(0, gamma_resolution):
 # plt.matshow(exp_mat, cmap = plt.get_cmap('PiYG'))  # We need to flip the matrix of we use the matshow
 # Do this by putting exp_mat[beta_resolution-1-j, i] = np.mean(expect(ham, state)) in for loops!) !
 
+
+print("Time elapsed: %.2f seconds." %(time.time()-tstart))
 
 fig, ax = plt.subplots()
 cs = ax.contourf(gamma_vec, beta_vec, exp_mat, 400, cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1, levels=np.linspace(-1,1,345))
@@ -120,4 +123,4 @@ we want to do it, but then we can just remove the file // Albin
 I added one step (p = 1) of the gates as they are defined in the paper (PHYS. REV. APPLIED 14, 034010 (2020))
 I am unsure of how we define the angle for the Hadamard, I wrote 0 for now // Axel
 """
-print("Done")
+print("\nDone")

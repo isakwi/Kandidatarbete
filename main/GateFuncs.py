@@ -52,6 +52,9 @@ def CreateHfromStep(step, Qblist, t_max):
                 step.Tar_Con[i] > len(Qblist) - 1:
             print('Error: Qubit outside of the number of qubits is being targeted by Tar_Con')
             sys.exit(1)  # Stops the program
+        if step.angle[i] < 0:
+            print("Warning! Negative angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i]/np.pi+2),3)) + "π")
+            step.angle[i]=step.angle[i] + 2*np.pi
         """The error handling is probably not very good. I know one should be more specific in which errors
         to handle in each except, but all the errors in the try block must come from step.name[i] (given that
         the code works as it should), so this should be pretty safe.         
@@ -89,10 +92,10 @@ def TimeDepend(step, gates, t_max, Qblist):
     # Find max drive time for 1qb gates ~ largest drive angle
     if t_max < 100*1e-9:   #Python makes t_max not quite 200ns for 2qb, so we add a large safety margin ;).
         t_dmax = t_max * abs(max(angles)) / np.pi  # Drive time for the largest angle in step
-        tlist = np.linspace(0, t_dmax, 100) #Maybe make resolution an input ? 100 default
+        tlist = np.linspace(0, t_dmax, 10) #Maybe make resolution an input? Doesn't really matter.
+                                        # Only specifies times where to store the states/e_ops
     else:
-        tlist = np.linspace(0,t_max,100)
-
+        tlist = np.linspace(0,t_max,10)
     args=np.zeros(3)
     #Create time dep H from angles
     tol = np.pi/180  # Tolerance for how small angle we can handle, when an angle is "0"

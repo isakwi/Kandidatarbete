@@ -10,17 +10,16 @@ import matplotlib.cm as cm
 import Qb_class as qbc
 import matplotlib as mpl
 pi = np.pi
-
-c = 0.00
+tstart = time.time()
+c = 0.01
 
 # qubits
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
+betaplot = True #make this true if we want 1D plots as well
 
-betaplot = False #make this true if we want 1D plots as well
-
-gamma_resolution = 6
-beta_resolution = 6
+gamma_resolution = 61
+beta_resolution = 61
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -30,13 +29,13 @@ qblist = [qb1, qb2]
 # zeros matrix for saving expectation value of hamiltonian
 exp_mat = np.zeros((beta_resolution, gamma_resolution))
 if betaplot:
-    state_mat = list([[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)])
-c_ops = colf.create_c_ops(qblist)
+    state_mat = [[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)]
+c_ops = [] #colf.create_c_ops(qblist)
 # number of trajectories
 ntraj = 1
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
-problem = 'a'
+problem = 'b'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -86,6 +85,8 @@ for i in range(0, gamma_resolution):
         if betaplot:
             state_mat[j][i] = state[0].data
 
+print("Time elapsed: %.2f seconds." %(time.time()-tstart))
+
 # plotting matrix
 # plt.matshow(exp_mat, cmap = plt.get_cmap('PiYG'))  # We need to flip the matrix of we use the matshow
 # Do this by putting exp_mat[beta_resolution-1-j, i] = np.mean(expect(ham, state)) in for loops!) !
@@ -117,27 +118,33 @@ print(f"It is located at gamma = {gamma_vec[coord[1]]} and beta at {beta_vec[coo
 
 if betaplot:
     fig, ax2 = plt.subplots()
-    cost_vec = exp_mat[coord[1]][:]
-    state_vec = state_mat[coord[1]][:]
-    zz = [state[0, 0] for state in state_vec]  # |00>
+    state_vec = [row[coord[1]] for row in state_mat]
+    cost_vec = [cost[coord[1]] for cost in exp_mat]
+    zz = [state[0,0] for state in state_vec]  # |00>
     zz = [np.abs(amp) ** 2 for amp in zz]
-    zo = [state[1, 0] for state in state_vec]  # |01>
+    zo = [state[1,0] for state in state_vec]  # |01>
     zo = [np.abs(amp) ** 2 for amp in zo]
-    oz = [state[3, 0] for state in state_vec]  # |10>
+    oz = [state[3,0] for state in state_vec]  # |10>
     oz = [np.abs(amp) ** 2 for amp in oz]
-    oo = [state[4, 0] for state in state_vec]  # |11>
+    oo = [state[4,0] for state in state_vec]  # |11>
     oo = [np.abs(amp) ** 2 for amp in oo]
-    ax2.plot(beta_vec, zz, 'yo', label="P(|00>)")
+    ax2.plot(beta_vec, cost_vec, 'o',color = "magenta", label="F")
+    ax2.plot(beta_vec, zz, 'o',color = "orange", label="P(|00>)")
     ax2.plot(beta_vec, zo, 'ro', label="P(|01>)")
     ax2.plot(beta_vec, oz, 'go', label="P(|10>)")
-    ax2.plot(beta_vec, oo, 'ko', label="P(|11>)")
-    ax2.plot(beta_vec, cost_vec, 'mo', label="F")
+    ax2.plot(beta_vec, oo, 'o',color = "purple",  label="P(|11>)")
     ax2.legend()
-    ax.set_title('Problem {problem}')
-    imStr = "betaplot" + str(problem) + ".pdf"
-    plt.show()
-    plt.savefig(imStr, format="pdf", bbox_inches="tight")
+    ax2.set(xlim= (0,pi), ylim= (-1, 1))
+    #Title if you want, uncomment then
+    #ax2.set_title('Problem {problem}')
+    ax2.set_xlabel(r"$\beta$")
+    ax2.set_ylabel("Cost function or probability of occupation")
 
+    #saves in the current directory, you can add a path before the name: "path/betaplot"...
+    imStr = "betaplot" + str(problem).upper() + ".pdf"
+    plt.show()
+
+fig.savefig(imStr, format="pdf", bbox_inches="tight")
 """
 This is meant to be a file to easily implement the benchmark. I don't know if this is how 
 we want to do it, but then we can just remove the file // Albin
@@ -145,4 +152,4 @@ we want to do it, but then we can just remove the file // Albin
 I added one step (p = 1) of the gates as they are defined in the paper (PHYS. REV. APPLIED 14, 034010 (2020))
 I am unsure of how we define the angle for the Hadamard, I wrote 0 for now // Axel
 """
-print("Done")
+print("\nDone")
