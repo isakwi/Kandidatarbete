@@ -30,12 +30,12 @@ qblist = [qb1, qb2]
 exp_mat = np.zeros((beta_resolution, gamma_resolution))
 if betaplot:
     state_mat = [[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)]
-c_ops = [] #colf.create_c_ops(qblist)
+c_ops = colf.create_c_ops(qblist)
 # number of trajectories
 ntraj = 1
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
-problem = 'b'
+problem = 'a'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
