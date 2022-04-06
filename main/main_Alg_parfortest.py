@@ -26,8 +26,6 @@ def main_algorithm(args):
                 psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
             for vgate in virtualgates:
                 psi0= parfor(mcsolving.virtgate, psi0, vgate=vgate)
-        print("(29) psi0 = " + str(psi0))
-        print(type(psi0))
     else:
         for i in range(0,len(steps)): #each step except the first one
             physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER

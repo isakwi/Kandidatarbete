@@ -56,7 +56,7 @@ def main_algorithm(args):
         physicalgatesangles.append(pgangles)
         virtualgatesarray.append(virtualgates)
         virtualgatesangles.append(vgangles)
-    tlist = np.linspace(0,t,round(1*t*1e9)) #Eventuellt kör bara med 10.
+    tlist = np.linspace(0,t,round(10*t*1e9)) #Eventuellt kör bara med 10.
     del t_st[-1]
     #print(t)
     #print(td)
@@ -72,6 +72,8 @@ def main_algorithm(args):
         else:
             output = sesolve(H, psi0, tlist, e_ops=[])
             psi0 = [Qobj(output.states[-1])] #If all noise rates=0, we use sesolve instead of mcsolve => only one state
+    else:
+        raise Exception("At least one of the tlists is too small and cannot be intergrated over.")
     #for vgate in virtualgates:
     #    psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
     ''' I don't know if we want to have the possibility to run with no noise.. but now we do.. 
