@@ -41,7 +41,7 @@ def help():
 
 def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_time_dynamics = False):
     """
-
+    The main solver function. Basically a user calls this function and everything else is automatic
     :param Qbfile: File that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi
     :param OpenQASM: File that specifies OpenQASM file. Default - Asks user to specify gates manually or not run
     :param n: number of qubits. Default - Last qubit targeted by OpenQASM
