@@ -13,7 +13,7 @@ def main_algorithm(args):
     ntraj = args["ntraj"]
     StoreTimeDynamics = args["StoreTimeDynamics"]
     tlist_tot = [0]
-    expectvals = []  # Fill this out later
+    e_ops = []  # Fill this out later
 
     psi0 = []
     for i in range(ntraj):
@@ -32,7 +32,7 @@ def main_algorithm(args):
                     tlist_shifted = tlist + tlist_tot[-1] # Shifting the tlist to start where previous starts.
                 tlist_tot = np.concatenate((tlist_tot, tlist_shifted )) # Create tlist for the entire process
             if max(tlist) >= 1e-11:
-                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
+                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)
             for vgate in virtualgates:
                 psi0= parfor(mcsolving.virtgate, psi0, vgate=vgate)
     else:
@@ -47,7 +47,7 @@ def main_algorithm(args):
                     tlist_shifted = tlist + tlist_tot[-1] # Shifting the tlist to start where previous starts.
                 tlist_tot = np.concatenate((tlist_tot, tlist_shifted )) # Create tlist for the entire process
             if max(tlist) > 1e-11:
-                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
+                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=[])
             for vgate in virtualgates:
                 psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
     if StoreTimeDynamics:
