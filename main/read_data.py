@@ -1,6 +1,28 @@
 import pandas as pd
 import sys
 
+def readfile(filename):
+    # Read the file
+    relax = []
+    depha = []
+    therma = []
+    anharm = []
+    levels = []
+    try:
+        data = pd.read_csv(filename, sep=";")
+        arr = data.to_numpy()
+        for i in range(0, n):
+            relax.append(arr[i, 1])
+            depha.append(arr[i, 2])
+            therma.append(arr[i, 3])
+            anharm.append(arr[i, 4])
+            levels.append(int(arr[i, 5]))
+    except Exception as error:
+        print("Something is wrong with the csv file! Check the example-file 'qubit_data.csv' for how it should look."
+              " Remember to use correct separation of values")
+        raise sys.exit(1)
+    return relax, depha, therma, anharm, levels
+
 def read_data():
     """Function that reads qubit number from user and qubit parameters from a .csv file
     Maybe change what parameters come from the file? Separation in csv must be ;
