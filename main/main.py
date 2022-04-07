@@ -18,6 +18,7 @@ pi = np.pi
 
 """ True if we are doing the benchmark! """
 benchmark = False
+StoreTimeDynamics = True
 
 # Parameters, eventually the number of qubits and the levels will be read from OpenQASM instead!
 n, ntraj, relax, depha, therma, anharm, l = rd.read_data()  # Parameters
@@ -40,18 +41,24 @@ psi0 = Qb.create_psi0(Qblist, 0)  # Create initial state with all qubits in grou
 c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
 """ Adding the algorithm steps! """
 steps = []
+#steps.append(gf.Add_step(["PX"], [0], [pi/2]))
 steps.append(gf.Add_step(["PX"], [0], [pi]))
+steps.append(gf.Add_step(["VPZ"], [0], [pi]))
+steps.append(gf.Add_step(["PX"], [0], [pi/2]))
 
 
-args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj}
+args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj, "StoreTimeDynamics": StoreTimeDynamics}
 tic = time.perf_counter() # Start stopwatch in order to print the run time
-result = mA.main_algorithm(args)
+if StoreTimeDynamics:
+    result, expectvals, tlist_tot = mA.main_algorithm(args)
+else:
+    result = mA.main_algorithm(args)
 toc = time.perf_counter() # Stop stopwatch
 print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
 
 
 #Used for testing
-PrintStates = True
+PrintStates = False
 if PrintStates:
     print(f"Initial state: {psi0}")
     if type(result) == list : # Basically, if noises (mcsolve)

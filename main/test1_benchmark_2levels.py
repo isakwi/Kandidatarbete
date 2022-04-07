@@ -8,19 +8,22 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import Qb_class as qbc
 from bayes_opt import BayesianOptimization
+import time
 
 
 
-c=0.0001
+c=0.01
 qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * np.pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * np.pi, [2,2], [1,0,0])
 qblist = [qb1, qb2]
 c_ops = colf.create_c_ops(qblist)
-ntraj = 1
+ntraj = 500
 tmax= [20e-9, 200e-9]
-psi0 = qbc.create_psi0(qblist)
+psi0 = qbc.create_psi0(qblist,0)
+iterations = 30
+initial_points = 5
 
-problem = 'A'
+problem = 'B'
 
 if problem == 'A':
     J = 1
@@ -35,6 +38,7 @@ elif problem == 'D':
     J = 1
     h1, h2 = 0, 0
 
+start_time = time.time()
 
 
 
@@ -155,7 +159,11 @@ new_optimizer = BayesianOptimization(
 print(new_optimizer.__class__)
 
 new_optimizer.maximize(
-    init_points=5,
-    n_iter= 30,
+    init_points= initial_points,
+    n_iter= iterations,
 )
+
+print("--- %s seconds ---" % (time.time() - start_time))
+print("problem:", problem, "Trajectories:" ,(ntraj), "noise:", (c), "initpoints:", (initial_points), "iterations:" ,(iterations) )
+print(new_optimizer.max)
 print('done')
