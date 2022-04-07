@@ -1,13 +1,13 @@
 from qutip import *
 
 
-def mcs(psi,H,tlist,c_ops):
+def mcs(psi,H,tlist,c_ops, e_ops):
     if c_ops != []:
-        output = mcsolve(H, psi, tlist, c_ops=c_ops, ntraj=1, progress_bar=None)
+        output = mcsolve(H, psi, tlist, c_ops=c_ops, e_ops = e_ops, ntraj=1, progress_bar=None)
         outstate = (output.states[:, -1])
         return outstate[0]
     else:
-        output = sesolve(H, psi, tlist, e_ops = [])
+        output = sesolve(H, psi, tlist, e_ops = e_ops)
         outstate = output.states[-1]
         return outstate
     # the virtual gates should be able to apply through matrix multiplication
