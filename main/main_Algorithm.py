@@ -35,7 +35,7 @@ def main_algorithm(args):
     Qblist = args["Qblist"]
     t_max = args["t_max"]
     ntraj = args["ntraj"]
-
+    e_ops = []
 
     H0 = anharmonicity(Qblist) # + ZZ_Interaction(Qblist)
     ## Do first iteration for ntraj trajectories to split the mcsolve
@@ -44,10 +44,10 @@ def main_algorithm(args):
     H = Htd + H0
     if max(tlist) >= 1e-11:  # If the tlist is too small we get integration error
         if c_ops != []:
-            output = mcsolve(H, psi0, tlist, c_ops=c_ops, ntraj=ntraj, progress_bar=None)
+            output = mcsolve(H, psi0, tlist, c_ops=c_ops, e_ops=e_ops, ntraj=ntraj, progress_bar=None)
             psi0 = output.states[:, -1].tolist()
         else:
-            output = sesolve(H, psi0, tlist, e_ops=[])
+            output = sesolve(H, psi0, tlist, e_ops=e_ops)
             psi0 = [Qobj(output.states[-1])] #If all noise rates=0, we use sesolve instead of mcsolve => only one state
     for vgate in virtualgates:
         psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
@@ -60,7 +60,7 @@ def main_algorithm(args):
             Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
             if max(tlist) >= 1e-11:
-                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
+                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)
             for vgate in virtualgates:
                 psi0= parfor(mcsolving.virtgate, psi0, vgate=vgate)
     else:
@@ -69,7 +69,7 @@ def main_algorithm(args):
             Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
             if max(tlist) > 1e-11:
-                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
+                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)
             for vgate in virtualgates:
                 psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
     return psi0
