@@ -57,7 +57,9 @@ def CreateHfromStep(step, Qblist, t_max):
             step.angle[i]=step.angle[i] + 2*np.pi
         """The error handling is probably not very good. I know one should be more specific in which errors
         to handle in each except, but all the errors in the try block must come from step.name[i] (given that
-        the code works as it should), so this should be pretty safe.         
+        the code works as it should), so this should be pretty safe.    
+        
+        Maybe would be good to just have a negative envelope but not sure if that's legal     
         """
 
         if step.name[i] in ["VPZ"]:  # Check virtual gates
