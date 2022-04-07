@@ -51,7 +51,6 @@ args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max":
 tic = time.perf_counter() # Start stopwatch in order to print the run time
 if StoreTimeDynamics:
     result, expectvals, tlist_tot = mA.main_algorithm(args)
-    print(tlist_tot)
 else:
     result = mA.main_algorithm(args)
 toc = time.perf_counter() # Stop stopwatch
