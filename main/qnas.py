@@ -6,6 +6,8 @@ import Qb_class as qbc
 import GateFuncs as gf
 import numpy as np
 import read_data as rd
+import CollapseOperator_function as co
+import main_Algorithm as ma
 
 def help():
     """
@@ -37,7 +39,7 @@ def help():
           ":return: if store_time_dynamics is True: Not sure yet. Else: ntraj many final states\n\n")
 
 
-def solve(Qbfile = None, OpenQASM = None, n = None, ntraj = 500, tmax = [20e-9, 200e-9], store_time_dynamics = False):
+def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_time_dynamics = False):
     """
 
     :param Qbfile: File that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi
@@ -48,6 +50,8 @@ def solve(Qbfile = None, OpenQASM = None, n = None, ntraj = 500, tmax = [20e-9, 
     :param store_time_dynamics: True/False value to store time dynamics. Default - False
     :return: if store_time_dynamics is True: Not sure yet. Else: ntraj many final states
     """
+    if tmax is None:
+        tmax = [20e-9, 200e-9]
     if OpenQASM is None:
         print("You didn't enter an OpenQASM file. Do you want to add gates manually ('y'/'n')?\t")
         inp = input()
@@ -120,6 +124,10 @@ def solve(Qbfile = None, OpenQASM = None, n = None, ntraj = 500, tmax = [20e-9, 
               " computer). If you leave it unspecified ntraj will automatically be 500. QnAS.solve() will now exit")
         return
 
+    if tmax is None:
+        print("No input for tmax! QnAS will use 1qb gate time: 20ns and 2qb gate time: 200ns!")
+        tmax = [20e-9, 200e-9]
+
     if not type(tmax) == list:
         print("Invalid input for tmax! tmax must be a list of the form [1qb, 2qb] with "
               "max gate times for 1-qubit-gates and 2-qubit-gates given in seconds!"
@@ -133,6 +141,12 @@ def solve(Qbfile = None, OpenQASM = None, n = None, ntraj = 500, tmax = [20e-9, 
         print("store_time_dynamics must be a boolean (True/False). "
               "QnAS.solve() will now exit")
         return
+
+    psi0 = qbc.create_psi0(Qblist, 0)
+    c_ops = co.create_c_ops(Qblist)
+
+    args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": Qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": store_time_dynamics}
+    return ma.main_algorithm(args)
 
 
 if __name__ == "__main__":
