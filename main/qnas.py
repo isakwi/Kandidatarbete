@@ -27,16 +27,16 @@ def help():
           "Make sure these are the only gates you have included in your OpenQASM file to create the algorithm!\n"
           "\nDescription of functions: \n\n"
           "help()\n"
-          ":You already called this function so you probably know that "
+          "\t:You already called this function so you probably know that "
           "it just helps you get started!\n\n"
           "solve(Qbfile, OpenQASM, n, ntraj, tmax, store_time_dynamics)\n"
-          ":param Qbfile: Filepath that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi\n"
-          ":param OpenQASM: Filepath that specifies OpenQASM file. Default - Asks user to specify gates manually or not run\n"
-          ":param n: number of qubits. Default - Last qubit targeted by OpenQASM\n"
-          ":param ntraj: number of trajectories for the Monte Carlo solver. Default - 500\n"
-          ":param tmax: Max time for 1qb-gate and 2qb-gate ~ [t_1qb, t_2qb]. Default - [20e-9, 200e-9]\n"
-          ":param store_time_dynamics: True/False value to store time dynamics. Default - False\n"
-          ":return: if store_time_dynamics is True: Not sure yet. Else: ntraj many final states\n\n")
+          "\t:param Qbfile: Filepath that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi\n"
+          "\t:param OpenQASM: Filepath that specifies OpenQASM file. Default - Asks user to specify gates manually or not run\n"
+          "\t:param n: number of qubits. Default - Last qubit targeted by OpenQASM\n"
+          "\t:param ntraj: number of trajectories for the Monte Carlo solver. Default - 500\n"
+          "\t:param tmax: Max time for 1qb-gate and 2qb-gate ~ [t_1qb, t_2qb]. Default - [20e-9, 200e-9]\n"
+          "\t:param store_time_dynamics: True/False value to store time dynamics. Default - False\n"
+          "\t:return: if store_time_dynamics is True: Not sure yet. Else: ntraj many final states\n\n")
 
 
 def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_time_dynamics = False):
@@ -50,8 +50,6 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
     :param store_time_dynamics: True/False value to store time dynamics. Default - False
     :return: if store_time_dynamics is True: Not sure yet. Else: ntraj many final states
     """
-    if tmax is None:
-        tmax = [20e-9, 200e-9]
     if OpenQASM is None:
         print("You didn't enter an OpenQASM file. Do you want to add gates manually ('y'/'n')?\t")
         inp = input()
@@ -107,7 +105,7 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
         print("You didn't specify a file for the qubit parameters! \n"
               "QnAS assumes you have 3 levels, no noises and sets the anharmonicity to"
               " -225e6*2*pi for all qubits")
-        Qblist = [qbc.Qubit(3, [0,0,0], -225e6 * 2 * np.pi, [i,i], [1,0,0]) for i in range(n)]
+        Qblist = [qbc.Qubit(3, [0,0,0], -225e6 * 2 * np.pi, [], []) for i in range(n)]
     else:
         try:
             relax, depha, therma, anharm, levels = rd.readfile(Qbfile)
@@ -121,7 +119,7 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
 
     if not 1 <= ntraj <= 100000:
         print("Invalid value for ntraj! Must be a positive integer with an upper limit of 100000 (to not kill your"
-              " computer). If you leave it unspecified ntraj will automatically be 500. QnAS.solve() will now exit")
+              " computer). If you leave it unspecified, ntraj will automatically be 500. QnAS.solve() will now exit")
         return
 
     if tmax is None:
@@ -133,7 +131,7 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
               "max gate times for 1-qubit-gates and 2-qubit-gates given in seconds!"
               " QnAS.solve() will now exit")
         return
-    if not 1e-12 < tmax[0] < 1e12 or 1e-12 < tmax[1] < 1e12:
+    if not (1e-12 < tmax[0] < 1e12 or 1e-12 < tmax[1] < 1e12):
         print("Invalid values for at least one of the max gate times. Limits are 1e-12 < t < 1e12. "
               " QnAS.solve() will now exit")
         return
