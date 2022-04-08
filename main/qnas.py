@@ -92,7 +92,7 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
                     if max(target) > maxi:
                         maxi = target
         if maxi == -1:
-            print("No qubit has been targeted by the algorithm, n could not be decided."
+            print("No qubit has been targeted by the algorithm, number of qubits could not be decided."
                   " QnAS.solve() will now exit")
             return
         else:
