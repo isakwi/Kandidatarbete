@@ -44,12 +44,14 @@ def main_algorithm(args):
     physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[0], Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
     Htd, tlist = gf.TimeDepend(steps[0], physicalgates, tmax, Qblist)
     H = Htd + H0
+    numberOfPhysicalSteps = len(steps)
 
 
     if StoreTimeDynamics:
         allStates = np.array([]) #a list where all states are saved
         expectop = args["expectop"]   # Assume this is a Qobj operator that can act on psi0
         if steps[0].name[0] in ["VPZ"]:  #Check if VPZ step, then no time added to tlist
+            numberOfPhysicalSteps -= 1
             tlist_tot = []
         else:
             tlist_tot = tlist # Create tlist for the entire process
@@ -84,6 +86,7 @@ def main_algorithm(args):
             if StoreTimeDynamics:
                 if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
                     tlist_shifted = []
+                    numberOfPhysicalSteps -= 1
                 else:
                     tlist_shifted = tlist + tlist_tot[-1] # Shifting the tlist to start where previous starts.
                 tlist_tot = np.concatenate((tlist_tot, tlist_shifted )) # Create tlist for the entire process
@@ -108,6 +111,7 @@ def main_algorithm(args):
             if StoreTimeDynamics:
                 if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
                     tlist_shifted = []
+                    numberOfPhysicalSteps -= 1
                 else:
                     tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts.
                 tlist_tot = np.concatenate((tlist_tot, tlist_shifted)) # Create tlist for the entire process
@@ -126,7 +130,7 @@ def main_algorithm(args):
 
 
     if StoreTimeDynamics:
-        allStatesReshaped = np.reshape(allStates, ((len(steps))*10,ntraj))
+        allStatesReshaped = np.reshape(allStates, ((numberOfPhysicalSteps)*10,ntraj))
         expectvals = [np.mean(expect(expectop, parallelStates)) for parallelStates in allStatesReshaped]
         return psi0,allStates, expectvals, tlist_tot #psi0 are the final state (there are ntraj of them)
     else:

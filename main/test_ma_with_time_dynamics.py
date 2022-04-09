@@ -30,7 +30,7 @@ steps = []
 c_ops = colf.create_c_ops(qblist)
 J, h1, h2 = 1, 0, 0
 gamma = 2.36
-beta = 1.94
+beta = 0.8
 
 steps.append(gf.Add_step(["HD", "HD"], [0,1], [0, 0]))  # First we apply Hadamard to both qubits
 steps.append(gf.Add_step([ "HD"], [1], [0]))  # Then we apply Hadamard to the second qubit
@@ -38,7 +38,7 @@ steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps.append(gf.Add_step(["PX"], [1], [2 * gamma * J]))
 steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps.append(gf.Add_step(["HD"], [1], [0]))
-#steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * gamma * h1, 2 * gamma * h2]))
+steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * gamma * h1, 2 * gamma * h2]))
 steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * beta, 2 * beta]))
 
 e_ops = []
