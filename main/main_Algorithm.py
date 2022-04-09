@@ -126,7 +126,7 @@ def main_algorithm(args):
 
 
     if StoreTimeDynamics:
-        allStatesReshaped = np.reshape(allStates, (len(steps)*10,ntraj))
+        allStatesReshaped = np.reshape(allStates, ((len(steps))*10,ntraj))
         expectvals = [np.mean(expect(expectop, parallelStates)) for parallelStates in allStatesReshaped]
         return psi0,allStates, expectvals, tlist_tot #psi0 are the final state (there are ntraj of them)
     else:

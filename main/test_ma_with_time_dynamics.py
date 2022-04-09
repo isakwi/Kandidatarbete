@@ -28,17 +28,26 @@ qblist = [qb1, qb2]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
 steps = []
 c_ops = colf.create_c_ops(qblist)
-steps.append(gf.Add_step(["PX", "PX"], [0,1], [pi, pi]))  # Applying Hadamard on both qubits
-#steps.append(gf.Add_step(["PX", "PX"], [0,1], [pi/2, pi/2]))  # Applying Hadamard on both qubits
-steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))  # Applying Hadamard on both qubits
-steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))  # Applying Hadamard on both qubits
-#steps.append(gf.Add_step(["HD", "HD"], [0,1], [0, 0]))  # Applying Hadamard on both qubits
+J, h1, h2 = 1, 0, 0
+gamma = 2.36
+beta = 1.94
+
+steps.append(gf.Add_step(["HD", "HD"], [0,1], [0, 0]))  # First we apply Hadamard to both qubits
+steps.append(gf.Add_step([ "HD"], [1], [0]))  # Then we apply Hadamard to the second qubit
+steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
+steps.append(gf.Add_step(["PX"], [1], [2 * gamma * J]))
+steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
+steps.append(gf.Add_step(["HD"], [1], [0]))
+#steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * gamma * h1, 2 * gamma * h2]))
+steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * beta, 2 * beta]))
 
 e_ops = []
 ntraj = 12
 t_max = [20e-9, 200e-9] #max drive time in seconds
 
 expectop = gl.PZ(qblist, 0) + gl.PZ(qblist, 1)
+expectop = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
+
 
 
 
