@@ -45,8 +45,10 @@ def main_algorithm(args):
     Htd, tlist = gf.TimeDepend(steps[0], physicalgates, tmax, Qblist)
     H = Htd + H0
 
+
     if StoreTimeDynamics:
-        expectvals = []   # Write over or something with this later, but for now just to test the tlist_tot.
+        allStates = np.array([]) #a list where all states are saved
+        expectop = args["expectop"]   # Assume this is a Qobj operator that can act on psi0
         if steps[0].name[0] in ["VPZ"]:  #Check if VPZ step, then no time added to tlist
             tlist_tot = []
         else:
@@ -54,12 +56,23 @@ def main_algorithm(args):
     if max(tlist) >= 1e-11:  # If the tlist is too small we get integration error
         if c_ops != []:
             output = mcsolve(H, psi0, tlist, c_ops=c_ops, e_ops=e_ops, ntraj=ntraj, progress_bar=None)
-            psi0 = output.states[:, -1].tolist()
+            psi0 = output.states[:, -1].tolist()#this is the final states
+            if StoreTimeDynamics:
+                allStates = np.append(allStates, (np.transpose(output.states))) #we append a list of size (ntraj x t_res) = n_traj x 10
         else:
             output = sesolve(H, psi0, tlist, e_ops=e_ops)
             psi0 = [Qobj(output.states[-1])] #If all noise rates=0, we use sesolve instead of mcsolve => only one state
+            if StoreTimeDynamics:
+                np.append(allStates, (np.transpose(output.states))) #we append a list of size (ntraj x t_res) = n_traj x 10
     for vgate in virtualgates:
-        psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
+        if not StoreTimeDynamics:
+            psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
+        else:
+            allStates[-ntraj:] = parfor(mcsolving.virtgate, psi0, vgate = vgate) #we replace the
+            #...last element with this one, since no time passes
+            psi0 = allStates[-ntraj:]
+
+
     ''' I don't know if we want to have the possibility to run with no noise.. but now we do.. 
     just remove the if statements if we want to remove. Maybe it slows it down, it's before the loops so its probably ok
     '''
@@ -75,9 +88,18 @@ def main_algorithm(args):
                     tlist_shifted = tlist + tlist_tot[-1] # Shifting the tlist to start where previous starts.
                 tlist_tot = np.concatenate((tlist_tot, tlist_shifted )) # Create tlist for the entire process
             if max(tlist) >= 1e-11:
-                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)
+                if not StoreTimeDynamics:
+                    psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)
+                else:
+                    allStates= np.append(allStates, np.transpose(parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops, returnFullList = True)))
+                    psi0 = allStates[-ntraj:]
             for vgate in virtualgates:
-                psi0= parfor(mcsolving.virtgate, psi0, vgate=vgate)
+                if not StoreTimeDynamics:
+                    psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
+                else:
+                    allStates[-ntraj:] = (parfor(mcsolving.virtgate, psi0, vgate=vgate))  # the we replace the
+                    # ...last element with this one, since no time passes
+                    psi0 = allStates[-ntraj:]
     else:
         for i in range(1,len(steps)): #each step except the first one
             physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
@@ -89,12 +111,24 @@ def main_algorithm(args):
                 else:
                     tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts.
                 tlist_tot = np.concatenate((tlist_tot, tlist_shifted)) # Create tlist for the entire process
-            if max(tlist) > 1e-11:
-                psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)
-            for vgate in virtualgates:
-                psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
+                if max(tlist) > 1e-11:
+                    allStates[-ntraj:] = np.transpose(parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops, returnFullList = True))
+                    psi0 = allStates[-ntraj:]
+                for vgate in virtualgates:
+                    allStates[-ntraj:] = np.transpose(parfor(mcsolving.virtgate, psi0, vgate=vgate) ) # the we replace the
+                    # ...last element with this one, since no time passes
+                    psi0 = allStates[-ntraj:]
+            else:
+                if max(tlist) > 1e-11:
+                    psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)
+                for vgate in virtualgates:
+                    psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
+
+
     if StoreTimeDynamics:
-        return psi0, expectvals, tlist_tot
+        allStatesReshaped = np.reshape(allStates, (len(steps)*10,ntraj))
+        expectvals = [np.mean(expect(expectop, parallelStates)) for parallelStates in allStatesReshaped]
+        return psi0,allStates, expectvals, tlist_tot #psi0 are the final state (there are ntraj of them)
     else:
         return psi0
     
