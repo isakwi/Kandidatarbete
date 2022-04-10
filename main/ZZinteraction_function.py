@@ -6,6 +6,12 @@ import Qb_class as qc
 between qubits, returns term for hamiltonian"""
 
 
+
+
+
+
+
+
 def ZZ_interaction(Qblist, interaction_mat):
     eye_vec = []
     H_intlist = []
@@ -25,6 +31,7 @@ def ZZ_interaction(Qblist, interaction_mat):
                 eyequb[qub[0]] = destroy(qub[1].level).dag() * destroy(qub[1].level)
 
                 inter = inter + interaction_mat[qb[0],qub[0]] * tensor(eyeqb)*tensor(eyequb)
+                H_intlist.append(inter)
 
     for ind in range(0, len(H_intlist)): #adds interaction terms together and returns hamiltonian term for ZZ-interaction
         H_interaction = H_interaction + H_intlist[ind]
