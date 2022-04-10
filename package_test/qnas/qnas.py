@@ -36,7 +36,9 @@ def help():
           "\t:param ntraj: number of trajectories for the Monte Carlo solver. Default - 500\n"
           "\t:param tmax: Max time for 1qb-gate and 2qb-gate ~ [t_1qb, t_2qb]. Default - [20e-9, 200e-9]\n"
           "\t:param store_time_dynamics: True/False value to store time dynamics. Default - False\n"
-          "\t:return: if store_time_dynamics is True: Not sure yet. Else: ntraj many final states\n\n")
+          "\t:return: if store_time_dynamics is True: Not sure yet. Else: ntraj many final states\n\n"
+          "Do you want to donate to QnAS development to keep the project going forward?\n"
+          "Swish to +46 70 603 61 27, thanks!")
 
 
 def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_time_dynamics = False):

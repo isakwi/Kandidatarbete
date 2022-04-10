@@ -33,7 +33,7 @@ if betaplot:
     state_mat = [[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)]
 c_ops = colf.create_c_ops(qblist)
 # number of trajectories
-ntraj = 1
+ntraj = 5000
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
 problem = 'a'
@@ -55,10 +55,10 @@ ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.
 # Changed the sign of J again and then it kinda worked
 
 # steps in algoritm (the ones that change will be updated for each step)
-steps = [gf.Add_step(["PX"],[0],[0.1]) for i in range(8)]  # zero angle rotation, will all be replaced
+steps = [gf.Add_step(["PX"],[1],[0.1]) for i in range(8)]  # zero angle rotation, will all be replaced
 
-steps[0] = (gf.Add_step(["HD", "HD"], [0, 1], [0, 0]))  # First we apply Hadamard to both qubits
-steps[1] = (gf.Add_step([ "HD"], [ 1], [0]))  # Then we apply Hadamard to the second qubit
+steps[0] = (gf.Add_step(["HD", "HD"], [0,1], [0, 0]))  # First we apply Hadamard to both qubits
+steps[1] = (gf.Add_step([ "HD"], [1], [0]))  # Then we apply Hadamard to the second qubit
 steps[2] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps[4] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps[5] = (gf.Add_step(["HD"], [1], [0]))
@@ -76,10 +76,10 @@ for i in range(0, gamma_resolution):
     for j in range(0, beta_resolution):
         beta = beta_vec[j]
         steps[3] = (gf.Add_step(["PX"], [1], [2 * gamma * J]))
-        steps[6] = (gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * gamma * h1, 2 * gamma * h2]))
-        steps[7] = (gf.Add_step(["PX", "PX"], [0, 1], [2 * beta, 2 * beta]))
+        steps[6] = (gf.Add_step(["VPZ", "VPZ"], [0,1], [2 * gamma * h1, 2 * gamma * h2]))
+        steps[7] = (gf.Add_step(["PX", "PX"], [0,1], [2 * beta, 2 * beta]))
 # calling main_algorithm
-        args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj}
+        args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": False}
         state = ma.main_algorithm(args)
 # saving mean value of expectation value in matrix
         exp_mat[j, i] = np.mean(expect(ham, state))  # Beta y-axis and gamma x-axis
@@ -144,8 +144,7 @@ if betaplot:
     #saves in the current directory, you can add a path before the name: "path/betaplot"...
     imStr = "betaplot" + str(problem).upper() + ".pdf"
     plt.show()
-
-fig.savefig(imStr, format="pdf", bbox_inches="tight")
+    fig.savefig(imStr, format="pdf", bbox_inches="tight")
 """
 This is meant to be a file to easily implement the benchmark. I don't know if this is how 
 we want to do it, but then we can just remove the file // Albin
