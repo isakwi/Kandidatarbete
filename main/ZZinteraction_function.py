@@ -2,10 +2,11 @@ import numpy as np
 from qutip import *
 import Qb_class as qc
 
-""""Problem: if we have sigmaz_1 * sigmaz_2 with dimensional mismatch, its not gonna work."""
+"""Creates ZZ-interaction term for hamiltonian , input is list fo qubits and interaction matrix containing interaction strength 
+between qubits, returns term for hamiltonian"""
 
 
-def ZZ_interaction(Qblist):
+def ZZ_interaction(Qblist, interaction_mat):
     eye_vec = []
     H_intlist = []
     H_interaction = 0
@@ -16,20 +17,14 @@ def ZZ_interaction(Qblist):
 
     for qb in enumerate(Qblist): #enumerates through array of Qubits and creates interaction operators qubits that interacts
         eyeqb = eye_vec.copy()
-        """Needs to change this since Anton said that interaction only will be given as a matrix
-        From what I understand we wont need to check the position and how close qubits are
-        if we have that matrix? It will just work as the other c_ops?"""
+        eyequb = eye_vec.copy()
 
-        if qb[1].noisert_vec[2] > 0.0: # checks to see if there is any noise and adds sigmaz for qubit
-            eyeqb[qb[0]] = destroy(qb[1].level).dag() * destroy(qb[1].level)
+        for qub in enumerate(Qblist):
+            if interaction_mat[qb[0], qub[0]] > 0 and qb[0] != qub[0]:
+                eyeqb[qb[0]] = destroy(qb[1].level).dag() * destroy(qb[1].level)
+                eyequb[qub[0]] = destroy(qub[1].level).dag() * destroy(qub[1].level)
 
-            for q in enumerate(Qblist): #checks to see which qubits that the qubits interacts with
-                eyeq = eye_vec.copy()
-
-                if 0.0 < np.sqrt((q[1].desig[0] - qb[1].desig[0]) ** 2 + (q[1].desig[1] - qb[1].desig[1]) ** 2) < 1.0:
-                    eyeq[q[0]] = destroy(q[1].level).dag() * destroy(q[1].level)
-                    inter = inter + qb[1].noisert_vec[2] * tensor(eyeqb) * tensor(eyeq)
-                    H_intlist.append(inter)
+                inter = inter + interaction_mat[qb[0],qub[0]] * tensor(eyeqb)*tensor(eyequb)
 
     for ind in range(0, len(H_intlist)): #adds interaction terms together and returns hamiltonian term for ZZ-interaction
         H_interaction = H_interaction + H_intlist[ind]
@@ -37,4 +32,5 @@ def ZZ_interaction(Qblist):
         ind += ind
 
     return H_interaction
+
 
