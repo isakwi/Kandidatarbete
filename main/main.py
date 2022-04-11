@@ -20,6 +20,17 @@ pi = np.pi
 benchmark = False
 StoreTimeDynamics = True
 
+""" e_ops are currently defined here """
+e_ops = []
+
+""" I have an idea, maybe we can write someting like
+
+StoreTimeDynamics = False
+if e_ops != []:
+    StoreTimeDynamics = True
+
+That way we always store time dynamics if we're given an expectation value to work with"""
+
 # Parameters, eventually the number of qubits and the levels will be read from OpenQASM instead!
 n, ntraj, relax, depha, therma, anharm, l = rd.read_data()  # Parameters
 Qblist = []
@@ -47,7 +58,7 @@ steps.append(gf.Add_step(["VPZ"], [0], [pi]))
 steps.append(gf.Add_step(["PX"], [0], [pi/2]))
 
 
-args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj, "StoreTimeDynamics": StoreTimeDynamics}
+args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj, "StoreTimeDynamics": StoreTimeDynamics, "e_ops": e_ops}
 tic = time.perf_counter() # Start stopwatch in order to print the run time
 if StoreTimeDynamics:
     result, expectvals, tlist_tot = mA.main_algorithm(args)

@@ -35,7 +35,7 @@ def main_algorithm(args):
     Qblist = args["Qblist"]
     t_max = args["t_max"]
     ntraj = args["ntraj"]
-    e_ops = []
+    e_ops = args["e_ops"]
     StoreTimeDynamics = args["StoreTimeDynamics"]
 
 
@@ -49,7 +49,11 @@ def main_algorithm(args):
 
     if StoreTimeDynamics:
         allStates = np.array([]) #a list where all states are saved
-        expectop = args["expectop"]   # Assume this is a Qobj operator that can act on psi0
+        "Does it make sense to save states? We can't take the mean of states //Albin"
+        #expectop = args["expectop"]   # Assume this is a Qobj operator that can act on psi0
+        """I fixed so that we import e_ops with from args higher in this doc. Don't know which way we 
+        want to do it. This line might we unneccesary then. Temporarily commented it away because it 
+        gave me an error. //Albin"""
         if steps[0].name[0] in ["VPZ"]:  #Check if VPZ step, then no time added to tlist
             numberOfPhysicalSteps -= 1
             tlist_tot = []
@@ -58,20 +62,22 @@ def main_algorithm(args):
     if max(tlist) >= 1e-11:  # If the tlist is too small we get integration error
         if c_ops != []:
             output = mcsolve(H, psi0, tlist, c_ops=c_ops, e_ops=e_ops, ntraj=ntraj, progress_bar=None)
+            "e_ops is added here, nothing is different if e_ops = [], so it doesn't hurt to have it everywhere"
             psi0 = output.states[:, -1].tolist()#this is the final states
             if StoreTimeDynamics:
                 allStates = np.append(allStates, (np.transpose(output.states))) #we append a list of size (ntraj x t_res) = n_traj x 10
         else:
-            output = sesolve(H, psi0, tlist, e_ops=e_ops)
+            output = sesolve(H, psi0, tlist, e_ops=e_ops) #e_ops here as well
             psi0 = [Qobj(output.states[-1])] #If all noise rates=0, we use sesolve instead of mcsolve => only one state
             if StoreTimeDynamics:
                 np.append(allStates, (np.transpose(output.states))) #we append a list of size (ntraj x t_res) = n_traj x 10
     for vgate in virtualgates:
-        if not StoreTimeDynamics:
-            psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
+        if not StoreTimeDynamics: 
+            psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate) #Do we need e_ops here as well? //Albin
         else:
             allStates[-ntraj:] = parfor(mcsolving.virtgate, psi0, vgate = vgate) #we replace the
             #...last element with this one, since no time passes
+            "e_ops here? ^ //Albin"
             psi0 = allStates[-ntraj:]
 
 
@@ -135,7 +141,8 @@ def main_algorithm(args):
         expectedvals is an 1-dim array with the expected value of chosen operator at each time step
         allstates will be returned as an array with dimensions (len(tlist_tot),ntraj), """
         allStates = np.reshape(allStates, ((numberOfPhysicalSteps)*10,ntraj))
-        expectvals = [np.mean(expect(expectop, parallelStates)) for parallelStates in allStates]
+        expectvals = [np.mean(expect(expectop, parallelStates)) for parallelStates in allStates] #expectop is written here,
+        # just so we don't forget to change it here if we change it elsewhere //Albin
         return psi0,allStates, expectvals, tlist_tot #psi0 are the final state (there are ntraj of them)
     else:
         return psi0

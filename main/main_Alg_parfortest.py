@@ -13,7 +13,7 @@ def main_algorithm(args):
     ntraj = args["ntraj"]
     StoreTimeDynamics = args["StoreTimeDynamics"]
     tlist_tot = [0]
-    e_ops = []
+    e_ops = args["e_ops"]
     expectvals = 0 # Write over this later
 
     psi0 = []
