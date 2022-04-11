@@ -60,11 +60,6 @@ def main_algorithm(args):
 
     if StoreTimeDynamics:
         allStates = np.array([]) #a list where all states are saved
-        "Does it make sense to save states? We can't take the mean of states //Albin"
-        #expectop = args["expectop"]   # Assume this is a Qobj operator that can act on psi0
-        """I fixed so that we import e_ops with from args higher in this doc. Don't know which way we 
-        want to do it. This line might we unneccesary then. Temporarily commented it away because it 
-        gave me an error. //Albin"""
         if steps[0].name[0] in ["VPZ"]:  #Check if VPZ step, then no time added to tlist
             numberOfPhysicalSteps -= 1
             tlist_tot = []
@@ -84,11 +79,10 @@ def main_algorithm(args):
                 np.append(allStates, (np.transpose(output.states))) #we append a list of size (ntraj x t_res) = n_traj x 10
     for vgate in virtualgates:
         if not StoreTimeDynamics: 
-            psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate) #Do we need e_ops here as well? //Albin
+            psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate) 
         else:
             allStates[-ntraj:] = parfor(mcsolving.virtgate, psi0, vgate = vgate) #we replace the
             #...last element with this one, since no time passes
-            "e_ops here? ^ //Albin"
             psi0 = allStates[-ntraj:]
 
 
