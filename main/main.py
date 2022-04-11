@@ -61,7 +61,7 @@ steps.append(gf.Add_step(["PX"], [0], [pi/2]))
 args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj, "StoreTimeDynamics": StoreTimeDynamics, "e_ops": e_ops}
 tic = time.perf_counter() # Start stopwatch in order to print the run time
 if StoreTimeDynamics:
-    result, expectvals, tlist_tot = mA.main_algorithm(args)
+    result,allstates, expectvals, tlist_tot = mA.main_algorithm(args)
 else:
     result = mA.main_algorithm(args)
 toc = time.perf_counter() # Stop stopwatch
@@ -72,7 +72,7 @@ print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
 PrintStates = False
 if PrintStates:
     print(f"Initial state: {psi0}")
-    if type(result) == list : # Basically, if noises (mcsolve)
+    if isinstance(result, (list, tuple, np.ndarray)): # Basically, if noises (mcsolve)
         print(f"Final state: {result[-1].tidyup(atol=1e-4)}") # Prints one of the final states
         vec2 = result[-1]
     elif type(result) == Qobj:
