@@ -12,7 +12,7 @@ def mcs(psi,H,tlist,c_ops, e_ops, returnFullList = False):
             return outstate
 
     else:
-        output = sesolve(H, psi, tlist, e_ops = e_ops,returnFullList = False)
+        output = sesolve(H, psi, tlist, e_ops = e_ops)
         if not returnFullList:
             outstate = output.states[-1]
         else:
