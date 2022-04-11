@@ -25,7 +25,7 @@ qb3 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
 qblist = [qb0, qb1, qb2, qb3]
 c_ops = colf.create_c_ops(qblist)
-ntraj = 500
+ntraj = 50
 tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist,0)
 
@@ -46,6 +46,13 @@ def circuit(theta_arr):
 
     return state
 
+#snabbtest
+
+theta = [pi/2]*11
+
+result = circuit(theta)
+
+print(result)
 
 
 
