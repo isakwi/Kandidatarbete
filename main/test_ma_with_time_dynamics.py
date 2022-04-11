@@ -19,8 +19,8 @@ pi = np.pi
 
 
 """Configurations below, this should be changed and tweaked to test our program sufficiently"""
-c1 = 1e5 # Relaxation/Decoherence
-c2 = 1e5 # Dephasing
+c1 = 1e-2 # Relaxation/Decoherence
+c2 = 1e-2 # Dephasing
 c3 = 0 #Thermal excitation? Yet to be implemented in CollapseOperator_function
 qb1 = qbc.Qubit(3, [c1, c2, c3], -229e6 * 2 * pi, [1,1], [1,0,0]) #levels, c_parameters, anharm_freq, positional coordinates, initial state
 qb2 = qbc.Qubit(3, [c1, c2, c3], -225e6 * 2 * pi, [1,2], [1,0,0])
@@ -29,26 +29,39 @@ psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
 steps = []
 c_ops = colf.create_c_ops(qblist)
 J, h1, h2 = 1, 0, 0
-gamma = 2.356
-beta = 1.178
+gamma1, gamma2 = 0.498, 0.675
+beta1, beta2 = 0.386, 0.934
+
+# {'bangle1': 0.38625749927352887, 'bangle2': 0.9338998705777307, 'cangle1': 0.4983658373499303, 'cangle2': 0.6747157321745737}}
 
 steps.append(gf.Add_step(["HD", "HD"], [0,1], [0, 0]))  # First we apply Hadamard to both qubits
 steps.append(gf.Add_step([ "HD"], [1], [0]))  # Then we apply Hadamard to the second qubit
 steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
-steps.append(gf.Add_step(["PX"], [1], [2 * gamma * J]))
+steps.append(gf.Add_step(["PX"], [1], [2 * gamma1 * J]))
 steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps.append(gf.Add_step(["HD"], [1], [0]))
-steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * gamma * h1, 2 * gamma * h2]))
-steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * beta, 2 * beta]))
+steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * gamma1 * h1, 2 * gamma1 * h2]))
+steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * beta1, 2 * beta1]))
+steps.append(gf.Add_step([ "HD"], [1], [0]))  # Then we apply Hadamard to the second qubit
+steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
+steps.append(gf.Add_step(["PX"], [1], [2 * gamma2 * J]))
+steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
+steps.append(gf.Add_step(["HD"], [1], [0]))
+steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * gamma2 * h1, 2 * gamma2 * h2]))
+steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * beta2, 2 * beta2]))
+
+
 
 e_ops = []
-ntraj = 100
+ntraj = 10
 t_max = [50e-9, 271e-9] #max drive time in seconds
 
-expectop = gl.PZ(qblist, 0) + gl.PZ(qblist, 1)
-expectop = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
-state11 = tensor((basis(3,1)),(basis(3,1)))
-expectop = state11 * state11.dag()
+#expectop = gl.PZ(qblist, 0) + gl.PZ(qblist, 1)
+expectop1 = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
+#state11 = tensor((basis(3,1)),(basis(3,1)))
+state02 = tensor((basis(3,0)),(basis(3,2)))
+state20 = tensor((basis(3,2)),(basis(3,0)))
+expectop2 = state02 * state02.dag() + state20 * state20.dag()
 
 
 
@@ -63,14 +76,20 @@ args["e_ops"] = e_ops
 args["c_ops"] = c_ops
 args["steps"] = steps
 args["psi0"] = psi0
-args["expectop"] = expectop
+args["e_ops"] = [expectop1, expectop2]
 
 
 
 """We test our program"""
-finalstates,allstates, expvals, tlist = ma.main_algorithm(args)
+finalstates, allstates, expvals, tlist = ma.main_algorithm(args)
 """Visualize result as desired"""
-print("length of state list:" , len(allstates))
-print("time list: ", tlist)
-plt.plot(tlist, expvals)
+#print("length of state list:" , len(allstates))
+#print("time list: ", tlist)
+print("final states data type:" , type(finalstates))
+#print("all states data type: " , type(allstates))
+#print("expected values data type: " , type(expvals))
+#print("tlist data type: " , type(tlist))
+
+plt.plot(tlist, expvals[0])
+plt.plot(tlist, expvals[1])
 plt.show()
