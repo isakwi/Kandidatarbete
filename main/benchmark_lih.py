@@ -10,6 +10,30 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import Qb_class as qbc
 import matplotlib as mpl
+import pandas as pd
+
+
+l = 3 #qubit energy level
+"""The H defined immediately below is the cost function"""
+sx = destroy(l) + create(l)
+sy = -1j * (destroy(l) - create(l))
+sz= 2 * create(l) * destroy(l) - qeye(l)
+I = qeye(l)
+df = pd.read_excel('LiH_cost_function_data.xlsx', header = 0)
+ops = df["Operator"].values
+weights = df["Weight"].values
+opDict = {"I": I, "X": sx, "Y": sy, "Z": sz}
+H = 0 #our cost function
+for i in range(len(ops)):
+    Hlist = []
+    word = ops[i]
+    for letter in word:
+        Hlist.append(opDict[letter])
+    H += weights[i] * tensor(Hlist)
+
+
+
+
 pi = np.pi
 tstart = time.time()
 steps=[]
