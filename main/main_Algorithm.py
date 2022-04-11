@@ -163,5 +163,5 @@ def main_algorithm(args):
         # expectop is written here as well, just so we don't forget to change it here if we change it elsewhere //Albin
         return psi0,allStates, expectvals, tlist_tot #psi0 are the final state (there are ntraj of them)
     else:
-        return np.array(psi0)
+        return (psi0)
 
