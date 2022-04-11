@@ -54,6 +54,9 @@ result = circuit(theta)
 
 print(result)
 
+print("--- %s seconds ---" % (time.time() - tstart))
+print('done')
+
 
 
 
