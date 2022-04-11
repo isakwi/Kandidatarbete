@@ -34,6 +34,7 @@ def CreateHfromStep(step, Qblist, t_max):
     """ Create two lists of Qobj from a step in the step_list, one for virtual and one for real gates
     Also return a tlist depending on what gates there are in the step
     t_max[0] = max for 1qb gate (~20ns) and t_max[1] = max for 2ab gate (~200ns)"""
+    anyPhysicalGate = False #assume we have no physical gates until the we're told the opposite
     H_real = []  # Try to make H pre defined in size!!! 
     # Might be hard to do since we don't know how many gates will be real
     H_virt = []
@@ -65,18 +66,22 @@ def CreateHfromStep(step, Qblist, t_max):
         if step.name[i] in ["VPZ"]:  # Check virtual gates
             H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
         elif step.name[i] in ["PX", "PY", "PZ", "PM"]:
+            anyPhysicalGate = True
             H_real.append(y(Qblist, step.Tar_Con[i]))
         elif step.name[i] in ["CZ", "iSWAP","CZnew"]:  # Check 2q gates
+            anyPhysicalGate = True
             H_real.append(y(Qblist, step.Tar_Con[i]))
             step.angle[i] = 2*np.pi  # Should it be 2*pi for all 2qb gatess??
             tmax =t_max[1] # If there is a 2qb gate the maximal time changes to match that
         elif step.name[i] in ["HD"]:
+            anyPhysicalGate = True
             step.angle[i] = np.pi/2
             H = GateLib.HD(Qblist, step.Tar_Con[i])
             H_real.append(H[0])
             H_virt.append(H[1])
         else:  # Else append as 1q gate
             print(f"No gate added")
+        if not anyPhysicalGate: tmax = 0
     return H_real, H_virt, tmax
 
 

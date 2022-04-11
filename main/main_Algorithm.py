@@ -82,7 +82,7 @@ def main_algorithm(args):
             psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
         else:
             allStates[-ntraj:] = parfor(mcsolving.virtgate, psi0, vgate = vgate) #we replace the
-            #...last element with this one, since no time passes
+            #...last ntraj elements with this one, since no time passes
             psi0 = allStates[-ntraj:]
 
 
@@ -112,7 +112,7 @@ def main_algorithm(args):
                     psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
                 else:
                     allStates[-ntraj:] = (parfor(mcsolving.virtgate, psi0, vgate=vgate))  # the we replace the
-                    # ...last element with this one, since no time passes
+                    # ... last ntraj elements with this one, since no time passes
                     psi0 = allStates[-ntraj:]
     else:
         for i in range(1,len(steps)): #each step except the first one
@@ -127,7 +127,7 @@ def main_algorithm(args):
                     tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts.
                 tlist_tot = np.concatenate((tlist_tot, tlist_shifted)) # Create tlist for the entire process
                 if max(tlist) > 1e-11:
-                    allStates[-ntraj:] = np.transpose(parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops, returnFullList = True))
+                    allStates = np.append(allStates, np.transpose(parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops, returnFullList = True)))
                     psi0 = allStates[-ntraj:]
                 for vgate in virtualgates:
                     allStates[-ntraj:] = np.transpose(parfor(mcsolving.virtgate, psi0, vgate=vgate) ) # the we replace the
@@ -145,7 +145,7 @@ def main_algorithm(args):
         tlist_tot is a 1-dim numpy array of every time step in the simulation
         expectedvals is an 1-dim numpy array with the expected value of chosen operator at each time step
         allstates will be returned as a numpy array with dimensions (len(tlist_tot),ntraj), """
-        allStates = np.reshape(allStates, ((numberOfPhysicalSteps)*10,ntraj))
+        allStates = np.reshape(allStates, ((numberOfPhysicalSteps)*10,ntraj)) #time resolution for each step is 10
         expectvals = np.array([np.mean(expect(expectop, parallelStates)) for parallelStates in allStates])
         return psi0,allStates, expectvals, tlist_tot #psi0 are the final state (there are ntraj of them)
     else:
