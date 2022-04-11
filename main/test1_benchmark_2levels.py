@@ -12,18 +12,18 @@ import time
 
 
 
-c=0.01
+c=1000000.0
 qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * np.pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * np.pi, [2,2], [1,0,0])
 qblist = [qb1, qb2]
 c_ops = colf.create_c_ops(qblist)
-ntraj = 500
+ntraj = 10000
 tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist,0)
-iterations = 30
-initial_points = 5
+iterations = 100
+initial_points = 10
 
-problem = 'B'
+problem = 'A'
 
 if problem == 'A':
     J = 1
@@ -138,7 +138,7 @@ def circuit(cangle1, bangle1, cangle2, bangle2):
 
 
     # calling main_algorithm
-    args = {"steps": steps, "c_ops": c_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax, "ntraj": ntraj}
+    args = {"steps": steps, "c_ops": c_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax, "ntraj": ntraj ,"StoreTimeDynamics": False}
     state = ma.main_algorithm(args)
 
     return -np.mean(expect(ham, state))
