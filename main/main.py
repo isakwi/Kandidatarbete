@@ -36,6 +36,13 @@ That way we always store time dynamics if we're given an expectation value to wo
 
 # Parameters, eventually the number of qubits and the levels will be read from OpenQASM instead!
 n, ntraj, relax, depha, therma, anharm, l = rd.read_data()  # Parameters
+
+# e_ops is currently defined here
+e_ops = [] # Parameter, don't know how we want to import this later, maybe some text file or something
+StoreTimeDynamics = False
+if e_ops != []:
+    StoreTimeDynamics = True # If we pass some expectation operator(s) we store time dynamics
+
 Qblist = []
 for i in range(0, n):  # Creates list with all qubits, for now the desig and init_vec are empty
     anharm[i] = -2*pi*abs(anharm[i])*1e6  # Convert linear frequency to angular (input seems to usually be linear)
@@ -53,6 +60,7 @@ beta2 = pi/t_2q  # Driving strength for 2q gate
 
 psi0 = Qb.create_psi0(Qblist, 0)  # Create initial state with all qubits in ground state
 c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
+
 """ Adding the algorithm steps! """
 steps = []
 #steps.append(gf.Add_step(["PX"], [0], [pi/2]))
