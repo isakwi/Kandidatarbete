@@ -130,12 +130,12 @@ def main_algorithm(args):
 
 
     if StoreTimeDynamics:
-        """psi0 is a list of the final states (Qobj) with length ntraj
-        tlist_tot is a list of every time step in the simulation
-        expectedvals is an 1-dim array with the expected value of chosen operator at each time step
-        allstates will be returned as an array with dimensions (len(tlist_tot),ntraj), """
+        """psi0 is a 1-dim numpy array of the final states (Qobj) with length ntraj
+        tlist_tot is a 1-dim numpy array of every time step in the simulation
+        expectedvals is an 1-dim numpy array with the expected value of chosen operator at each time step
+        allstates will be returned as a numpy array with dimensions (len(tlist_tot),ntraj), """
         allStates = np.reshape(allStates, ((numberOfPhysicalSteps)*10,ntraj))
-        expectvals = [np.mean(expect(expectop, parallelStates)) for parallelStates in allStates]
+        expectvals = np.array([np.mean(expect(expectop, parallelStates)) for parallelStates in allStates])
         return psi0,allStates, expectvals, tlist_tot #psi0 are the final state (there are ntraj of them)
     else:
         return psi0
