@@ -151,7 +151,7 @@ def main_algorithm(args):
     if StoreTimeDynamics:
         """psi0 is a 1-dim numpy array of the final states (Qobj) with length ntraj
         tlist_tot is a 1-dim numpy array of every time step in the simulation
-        expectedvals is an 1-dim numpy array with the expected value of chosen operator at each time step
+        expectedvals is an (optional: list of) 1-dim numpy array(s) with the expected value of chosen operator at each time step
         allstates will be returned as a numpy array with dimensions (len(tlist_tot),ntraj), """
         allStates = np.reshape(allStates, ((numberOfPhysicalSteps)*10,ntraj)) #time resolution for each step is 10
         if type(e_ops) == Qobj:
