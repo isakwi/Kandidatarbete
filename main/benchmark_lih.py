@@ -32,6 +32,8 @@ for i in range(len(ops)):
         Hlist.append(opDict[letter])
     H += weights[i] * tensor(Hlist)
 
+print(H)
+
 
 
 
@@ -51,7 +53,7 @@ qb3 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 qblist = [qb0, qb1, qb2, qb3]
 c_ops = colf.create_c_ops(qblist)
 e_ops = []
-ntraj = 50
+ntraj = 5
 tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist, 0)
 iterations = 50
@@ -72,23 +74,29 @@ def circuit(theta_arr):
     args = {"steps": steps, "c_ops": c_ops, "e_ops": e_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax, "ntraj": ntraj, "StoreTimeDynamics": False}
     print("starts")
     state = ma.main_algorithm(args)
+    #expval = np.mean(expect(H, state))
+    #print(state[0])
 
 
-    return state
+    return -np.mean(expect(H, state))
 
-def blackbox(theta_arr):
+
+"""def blackbox(theta_arr):
     states = circuit(theta_arr)
+    print('we got states')
+    print(states)
+    #Ham =
     expval = np.mean(expect(H, states))
 
-    return -expval
+    return -np.mean(expect(H, state))
+"""
+def adm(t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11):
+    theta_arr = [t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11]
 
-def adm(t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,t11):
-    theta_arr = [t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,t11]
+    return circuit(theta_arr)
 
-    return blackbox(theta_arr)
-
-upperb = 2*np.pi
-lowerb = -2*np.pi
+upperb = 4*np.pi
+lowerb = -4*np.pi
 
 pbounds = {'t0': (lowerb, upperb), 't1': (lowerb, upperb), 't2': (lowerb, upperb), 't3': (lowerb, upperb),'t4': (lowerb, upperb), 't5': (lowerb, upperb), 't6': (lowerb, upperb), 't7': (lowerb, upperb), 't8': (lowerb, upperb), 't9': (lowerb, upperb), 't10': (lowerb, upperb), 't11': (lowerb, upperb)}
 
