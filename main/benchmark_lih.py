@@ -23,7 +23,30 @@ qb1 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb3 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
+qblist = [qb0, qb1, qb2, qb3]
+c_ops = colf.create_c_ops(qblist)
+ntraj = 500
+tmax= [20e-9, 200e-9]
+psi0 = qbc.create_psi0(qblist,0)
+
+
 def circuit(theta_arr):
     steps.append(gf.Add_step(["PY", "PY", "PY", "PY"], [0, 1, 2, 3], [theta_arr[0],theta_arr[1],theta_arr[2],theta_arr[3],]))
     steps.append(gf.Add_step(["CZnew"], [[1,0]], [0]))
     steps.append(gf.Add_step(["PY", "CZnew"], [[0], [3,1]] ,[theta_arr[4], 0]))
+    steps.append(gf.Add_step(["PY", "CZnew"], [[0], [3, 2]], [theta_arr[5], 0]))
+    steps.append(gf.Add_step(["PY", "PY"], [1, 2], [theta_arr[6], theta_arr[7]]))
+    steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
+    steps.append(gf.Add_step(["PY", "CZnew"], [[0], [3, 1]], [theta_arr[8], 0]))
+    steps.append(gf.Add_step(["PY", "CZnew"], [[3], [1, 2]], [theta_arr[11], 0]))
+    steps.append(gf.Add_step(["PY", "PY"], [1, 2], [theta_arr[9], theta_arr[10]]))
+
+    args = {"steps": steps, "c_ops": c_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax, "ntraj": ntraj}
+    state = ma.main_algorithm(args)
+
+    return state
+
+
+
+
+
