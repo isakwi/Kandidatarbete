@@ -42,9 +42,15 @@ def main_algorithm(args):
     ntraj = args["ntraj"]
     e_ops = args["e_ops"]
     StoreTimeDynamics = args["StoreTimeDynamics"]
+    #temporary soltuion for zz interaction below
+    try:
+        zz_mat = args["zz_mat"]
+        H0 = anharmonicity(Qblist) + ZZ_Interaction(Qblist, zz_mat)
+    except:
+        #if zz interactions not specified, we skip them
+        H0 = anharmonicity(Qblist)
 
 
-    H0 = anharmonicity(Qblist) # + ZZ_Interaction(Qblist)
     ## Do first iteration for ntraj trajectories to split the mcsolve
     physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[0], Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
     Htd, tlist = gf.TimeDepend(steps[0], physicalgates, tmax, Qblist)
