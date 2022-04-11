@@ -23,6 +23,17 @@ benchmark = False
 """ False if we only care about the final states"""
 StoreTimeDynamics = True
 
+""" e_ops are currently defined here """
+e_ops = []
+
+""" I have an idea, maybe we can write someting like
+
+StoreTimeDynamics = False
+if e_ops != []:
+    StoreTimeDynamics = True
+
+That way we always store time dynamics if we're given an expectation value to work with"""
+
 # Parameters, eventually the number of qubits and the levels will be read from OpenQASM instead!
 n, ntraj, relax, depha, therma, anharm, l = rd.read_data()  # Parameters
 Qblist = []
@@ -45,7 +56,6 @@ c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing f
 """ Adding the algorithm steps! """
 steps = []
 #steps.append(gf.Add_step(["PX"], [0], [pi/2]))
-steps.append(gf.Add_step(["PX"], [0], [pi]))
 steps.append(gf.Add_step(["PX"], [0], [pi]))
 steps.append(gf.Add_step(["VPZ"], [0], [pi]))
 steps.append(gf.Add_step(["PX"], [0], [pi/2]))
