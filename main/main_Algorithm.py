@@ -11,6 +11,7 @@ import numpy as np
 import GateFuncs as gf
 import mcsolving
 from Anharmonicity import anharmonicity
+import ZZinteraction_function as zz
 
 def main_algorithm(args):
     """ The main algorithm.
@@ -45,7 +46,7 @@ def main_algorithm(args):
     #temporary soltuion for zz interaction below
     try:
         zz_mat = args["zz_mat"]
-        H0 = anharmonicity(Qblist) + ZZ_Interaction(Qblist, zz_mat)
+        H0 = anharmonicity(Qblist) + zz.ZZ_Interaction(Qblist, zz_mat)
     except:
         #if zz interactions not specified, we skip them
         H0 = anharmonicity(Qblist)

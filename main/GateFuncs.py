@@ -81,7 +81,8 @@ def CreateHfromStep(step, Qblist, t_max):
             H_virt.append(H[1])
         else:  # Else append as 1q gate
             print(f"No gate added")
-        if not anyPhysicalGate: tmax = 0
+        if not anyPhysicalGate:
+            tmax = 0
     return H_real, H_virt, tmax
 
 

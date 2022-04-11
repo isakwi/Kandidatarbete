@@ -7,6 +7,7 @@ import numpy as np
 import CollapseOperator_function as co
 from qutip import *
 import GateFuncs as gf
+import GateLib as gl
 
 "One of these should be used."
 import main_Algorithm as mA # The main algorithm as we first wrote it
@@ -18,6 +19,8 @@ pi = np.pi
 
 """ True if we are doing the benchmark! """
 benchmark = False
+
+""" False if we only care about the final states"""
 StoreTimeDynamics = True
 
 # Parameters, eventually the number of qubits and the levels will be read from OpenQASM instead!
@@ -43,11 +46,13 @@ c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing f
 steps = []
 #steps.append(gf.Add_step(["PX"], [0], [pi/2]))
 steps.append(gf.Add_step(["PX"], [0], [pi]))
+steps.append(gf.Add_step(["PX"], [0], [pi]))
 steps.append(gf.Add_step(["VPZ"], [0], [pi]))
 steps.append(gf.Add_step(["PX"], [0], [pi/2]))
 
 
 args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj, "StoreTimeDynamics": StoreTimeDynamics}
+args["expectop"] = tensor([basis(qb.level,0) for qb in Qblist]) * tensor([basis(qb.level,0) for qb in Qblist]).dag()
 tic = time.perf_counter() # Start stopwatch in order to print the run time
 if StoreTimeDynamics:
     result,allstates, expectvals, tlist_tot = mA.main_algorithm(args)
