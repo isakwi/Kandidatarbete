@@ -7,6 +7,7 @@ import numpy as np
 import CollapseOperator_function as co
 from qutip import *
 import GateFuncs as gf
+import GateLib as gl
 
 "One of these should be used."
 import main_Algorithm as mA # The main algorithm as we first wrote it
@@ -18,10 +19,30 @@ pi = np.pi
 
 """ True if we are doing the benchmark! """
 benchmark = False
+
+""" False if we only care about the final states"""
 StoreTimeDynamics = True
+
+""" e_ops are currently defined here """
+e_ops = []
+
+""" I have an idea, maybe we can write someting like
+
+StoreTimeDynamics = False
+if e_ops != []:
+    StoreTimeDynamics = True
+
+That way we always store time dynamics if we're given an expectation value to work with"""
 
 # Parameters, eventually the number of qubits and the levels will be read from OpenQASM instead!
 n, ntraj, relax, depha, therma, anharm, l = rd.read_data()  # Parameters
+
+# e_ops is currently defined here
+e_ops = [] # Parameter, don't know how we want to import this later, maybe some text file or something
+StoreTimeDynamics = False
+if e_ops != []:
+    StoreTimeDynamics = True # If we pass some expectation operator(s) we store time dynamics
+
 Qblist = []
 for i in range(0, n):  # Creates list with all qubits, for now the desig and init_vec are empty
     anharm[i] = -2*pi*abs(anharm[i])*1e6  # Convert linear frequency to angular (input seems to usually be linear)
@@ -39,6 +60,7 @@ beta2 = pi/t_2q  # Driving strength for 2q gate
 
 psi0 = Qb.create_psi0(Qblist, 0)  # Create initial state with all qubits in ground state
 c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
+
 """ Adding the algorithm steps! """
 steps = []
 #steps.append(gf.Add_step(["PX"], [0], [pi/2]))
@@ -48,9 +70,10 @@ steps.append(gf.Add_step(["PX"], [0], [pi/2]))
 
 
 args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj, "StoreTimeDynamics": StoreTimeDynamics}
+args["expectop"] = tensor([basis(qb.level,0) for qb in Qblist]) * tensor([basis(qb.level,0) for qb in Qblist]).dag()
 tic = time.perf_counter() # Start stopwatch in order to print the run time
 if StoreTimeDynamics:
-    result, expectvals, tlist_tot = mA.main_algorithm(args)
+    result,allstates, expectvals, tlist_tot = mA.main_algorithm(args)
 else:
     result = mA.main_algorithm(args)
 toc = time.perf_counter() # Stop stopwatch
@@ -61,7 +84,7 @@ print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
 PrintStates = False
 if PrintStates:
     print(f"Initial state: {psi0}")
-    if type(result) == list : # Basically, if noises (mcsolve)
+    if isinstance(result, (list, tuple, np.ndarray)): # Basically, if noises (mcsolve)
         print(f"Final state: {result[-1].tidyup(atol=1e-4)}") # Prints one of the final states
         vec2 = result[-1]
     elif type(result) == Qobj:
