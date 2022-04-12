@@ -91,6 +91,7 @@ def main_algorithm(args):
             "e_ops here? ^ //Albin"
             "We could do that but I think that it is easier to do at the end of the code, since we easily can" \
             "obtain e_ops from allstates. /Axel"
+            "Om vi ska beräkna e_ops med mcsolvern måste ett option läggas till, se kommentarer i mcsolving.py /Ed "
             psi0 = allStates[-ntraj:]
 
 
