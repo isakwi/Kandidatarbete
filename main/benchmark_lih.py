@@ -42,7 +42,7 @@ tstart = time.time()
 steps=[]
 
 
-c = 0.01
+c = 0.00
 
 #
 qb0 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
@@ -58,7 +58,7 @@ ntraj = 1
 tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist, 0)
 iterations = 10
-initial_points = 20
+initial_points = 5
 
 
 def circuit(theta_arr):
