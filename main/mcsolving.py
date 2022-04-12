@@ -1,9 +1,11 @@
 from qutip import *
 
+#options = Options()
+#options.store_states = False  # If e_ops != 0, it wont store states?
 
 def mcs(psi,H,tlist,c_ops, e_ops, returnFullList = False):
     if c_ops != []:
-        output = mcsolve(H, psi, tlist, c_ops=c_ops, e_ops = e_ops, ntraj=1, progress_bar=None)
+        output = mcsolve(H, psi, tlist, c_ops=c_ops, e_ops = e_ops, ntraj=1, progress_bar=None) #, options=options)
         if not returnFullList:
             outstate = (output.states[:, -1])
             return outstate[0]
