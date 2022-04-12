@@ -41,7 +41,7 @@ def main_algorithm(args):
     Qblist = args["Qblist"]
     t_max = args["t_max"]
     ntraj = args["ntraj"]
-    e_ops = args["e_ops"]
+    #e_ops = args["e_ops"]
     StoreTimeDynamics = args["StoreTimeDynamics"]
     #temporary soltuion for zz interaction below
     try:

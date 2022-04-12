@@ -1,7 +1,7 @@
 import numpy as np
 from qutip import *
 import math
-import GateLib as gl
+import qnas.GateLib as gl
 
 '''Takes array of instances of qubits from the Qubitclass as input, i need to add thermal noise and noise from unwanted 
 interactions, unwanted interactions is alot trickier because we need to check if qubits can affect each other '''

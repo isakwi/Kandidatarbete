@@ -8,11 +8,11 @@ Contains:
   and tlist being a list of times over which the simulation will run.
 """
 
-import GateLib
+import qnas.GateLib
 from qutip import * # Will probably only need 
 import numpy as np
-import Qb_class as Qb
-from Envelope import *
+import qnas.Qb_class as Qb
+from qnas.Envelope import *
 import sys # For terminating upon error. We will see if this is a good way to do it
 import math
 

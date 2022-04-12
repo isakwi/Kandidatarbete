@@ -2,7 +2,7 @@
 Backend with definition of 1qb and 2qb gates
 """
 
-import Qb_class as Qb
+import qnas.Qb_class as Qb
 from qutip import *
 import numpy as np
 from scipy.linalg import *
@@ -162,7 +162,7 @@ def CZnew(Qblist, Tar_Con):
     control = Tar_Con[1]  # index of the controlling qubit
     del(cz[max(Tar_Con)])  # Make room for the cz gate
     del(cz[min(Tar_Con)])  # Make room for the cz gate
-    return gate_expand_2toN(H,len(Qblist),cz,control,target) # Found this function on qutip web and modified it a bit
+    return gate_expand_2toN(H,len(Qblist),cz,control,target) # Found this function on package_test2 web and modified it a bit
 
 def Cnot_2qb (Qblist, targetlist, controlvalue):
     Cnotvec = [qeye(Qb.level) for Qb in Qblist] * Qblist[targetlist[0]].level

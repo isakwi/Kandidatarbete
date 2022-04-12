@@ -8,9 +8,9 @@
 ##THis program should return the final state
 from qutip import *
 import numpy as np
-import GateFuncs as gf
-import mcsolving
-from Anharmonicity import anharmonicity
+import qnas.GateFuncs as gf
+import qnas.mcsolving
+from qnas.Anharmonicity import anharmonicity
 
 def main_algorithm(args):
     """ The main algorithm.

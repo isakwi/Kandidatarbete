@@ -12,10 +12,10 @@ setuptools.setup(
     description='Testing installation of Package',
     long_description=long_description,  # loads your README.md
     long_description_content_type="text/markdown",  # README.md is of type 'markdown'
-    author='Isak Wikman, Edvin Martinssin, Axel Blom, Albin Edenmyr, Didrik Palmqvist, Ludvig Nordqvist',
-    author_email='våramail@hej.com',
-    url='https://github.com/mike-huls/toolbox_public',  # Skapa en ny git för detta?!
-    install_requires=['numpy'],  # list all packages that your package uses
+    author='Isak Wikman, Edvin Martinson, Axel Blom, Albin Edenmyr, Didrik Palmqvist, Ludvig Nordqvist',
+    author_email='isakwi@student.chalmers.se, edvmar@student.chalmers.se, bloaxel@student.chalmers.se, edenmyr@student.chalmers.se, didrikp@student.chalmers.se, ludnor@student.chalmers.se',
+    url='https://github.com/isakwi/Kandidatarbete/tree/main/package_test',  # Skapa en ny git för detta?!
+    install_requires=['numpy, qutip'],  # list all packages that your package uses
     keywords=["pypi", "qnas", "algorithm-simulator"],  # descriptive meta-data
     classifiers=[  # https://pypi.org/classifiers
         'Development Status :: 3 - Alpha',
@@ -28,5 +28,5 @@ setuptools.setup(
         'Programming Language :: Python :: 3.9',
     ],
 
-    download_url="https://github.com/mike-huls/toolbox_public/archive/refs/tags/0.0.3.tar.gz",
+    download_url="https://github.com/isakwi/Kandidatarbete/tree/main/package_test",  # This should have a zip-downloadable file
 )
