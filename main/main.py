@@ -10,7 +10,7 @@ import GateFuncs as gf
 import GateLib as gl
 
 "One of these should be used."
-import main_Algorithm as mA # The main algorithm as we first wrote it
+import main_Algorithm as mA  #The main algorithm as we first wrote it
 #import main_Alg_parfortest as mA # The main algorithm using parfor for all steps
 
 import benchmarking_main as bm
