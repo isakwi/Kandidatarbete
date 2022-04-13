@@ -17,19 +17,19 @@ import qiskit
 
 pi = np.pi
 tstart = time.time()
-c = 0.01
+c = 0
 
 # qubits
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 betaplot = True #make this true if we want 1D plots as well
 
-gamma_resolution = 8
-beta_resolution = 8
+gamma_resolution = 20
+beta_resolution = 20
 
 # list of angles for parameters
-gamma_vec = np.linspace(0, pi, gamma_resolution)
-beta_vec = np.linspace(0, pi, beta_resolution)
+gamma_vec = np.linspace(0, 3.14, gamma_resolution)
+beta_vec = np.linspace(0, 3.14, beta_resolution)
 qblist = [qb1, qb2]
 
 # zeros matrix for saving expectation value of hamiltonian
@@ -37,8 +37,9 @@ exp_mat = np.zeros((beta_resolution, gamma_resolution))
 if betaplot:
     state_mat = [[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)]
 c_ops = colf.create_c_ops(qblist)
+e_ops = []
 # number of trajectories
-ntraj = 20
+ntraj = 4
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
 problem = 'a'
@@ -88,10 +89,14 @@ for i in range(0, gamma_resolution):
         print("Time elapsed: %.2f seconds." %(t-t00))
         print("Estimated time left: %.2f seconds. \n" %((gamma_resolution-i) * (t-t0)))  # Change here
         t0 = t
-    for j in range(0, beta_resolution):
-        steps = oqi.qasm_to_qnas(ourcirc(i, j))[0]
 
-        args = {"steps": steps, "c_ops": c_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax, "ntraj": ntraj,
+    for j in range(0, beta_resolution):
+        beta = beta_vec[j]
+
+
+        steps = oqi.qasm_to_qnas(ourcirc(gamma, beta))[1]
+        #print(steps)
+        args = {"steps": steps, "c_ops": c_ops, "e_ops": e_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax, "ntraj": ntraj,
                 "StoreTimeDynamics": False}
         state = ma.main_algorithm(args)
 

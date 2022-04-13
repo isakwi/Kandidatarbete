@@ -32,8 +32,9 @@ exp_mat = np.zeros((beta_resolution, gamma_resolution))
 if betaplot:
     state_mat = [[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)]
 c_ops = colf.create_c_ops(qblist)
+e_ops = []
 # number of trajectories
-ntraj = 20
+ntraj = 4
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
 problem = 'a'
@@ -62,6 +63,7 @@ steps[1] = (gf.Add_step([ "HD"], [1], [0]))  # Then we apply Hadamard to the sec
 steps[2] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps[4] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps[5] = (gf.Add_step(["HD"], [1], [0]))
+print(steps)
 
 # iterating through list of angles and saving expectation values in matrix
 t00 = time.time()
@@ -79,7 +81,7 @@ for i in range(0, gamma_resolution):
         steps[6] = (gf.Add_step(["VPZ", "VPZ"], [0,1], [2 * gamma * h1, 2 * gamma * h2]))
         steps[7] = (gf.Add_step(["PX", "PX"], [0,1], [2 * beta, 2 * beta]))
 # calling main_algorithm
-        args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": False}
+        args = {"steps" : steps, "c_ops" : c_ops, "e_ops" : e_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": False}
         state = ma.main_algorithm(args)
 # saving mean value of expectation value in matrix
         exp_mat[j, i] = np.mean(expect(ham, state))  # Beta y-axis and gamma x-axis

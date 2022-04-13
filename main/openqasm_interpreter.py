@@ -1,13 +1,15 @@
 import qiskit
 import re
 import numpy as np
+import GateFuncs as gf
+import GateLib as gl
 
 
 def qasm_to_qnas(circuit):
     qc = circuit
     # qc = qiskit.QuantumCircuit.from_qasm_file('bench2.qasm')
     qc.remove_final_measurements()
-    print(qc.draw())
+    #print(qc.draw())
 
     def my_float(s):
         constants = {"pi": np.pi, "e": np.e}
@@ -104,7 +106,7 @@ def qasm_to_qnas(circuit):
             if allgates[i][j] == "rx":
                 allgates[i][j] = "PX"
             if allgates[i][j] == "h":
-                allgates[i][j] = '"HD"'
+                allgates[i][j] = "HD"
             if allgates[i][j] == "iswap":
                 allgates[i][j] = "iSWAP"
             if allgates[i][j] == "pz":
@@ -119,10 +121,19 @@ def qasm_to_qnas(circuit):
 
     # for i in range(qc.depth()):
     #    print(toqnas[i])
-    return toqnas
 
+    steps = []
+    for stp in enumerate(toqnas):
+        print(stp[1])
+        #print(stp[1][1])
+        #print(stp[1][2])
+        steps.append([gf.Add_step(stp[1][0], stp[1][1], stp[1][2])])
 
-qc = qiskit.QuantumCircuit.from_qasm_file('bench2.qasm')
-steps = qasm_to_qnas(qc)
-print(steps)
+        #print('works')
+    #print(steps[0])
+    return steps
+
+"""qc = qiskit.QuantumCircuit.from_qasm_file('bench2.qasm')
+steve = qasm_to_qnas(qc)
+print(steve)"""
 
