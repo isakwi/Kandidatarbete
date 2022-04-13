@@ -68,7 +68,7 @@ def ourcirc(gamma, beta):
         circ.cz(0,1)
         circ.rx(2*gamma*J, 1)
         circ.cz(0,1)
-        circ.barrier(0)
+        #circ.barrier(0)
         circ.h(1)
         circ.rz(2*gamma*h1, 0)
         circ.rz(2*gamma*h2, 1)
