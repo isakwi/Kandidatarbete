@@ -1,6 +1,6 @@
 # Importing all functions available as: import qnas as x -> x.function()
 
-from qnas.help import help
+from qnas.help import *
 from qnas.Anharmonicity import *
 from qnas.CollapseOperator_function import *
 from qnas.Envelope import *
