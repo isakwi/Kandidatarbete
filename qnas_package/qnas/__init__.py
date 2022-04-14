@@ -1,6 +1,6 @@
 # Importing all functions available as: import qnas as x -> x.function()
 
-from qnas.help import *
+from qnas.help import help
 from qnas.Anharmonicity import *
 from qnas.CollapseOperator_function import *
 from qnas.Envelope import *
@@ -13,5 +13,5 @@ from qnas.mcsolving import *
 from qnas.Qb_class import *
 from qnas.read_data import *
 from qnas.solve import *
+__all__ = ['help', 'solve']
 
-__all__ = ['help','solve']
