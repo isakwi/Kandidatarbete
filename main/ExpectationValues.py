@@ -121,6 +121,7 @@ def main_algorithm_expectation(args):
     expectvals = 0
 
 
+    finalstate = psi0[-1] # or something like that ? Not sure exactly how psi0 looks. Sry
 
-    return psi0[-1], expectvals, tlist_tot
+    return finalstate, expectvals, tlist_tot
 
