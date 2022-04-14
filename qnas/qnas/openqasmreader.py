@@ -2,8 +2,8 @@ import numpy as np
 
 from qutip import *
 import qiskit
-import GateLib as gl
-import GateFuncs as gf
+from . import GateLib as gl
+from . import GateFuncs as gf
 
 """basic inital idea: take in qasmfile and convert the steps to a array of strings [gate1 q[n],...,] and then extract
 an array that contains the order of gates being applied to qubits, use this array to determine wich gates should 
