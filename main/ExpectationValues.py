@@ -4,6 +4,10 @@ from qutip import *
 import numpy as np
 import GateLib
 import sys
+import GateFuncs as gf
+import mcsolving
+from Anharmonicity import anharmonicity
+import ZZinteraction_function as zz
 
 
 
@@ -19,16 +23,18 @@ def TensorifyExpectationOperator(Qblist, Tar_Con, Gate):
     if type(Tar_Con) == int:  # 1qb gate
         gateList[Tar_Con] = Gate
         if Gate.shape[0] != Qblist[Tar_Con].level:
-            print('Error: Shape of e_ops doesn\'t match the targeted qubit level. \n See \'GateLib\' for more info')
+            print('Error: Shape of e_ops doesn\'t match the targeted qubit level. \n See \'ExpectationValues\' for more info')
             sys.exit(1)
         return tensor(gateList)
     elif len(Tar_Con) == 2: # 2qb gate
         if Gate.shape[0] != Qblist[Tar_Con[0]].level*Qblist[Tar_Con[1]].level:
-            print('Error: Shape of e_ops doesn\'t match the targeted qubits levels. \n See \'GateLib\' for more info')
+            print('Error: Shape of e_ops doesn\'t match the targeted qubits levels. \n See \'ExpectationValues\' for more info')
             sys.exit(1)
+        del (gateList[max(Tar_Con)])  # Make room for the gate
+        del (gateList[min(Tar_Con)])  # Make room for the gate
         return GateLib.gate_expand_2toN(Gate, len(Qblist), gateList, Tar_Con[1],Tar_Con[0])
     else:
-        print('Error: QnAS only handles 1 or 2 qubit operators as e_ops. \n See \'GateLib\' for more info')
+        print('Error: QnAS only handles 1 or 2 qubit operators as e_ops. \n See \'ExpectationValues\' for more info')
         sys.exit(1)  # Stops the program with the same error code as above
         # Kan nog fixa mer allmänna också...
 
@@ -44,3 +50,77 @@ def CreateE_opsList(Qblist, e_ops_inp):
     for i in range(len(e_ops_inp)):
         e_ops.append(TensorifyExpectationOperator(Qblist, e_ops_inp[i][1], e_ops_inp[i][0]))
     return e_ops
+
+
+def main_algorithm_expectation(args):
+    steps = args["steps"]
+    c_ops = args["c_ops"]
+    init_state = args["psi0"]
+    Qblist = args["Qblist"]
+    t_max = args["t_max"]
+    ntraj = args["ntraj"]
+    StoreTimeDynamics = args["StoreTimeDynamics"]
+    tlist_tot = [0]
+    e_ops_inp = args["e_ops_inp"]
+    expectvals = 0  # Write over this later
+
+    psi0 = []
+    for i in range(ntraj):
+        psi0.append(init_state)
+
+    e_ops = CreateE_opsList(Qblist, e_ops_inp) # Construct the e_ops array from e_ops_input
+
+    # temporary soltuion for zz interaction below
+    try:
+        zz_mat = args["zz_mat"]
+        H0 = anharmonicity(Qblist) + zz.ZZ_interaction(Qblist, zz_mat)
+    except:  # if zz interactions not specified, we skip them
+        H0 = anharmonicity(Qblist)
+
+    if c_ops != []:
+        for i in range(0, len(steps)):  # each step except the first one
+            physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist,t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
+            Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
+            H = Htd + H0
+
+            # Create tlist for the entire process
+            if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
+                tlist_shifted = []
+            else:
+                tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts.
+            tlist_tot = np.concatenate((tlist_tot, tlist_shifted))
+
+            if max(tlist) >= 1e-11:
+                psi0 = parfor(mcsolving.mcs_expectation, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)
+                """OBS: MODIFY HERE SO THAT WE STORE ALL STATES ETC ETC
+                OBS OBS: USE mcsolving.mcs_expectation !!!"""
+            for vgate in virtualgates:
+                psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
+    else:
+        for i in range(0, len(steps)):  # each step except the first one
+            physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist,
+                                                                   t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
+            Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
+            H = Htd + H0
+
+            if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
+                tlist_shifted = []
+            else:
+                tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts.
+            tlist_tot = np.concatenate((tlist_tot, tlist_shifted))  # Create tlist for the entire process
+
+            if max(tlist) > 1e-11:
+                psi0 = parfor(mcsolving.mcs_expectation, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=[])
+                """OBS: MODIFY HERE SO THAT WE STORE ALL STATES ETC ETC"""
+            for vgate in virtualgates:
+                psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
+
+    tlist_tot = np.delete(tlist_tot, 0)  # We get double zero in the beginning since tlist_tot = [0] initially
+
+    """CALCULATE EXPECTATION VALUES FROM ALL STATES HERE """
+    expectvals = 0
+
+
+
+    return psi0[-1], expectvals, tlist_tot
+
