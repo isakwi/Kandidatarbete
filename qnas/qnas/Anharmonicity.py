@@ -1,5 +1,5 @@
 from qutip import *
-from qnas.GateLib import AnHarm
+from .GateLib import AnHarm
 
 def anharmonicity(Qblist):
     """function for creating anharmonicty term for the Hamiltonian.

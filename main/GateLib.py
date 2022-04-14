@@ -95,20 +95,6 @@ def HD(Qblist, target):
     HD_virt = VPZ(Qblist, target, np.pi)
     return [HD_real, HD_virt]
 
-def CNOT(Qblist, Tar_Con):
-    """Create a controlled-not gate, so far only for 2-level qubits"""
-    target = Tar_Con[0]
-    control = Tar_Con[1]
-    if Qblist[target].level != 2:
-        raise Exception("Qubit level needs to be 2!")
-    outerproducts = [basis(2, 0) * basis(2,0).dag(), basis(2, 1)  * basis(2,1).dag()]
-    CNOT_list_0 = [qeye(Qb.level) for Qb in Qblist]
-    CNOT_list_1 = [qeye(Qb.level) for Qb in Qblist]
-    CNOT_list_0[control] = outerproducts[0]
-    CNOT_list_1[control] = outerproducts[1]
-    CNOT_list_1[target] = sigmax()
-    CNOT = tensor(CNOT_list_0) + tensor(CNOT_list_1)
-    return CNOT
 
 def CZ_old(Qblist, Tar_Con):#DO NOT USE THIS
     """Create a controlled-Z gate, so far only for 2-level qubits"""
@@ -126,21 +112,7 @@ def CZ_old(Qblist, Tar_Con):#DO NOT USE THIS
     CZ = tensor(CZ_list_0) + tensor(CZ_list_1) #we make Kronecker products and add them up
     return CZ
 
-def CZ(Qblist, Tar_Con): #DO NOT USE THIS
-    """Create a controlled-Z gate, for up to 4-level qubits
-    It depends only on the lowest two states though"""
-    target = Tar_Con[0] #index of the targeted qubit
-    control = Tar_Con[1] #index of the controlling qubit
-    lvl = Qblist[control].level
-    outerproducts = [basis(lvl, 0) * basis(lvl,0).dag(), basis(lvl, 1) * basis(lvl,1).dag()] #[|0><0|, |1><1|]
-    #we make one list for the control = 0 case and one for the control = 1
-    CZ_list_0 = [qeye(Qb.level) for Qb in Qblist] #some of these will be replaced below
-    CZ_list_1 = [qeye(Qb.level) for Qb in Qblist] #some of these will be replaced below
-    CZ_list_0[control] = outerproducts[0] #this is the projection onto psi_control = 0
-    CZ_list_1[control] = outerproducts[1] #this is the projection onto psi_control = 1
-    CZ_list_1[target] = create(Qblist[target].level)*destroy(Qblist[target].level) #if psi_control = 1, then we will apply sz on the target
-    CZ = tensor(CZ_list_0) + tensor(CZ_list_1) #we make Kronecker products and add them up
-    return CZ
+
 
 def CZnew(Qblist, Tar_Con):
     """
@@ -166,28 +138,11 @@ def CZnew(Qblist, Tar_Con):
     del(cz[min(Tar_Con)])  # Make room for the cz gate
     return gate_expand_2toN(H,len(Qblist),cz,control,target) # Found this function on qutip web and modified it a bit
 
-def Cnot_2qb (Qblist, targetlist, controlvalue):
-    Cnotvec = [qeye(Qb.level) for Qb in Qblist] * Qblist[targetlist[0]].level
-    state_con =[]
-    Cnot = 0
 
-
-
-    for ind in range(0, Qblist[targetlist[0]].level):
-        state_con.append(basis(Qblist[targetlist[0]].level), ind)
-
-    for i in range(0, Qblist[targetlist[0]].level):
-        Cnotvec[i][targetlist[0]] = state_con[i] * state_con[i].dag()
-
-    Cnotvec[controlvalue][targetlist[1]] = destroy(Qblist[1].level) + destroy(Qblist[1].level)
-
-    for ix in range(0, len(Cnotvec)):
-        Cnot = Cnot + tensor(Cnotvec[ix])
-
-    return Cnot
 
 def iSWAP(Qblist, Tar_Con):
     """
+    Saved this for now, might delete later.
     Since this is a symmetric swap, both qubits are targets and controls
     To avoid enumeration of the tar/con qubits, they are still called "target" and "control"
     Takes help from the gate_expand_2toN function

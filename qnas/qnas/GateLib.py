@@ -2,7 +2,7 @@
 Backend with definition of 1qb and 2qb gates
 """
 
-import qnas.Qb_class as Qb
+from . import Qb_class as Qb
 from qutip import *
 import numpy as np
 from scipy.linalg import *
