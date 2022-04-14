@@ -69,7 +69,7 @@ steps.append(gf.Add_step(["VPZ"], [0], [pi]))
 steps.append(gf.Add_step(["PX"], [0], [pi/2]))
 
 
-args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj, "StoreTimeDynamics": StoreTimeDynamics, "e_ops": e_ops}
+args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj, "StoreTimeDynamics": StoreTimeDynamics, "e_ops_inp": e_ops}
 tic = time.perf_counter() # Start stopwatch in order to print the run time
 if StoreTimeDynamics:
     result,allstates, expectvals, tlist_tot = mA.main_algorithm(args)

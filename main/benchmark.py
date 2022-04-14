@@ -80,7 +80,7 @@ for i in range(0, gamma_resolution):
         steps[6] = (gf.Add_step(["VPZ", "VPZ"], [0,1], [2 * gamma * h1, 2 * gamma * h2]))
         steps[7] = (gf.Add_step(["PX", "PX"], [0,1], [2 * beta, 2 * beta]))
 # calling main_algorithm
-        args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": False, "e_ops": e_ops}
+        args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": False, "e_ops_inp": e_ops}
         state = ma.main_algorithm(args)
 # saving mean value of expectation value in matrix
         exp_mat[j, i] = np.mean(expect(ham, state))  # Beta y-axis and gamma x-axis

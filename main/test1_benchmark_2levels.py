@@ -138,7 +138,7 @@ def circuit(cangle1, bangle1, cangle2, bangle2):
 
     e_ops=[]
     # calling main_algorithm
-    args = {"steps": steps, "c_ops": c_ops,"e_ops": e_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax, "ntraj": ntraj ,"StoreTimeDynamics": False}
+    args = {"steps": steps, "c_ops": c_ops,"e_ops_inp": e_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax, "ntraj": ntraj ,"StoreTimeDynamics": False}
     state = ma.main_algorithm(args)
 
     return -np.mean(expect(ham, state))
