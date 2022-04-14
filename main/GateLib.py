@@ -270,9 +270,11 @@ def gate_expand_2toN(U, N, cz, control=None, target=None, targets=None):
         p[0], p[control] = p[control], p[0]
     return tensor([U] + cz).permute(p)
 
-
-
-
+def isVirtual(gate):
+    if gate.name in ["VPZ"]:
+        return True
+    else:
+        return False
 
 
 if __name__ == "__main__":
