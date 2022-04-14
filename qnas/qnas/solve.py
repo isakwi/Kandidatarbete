@@ -1,10 +1,10 @@
 #import openqasmreader as oqread
-import qnas.GateFuncs as gf
-import qnas.Qb_class as qbc
+from . import GateFuncs as gf
+from . import Qb_class as qbc
 import numpy as np
-import qnas.read_data as rd
-import qnas.CollapseOperator_function as co
-import qnas.main_Algorithm as ma
+from . import read_data as rd
+from . import CollapseOperator_function as co
+from . import main_Algorithm as ma
 
 def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_time_dynamics = False):
     """
@@ -18,19 +18,9 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
     :return: if store_time_dynamics is True: Not sure yet. Else: ntraj many final states
     """
     if OpenQASM is None:
-        print("You didn't enter an OpenQASM file. Do you want to add gates manually ('y'/'n')?\t")
-        inp = input()
-        if inp == 'y':
-            # Call some function which makes the user manually input gates
-            print("This has not been implemented yet, sorry! Try specifying an OpenQASM file instead."
-                  " QnAS.solve() will now exit")
-            return
-        elif inp == 'n':
-            print("Okay! Try specifying an OpenQASM file. QnAS.solve() will now exit")
-            return
-        else:
-            print("You didn't enter 'y' or 'n', QnAS.solve() will now exit")
-            return
+        print("You didn't enter an OpenQASM file. QnAS will now exit?\t")
+        return
+
     try:
         #steps = oqread.FUNCTION(Qbfile)  # Should return a list with Add_step objects?
         print("Reading OpenQASM file is not implemented yet!")
@@ -43,25 +33,25 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
     # Check n
     if n is None:
         """
-        If n is none, we take the highest target as our number of qubits
+        If n is none, we take the highest target as our number of qubits??
         """
-        maxi = -1
+        maxn = -1
         print("You didn't specify the number of qubits. QnAS will use the number of qubits that are being targeted"
               " by the algorithm")
         for step in steps:
             for target in step.Tar_Con:
                 if type(target) == int:
-                    if target > maxi:
-                        maxi = target
+                    if target > maxn:
+                        maxn = target
                 elif type(target) == list:
-                    if max(target) > maxi:
-                        maxi = target
-        if maxi == -1:
+                    if max(target) > maxn:
+                        maxn = target
+        if maxn == -1:
             print("No qubit has been targeted by the algorithm, number of qubits could not be decided."
                   " QnAS.solve() will now exit")
             return
         else:
-            n = maxi + 1
+            n = maxn + 1
     else:
         if not  1 <= n <= 15:
             print("Invalid value for n! Must be between 1 and 15! QnAS.solve() will now exit")
