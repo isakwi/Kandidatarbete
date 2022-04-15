@@ -28,7 +28,7 @@ def mcs_expectation(psi, H, tlist, c_ops, e_ops, returnFullList=True):
         return outstates
     else:
         output = sesolve(H, psi, tlist, e_ops=[]) #, options=options)
-        expectvals = output.expect
+        #expectvals = output.expect #I commented this since e_ops = [] /Axel
         outstates = output.states
         return outstates
 

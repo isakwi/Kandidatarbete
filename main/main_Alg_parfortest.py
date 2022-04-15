@@ -51,6 +51,7 @@ def main_algorithm(args):
         return psi0
     if StoreTimeDynamics:
         psi, expectvals, tlist_tot = ExpectationValues.main_algorithm_expectation(args)
-        """OBS OBS ^ FUNKAR INTE ATM ! Behöver fixas för att beräkna expectvals!"""
+        """OBS OBS ^ FUNKAR INTE ATM ! Behöver fixas för att beräkna expectvals!
+        Ser ut att fungera nu!"""
         return psi0, expectvals, tlist_tot
     

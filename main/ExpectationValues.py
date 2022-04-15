@@ -63,6 +63,8 @@ def main_algorithm_expectation(args):
     tlist_tot = [0]
     e_ops_inp = args["e_ops_inp"]
     expectvals = 0  # Write over this later
+    allStates = np.array([])  # a list where all states are saved
+    numberOfPhysicalSteps = len(steps) #We will subtract the number of virtual gates from this as we go
 
     psi0 = []
     for i in range(ntraj):
@@ -86,14 +88,18 @@ def main_algorithm_expectation(args):
             # Create tlist for the entire process
             if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
                 tlist_shifted = []
+                numberOfPhysicalSteps -= 1
             else:
                 tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts.
             tlist_tot = np.concatenate((tlist_tot, tlist_shifted))
 
             if max(tlist) >= 1e-11:
-                psi0 = parfor(mcsolving.mcs_expectation, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)
+                allStates = np.append(allStates,np.transpose(parfor(mcsolving.mcs_expectation, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)))
+                psi0 = allStates[-ntraj:]
                 """OBS: MODIFY HERE SO THAT WE STORE ALL STATES ETC ETC
-                OBS OBS: USE mcsolving.mcs_expectation !!!"""
+                OBS OBS: USE mcsolving.mcs_expectation !!!
+                Modified now! Looks like it works
+                """
             for vgate in virtualgates:
                 psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
     else:
@@ -105,13 +111,16 @@ def main_algorithm_expectation(args):
 
             if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
                 tlist_shifted = []
+                numberOfPhysicalSteps -= 1
             else:
                 tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts.
             tlist_tot = np.concatenate((tlist_tot, tlist_shifted))  # Create tlist for the entire process
 
             if max(tlist) > 1e-11:
-                psi0 = parfor(mcsolving.mcs_expectation, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=[])
-                """OBS: MODIFY HERE SO THAT WE STORE ALL STATES ETC ETC"""
+                allStates = np.append(allStates, np.transpose(parfor(mcsolving.mcs_expectation, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)))
+                psi0 = allStates[-ntraj:]
+                """OBS: MODIFY HERE SO THAT WE STORE ALL STATES ETC ETC
+                Modified now! Looks like it works"""
             for vgate in virtualgates:
                 psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
 
@@ -119,6 +128,13 @@ def main_algorithm_expectation(args):
 
     """CALCULATE EXPECTATION VALUES FROM ALL STATES HERE """
     expectvals = 0
+    allStates = np.reshape(allStates, ((numberOfPhysicalSteps) * 10, ntraj))  # time resolution for each step is 10
+    if type(e_ops) == Qobj:
+        expectvals = np.array([np.mean(expect(e_ops, parallelStates)) for parallelStates in allStates])
+    elif type(e_ops) == list and type(e_ops[0] == Qobj):
+        expectvals = [np.array([np.mean(expect(e, parallelStates)) for parallelStates in allStates]) for e in e_ops]
+    else:
+        raise Exception("e_ops needs to be either a Qobj or a list of Qobj")
 
 
     finalstate = psi0[-1] # or something like that ? Not sure exactly how psi0 looks. Sry

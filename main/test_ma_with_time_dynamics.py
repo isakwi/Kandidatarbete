@@ -82,10 +82,8 @@ args["e_ops_inp"] = [[expectop1, [0,1]], [expectop2, 1]]
 finalstates, expvals, tlist = ma.main_algorithm(args)
 #finalstates, expvals, tlist = ma.main_algorithm(args)
 """Visualize result as desired"""
-#print("length of state list:" , len(allstates))
 #print("time list: ", tlist)
 print("final states data type:" , type(finalstates))
-#print("all states data type: " , type(allstates))
 #print("expected values data type: " , type(expvals))
 #print("tlist data type: " , type(tlist))
 
