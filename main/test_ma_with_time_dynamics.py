@@ -79,7 +79,7 @@ args["e_ops_inp"] = [[expectop1, [0,1]], [expectop2, 1]]
 
 
 """We test our program"""
-finalstates, allstates, expvals, tlist = ma.main_algorithm(args)
+finalstates, expvals, tlist = ma.main_algorithm(args)
 #finalstates, expvals, tlist = ma.main_algorithm(args)
 """Visualize result as desired"""
 #print("length of state list:" , len(allstates))
