@@ -64,7 +64,6 @@ def main_algorithm_expectation(args):
     e_ops_inp = args["e_ops_inp"]
     expectvals = 0  # Write over this later
     allStates = np.array([])  # a list where all states are saved
-    numberOfPhysicalSteps = len(steps) #We will subtract the number of virtual gates from this as we go
 
     psi0 = []
     for i in range(ntraj):
@@ -88,7 +87,6 @@ def main_algorithm_expectation(args):
             # Create tlist for the entire process
             if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
                 tlist_shifted = []
-                numberOfPhysicalSteps -= 1
             else:
                 tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts.
             tlist_tot = np.concatenate((tlist_tot, tlist_shifted))
@@ -111,7 +109,6 @@ def main_algorithm_expectation(args):
 
             if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
                 tlist_shifted = []
-                numberOfPhysicalSteps -= 1
             else:
                 tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts.
             tlist_tot = np.concatenate((tlist_tot, tlist_shifted))  # Create tlist for the entire process
@@ -127,8 +124,7 @@ def main_algorithm_expectation(args):
     tlist_tot = np.delete(tlist_tot, 0)  # We get double zero in the beginning since tlist_tot = [0] initially
 
     """CALCULATE EXPECTATION VALUES FROM ALL STATES HERE """
-    expectvals = 0
-    allStates = np.reshape(allStates, ((numberOfPhysicalSteps) * 10, ntraj))  # time resolution for each step is 10
+    allStates = np.reshape(allStates, (len(tlist_tot), ntraj))  # time resolution for each step is 10
     if type(e_ops) == Qobj:
         expectvals = np.array([np.mean(expect(e_ops, parallelStates)) for parallelStates in allStates])
     elif type(e_ops) == list and type(e_ops[0] == Qobj):
