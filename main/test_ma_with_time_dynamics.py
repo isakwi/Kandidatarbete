@@ -4,8 +4,8 @@ Maybe you guys already did something similar, but I couldn't find any testing in
 import numpy as np
 import GateFuncs as gf
 import CollapseOperator_function as colf
-import main_Algorithm as ma
-#import main_Alg_parfortest as ma  #Uncomment to change to parfor from the start
+#import main_Algorithm as ma
+import main_Alg_parfortest as ma  #Uncomment to change to parfor from the start
 from qutip import *
 import GateLib as gl
 import time
@@ -61,10 +61,8 @@ expectop1 = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0)
 #state11 = tensor((basis(3,1)),(basis(3,1)))
 state02 = tensor((basis(3,0)),(basis(3,2)))
 state20 = tensor((basis(3,2)),(basis(3,0)))
-expectop2 = state02 * state02.dag() + state20 * state20.dag()
-
-
-
+#expectop2 = state02 * state02.dag() + state20 * state20.dag()
+expectop2 = destroy(3)
 
 """We create a dictionary of arguments and add them"""
 args = {}
@@ -76,17 +74,16 @@ args["e_ops"] = e_ops
 args["c_ops"] = c_ops
 args["steps"] = steps
 args["psi0"] = psi0
-args["e_ops"] = [expectop1, expectop2]
+args["e_ops_inp"] = [[expectop1, [0,1]], [expectop2, 1]]
 
 
 
 """We test our program"""
-finalstates, allstates, expvals, tlist = ma.main_algorithm(args)
+finalstates, expvals, tlist = ma.main_algorithm(args)
+#finalstates, expvals, tlist = ma.main_algorithm(args)
 """Visualize result as desired"""
-#print("length of state list:" , len(allstates))
 #print("time list: ", tlist)
 print("final states data type:" , type(finalstates))
-#print("all states data type: " , type(allstates))
 #print("expected values data type: " , type(expvals))
 #print("tlist data type: " , type(tlist))
 
