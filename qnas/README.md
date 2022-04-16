@@ -7,3 +7,5 @@ it was a little confusing with my test package.
 
 MIT License: Free to use!
 Fix a git for the package!
+
+Also need to learn how to update packages on PyPi
