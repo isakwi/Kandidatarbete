@@ -17,7 +17,7 @@ import qiskit
 
 pi = np.pi
 tstart = time.time()
-c = 0.01
+c = 0.0
 
 # qubits
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
@@ -38,7 +38,7 @@ if betaplot:
     state_mat = [[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)]
 c_ops = colf.create_c_ops(qblist)
 # number of trajectories
-ntraj = 20
+ntraj = 5
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
 problem = 'a'

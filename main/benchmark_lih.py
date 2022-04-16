@@ -65,11 +65,11 @@ def circuit(theta_arr):
     steps.append(gf.Add_step(["PY", "PY", "PY", "PY"], [0, 1, 2, 3], [theta_arr[0],theta_arr[1],theta_arr[2],theta_arr[3],]))
     steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
     steps.append(gf.Add_step(["PY", "CZnew"], [0, [3, 1]], [theta_arr[4], 0]))
-    steps.append(gf.Add_step(["PY", "CZnew"], [0, [3, 2]], [theta_arr[5], 0]))
+    steps.append(gf.Add_step(["PY", "CZnew"], [3, [2, 1]], [theta_arr[5], 0]))
     steps.append(gf.Add_step(["PY", "PY"], [1, 2], [theta_arr[6], theta_arr[7]]))
     steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
     steps.append(gf.Add_step(["PY", "CZnew"], [0, [3, 1]], [theta_arr[8], 0]))
-    steps.append(gf.Add_step(["PY", "CZnew"], [3, [1, 2]], [theta_arr[11], 0]))
+    steps.append(gf.Add_step(["PY", "CZnew"], [3, [2, 1]], [theta_arr[11], 0]))
     steps.append(gf.Add_step(["PY", "PY"], [1, 2], [theta_arr[9], theta_arr[10]]))
 
     args = {"steps": steps, "c_ops": c_ops, "e_ops_inp": e_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax, "ntraj": ntraj, "StoreTimeDynamics": False}
