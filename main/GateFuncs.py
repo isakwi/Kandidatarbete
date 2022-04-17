@@ -2,9 +2,9 @@
 Contains: 
 - Class Add_step for initialising a new step in the algorithm. 
 - Function CreateHFromStep(step, Qblist) that returns a list of [H_real, H_virt, tmax], where
-  H_real is the Hamiltonian for the real part of the step, H_virt is the Hamiltonian for the virtual 
-  part of the step, and tmax is the maximal time corresponding to a rotation of pi. 
-- Function TimeDepend(step, gates, t_max) which returns [H,tlist], H being a time dependent Hamiltonian 
+  H_real is the Hamiltonian (Qobj) for the real part of the step, H_virt is the Hamiltonian for the virtual
+  part of the step (Qobj), and tmax is the maximal time corresponding to a rotation of π for 1qb gates and 2π for CZ.
+- Function TimeDepend(step, gates, t_max) which returns [H,tlist], H being a time dependent Hamiltonian (QobjEvo)
   and tlist being a list of times over which the simulation will run.
 """
 
@@ -15,12 +15,13 @@ import Qb_class as Qb
 from Envelope import *
 import sys # For terminating upon error. We will see if this is a good way to do it
 import math
+import Anharmonicity
 
-"""
-Class for creating each step in an algorithm. 
-Initialises name of gate, target qubit (Tar_Con) and angle of rotation
-"""
 class Add_step:
+    """
+    Class for creating each step in an algorithm.
+    Initialises name of gate, target qubit(s) (Tar_Con) and angle of rotation
+    """
     def __init__(self, name, Tar_Con, angle):
         self.name = name
         self.Tar_Con = Tar_Con
@@ -71,7 +72,8 @@ def CreateHfromStep(step, Qblist, t_max):
         elif step.name[i] in ["CZ", "iSWAP","CZnew"]:  # Check 2q gates
             anyPhysicalGate = True
             H_real.append(y(Qblist, step.Tar_Con[i]))
-            step.angle[i] = 2*np.pi  # Should it be 2*pi for all 2qb gatess??
+            if step.name[i] in ["CZ","CZnew"]:  # If we want to keep the possibility to drive 2qb gates at different angles..
+                step.angle[i] = 2*np.pi
             tmax =t_max[1] # If there is a 2qb gate the maximal time changes to match that
         elif step.name[i] in ["HD"]:
             anyPhysicalGate = True
@@ -87,16 +89,14 @@ def CreateHfromStep(step, Qblist, t_max):
 
 
 def TimeDepend(step, gates, t_max, Qblist):
+    """
+    Translates the H_real from Qobj to QobjEvo by including the drive envelope corresponding to the
+    angle specified in the step, and sums all the QobjEvos together to return the entire Hamiltonian for
+    the real part of the step .
+    """
     angles = step.angle  # [ang1, ang2, ang3...]
     # Create tlist
 
-    # Find theoretical max drive time ~ π rotation
-    """t_max = 20 * 1e-9  # One qb gate time  MAYBE HAVE THIS AS AN INPUT?
-    for Tar_Con in step.Tar_Con:
-        if type(Tar_Con) == list:
-            t_max = 200*1e-9   #Two qb gate time
-            tlist = np.linspace(0, t_max, 100)  #Maybe make resolution an input ? 100 default
-            break"""
     # Find max drive time for 1qb gates ~ largest drive angle
     if t_max < 100*1e-9:   #Python makes t_max not quite 200ns for 2qb, so we add a large safety margin ;).
         t_dmax = t_max * abs(max(angles)) / np.pi  # Drive time for the largest angle in step
@@ -113,7 +113,7 @@ def TimeDepend(step, gates, t_max, Qblist):
         if step.name[i] in ['CZnew']:
             for j in range(2): # Removing anharmonicity for the gates targeted by CZ
                 target = step.Tar_Con[i][j]
-                H = H - Qblist[target].anharm*GateLib.AnHarm(Qblist, target)
+                H = H - Qblist[target].anharm*Anharmonicity.AnHarm(Qblist, target)
     for i in range(len(gates)):
         if abs(angles[i]) >= tol:  # Dont add gates which have a too small angle
             gate = gates[i]
