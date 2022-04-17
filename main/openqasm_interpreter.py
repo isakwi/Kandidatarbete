@@ -1,3 +1,5 @@
+import curses.ascii
+
 import qiskit
 import re
 import numpy as np
@@ -9,10 +11,12 @@ def qasm_to_qnas(circuit):
     qc = circuit
     # qc = qiskit.QuantumCircuit.from_qasm_file('bench2.qasm')
     qc.remove_final_measurements()
-    #print(qc.draw())
+    print(qc.draw())
 
     def my_float(s):
         constants = {"pi": np.pi, "e": np.e}
+        #if "*" in s:
+        #if "/" in s:
         if s in constants:
             return constants[s]
         else:
@@ -48,7 +52,7 @@ def qasm_to_qnas(circuit):
 
     for k in range(qc.depth() - 1):
         for i in range(len(newgatelist[qc.depth() - 2 - k])):  # näst sista element, jobba sig neråt
-            x = newgatelist[qc.depth() - 2 - k][i]  # näst sista listan, jobba sig neråt, i
+            x = newgatelist[qc.depth() - 2 - k][i]  # näst sista listan, jobba sig neråt, i++
             for j in range(len(newgatelist[qc.depth() - 1 - k])):
                 if x == newgatelist[qc.depth() - 1 - k][j]:
                     del newgatelist[qc.depth() - 1 - k][j]
@@ -63,6 +67,7 @@ def qasm_to_qnas(circuit):
     allgates = []
     allargs = []
     allqubits = []
+
     for k in range(len(a)):
         # find gatetype
         gates = []
@@ -96,9 +101,11 @@ def qasm_to_qnas(circuit):
         allgates.append(gates)
         allargs.append(args)
         allqubits.append(qubits)
-
+    barrierremove = []
     for i in range(qc.depth()):
         for j in range(len(allgates[i])):
+            if allgates[i][j] == "id":
+                barrierremove.append([i, j])
             if allgates[i][j] == "cz":
                 allgates[i][j] = "CZnew"
             if allgates[i][j] == "ry":
@@ -113,27 +120,36 @@ def qasm_to_qnas(circuit):
                 allgates[i][j] = "VPZ"
             # else:
             #    print("Gate " + allgates[i][j] + "not in library of qnas. ")
+    #print(barrierremove)
+    #print(barrierremove[0][0])
+    #print(barrierremove)
+    #print(allgates)
+    """for i in range(len(barrierremove)):
+        n = 0
+        if barrierremove[i][0] == barrierremove[i-1][0] and i != 1:
+            n = n+1
+        else:
+            n = 0
+        del allgates[barrierremove[i-n][0]][barrierremove[i-n][1]]
+        del allqubits[barrierremove[i-n][0]][barrierremove[i-n][1]]
+        del allargs[barrierremove[i-n][0]][barrierremove[i-n][1]]"""
 
     toqnas = []
-    for i in range(qc.depth()):
-        for j in range(qc.depth()):
-            toqnas.append([allgates[j], allqubits[j], allargs[j]])
 
+    for j in range(qc.depth()):
+        toqnas.append([allgates[j], allqubits[j], allargs[j]])
+    #print(toqnas)
     # for i in range(qc.depth()):
     #    print(toqnas[i])
 
     steps = []
     for stp in enumerate(toqnas):
-        print(stp[1])
-        #print(stp[1][1])
-        #print(stp[1][2])
         steps.append([gf.Add_step(stp[1][0], stp[1][1], stp[1][2])])
 
-        #print('works')
-    #print(steps[0])
     return steps
 
 """qc = qiskit.QuantumCircuit.from_qasm_file('bench2.qasm')
 steve = qasm_to_qnas(qc)
-print(steve)"""
-
+#print(len(steve))
+for i in range(len(steve)):
+    print(steve[i])"""

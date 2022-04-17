@@ -57,7 +57,7 @@ e_ops = []
 ntraj = 1
 tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist, 0)
-iterations = 10
+iterations = 40
 initial_points = 5
 
 
@@ -120,7 +120,7 @@ new_optimizer.maximize(
 print("--- %s seconds ---" % (time.time() - tstart))
 print( "Trajectories:" ,(ntraj), "noise:", (c), "initpoints:", (initial_points), "iterations:" ,(iterations) )
 print(new_optimizer.max)
-no = new_optimizer.max["params"]
+"""no = new_optimizer.max["params"]
 x,y = {},{}
 for key in no.keys():
     if len(key) == 2:
@@ -130,7 +130,7 @@ for key in no.keys():
 
 no = {**x,**y}
 df = pd.DataFrame.from_dict(no, orient = "index").transpose()
-df.to_excel("temporaryBenchmmarkOutput.xlsx")
+df.to_excel("temporaryBenchmmarkOutput.xlsx")"""
 print('done')
 
 

@@ -7,6 +7,11 @@ from qutip import *
 import numpy as np
 from scipy.linalg import *
 
+def ID(Qblist, target):
+    id = [qeye(Qb.level) for Qb in Qblist]
+
+    return tensor(id)
+
 def PX(Qblist, target):
     """Creates specific sigmax gate, maybe better than to create all gates? Then
     you can use only the operators you need.
