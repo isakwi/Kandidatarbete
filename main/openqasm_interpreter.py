@@ -22,6 +22,22 @@ def qasm_to_qnas(circuit):
         else:
             return float(s)
 
+    def pi_delivery(strg):
+        flt = 0
+
+        if '*pi/' in strg:
+            flt = float(strg.split('*')[0]) * np.pi / float(strg.split('/')[1])
+        elif '*pi' in strg:
+            flt = float(strg.split('*')[0]) * np.pi
+        elif 'pi/' in strg:
+            flt = np.pi / float(strg.split('/')[1])
+        elif 'pi' in strg:
+            flt = np.pi
+        else:
+            flt = float(strg)
+
+        return flt
+
     gatelst = []
     for i in range(qc.depth()):
         dag = qiskit.converters.circuit_to_dag(qc)
@@ -83,7 +99,7 @@ def qasm_to_qnas(circuit):
         args = []
         for i in range(len(a[k])):
             if "(" in a[k][i]:
-                args.append(my_float(a[k][i][a[k][i].find("(") + 1:a[k][i].find(
+                args.append(pi_delivery(a[k][i][a[k][i].find("(") + 1:a[k][i].find(
                     ")")]))  # find item inside parenthesis, if no parenthesis current prints entire thing
             else:
                 args.append(0)
@@ -146,10 +162,11 @@ def qasm_to_qnas(circuit):
     for stp in enumerate(toqnas):
         steps.append([gf.Add_step(stp[1][0], stp[1][1], stp[1][2])])
 
-    return steps
+    return toqnas
 
-"""qc = qiskit.QuantumCircuit.from_qasm_file('bench2.qasm')
+qc = qiskit.QuantumCircuit.from_qasm_file('bench2.qasm')
 steve = qasm_to_qnas(qc)
+
 #print(len(steve))
 for i in range(len(steve)):
-    print(steve[i])"""
+    print(steve[i])
