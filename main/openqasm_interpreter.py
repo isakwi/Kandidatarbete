@@ -11,7 +11,7 @@ def qasm_to_qnas(circuit):
     qc = circuit
     # qc = qiskit.QuantumCircuit.from_qasm_file('bench2.qasm')
     qc.remove_final_measurements()
-    print(qc.draw())
+    #print(qc.draw())
 
     def my_float(s):
         constants = {"pi": np.pi, "e": np.e}
@@ -134,6 +134,8 @@ def qasm_to_qnas(circuit):
                 allgates[i][j] = "iSWAP"
             if allgates[i][j] == "pz":
                 allgates[i][j] = "VPZ"
+            if allgates[i][j] == "id":
+                allgates[i][j] = "ID"
             # else:
             #    print("Gate " + allgates[i][j] + "not in library of qnas. ")
     #print(barrierremove)
@@ -160,13 +162,14 @@ def qasm_to_qnas(circuit):
 
     steps = []
     for stp in enumerate(toqnas):
+        print(stp[1])
         steps.append([gf.Add_step(stp[1][0], stp[1][1], stp[1][2])])
 
-    return toqnas
+    return steps
 
-qc = qiskit.QuantumCircuit.from_qasm_file('bench2.qasm')
+"""qc = qiskit.QuantumCircuit.from_qasm_file('bench1.qasm')
 steve = qasm_to_qnas(qc)
-
+print(type(qc))
 #print(len(steve))
 for i in range(len(steve)):
-    print(steve[i])
+    print(steve[i])"""

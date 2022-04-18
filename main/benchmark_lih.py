@@ -42,7 +42,7 @@ tstart = time.time()
 steps=[]
 
 
-c = 0.00
+c = 1000
 
 #
 qb0 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
