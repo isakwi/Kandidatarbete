@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import Qb_class as qbc
 import matplotlib as mpl
+import openqasm_interpreter as opi
 pi = np.pi
 tstart = time.time()
 c = 0.01
@@ -50,19 +51,37 @@ elif problem == 'd':
 else:
     raise ValueError("You must do problem \'a\', \'b\', \'c\' or \'d\'")
 
+
+def ourcirc(gamma, beta):
+
+    circ = qiskit.QuantumCircuit(2)
+    circ.h(0)
+    circ.h(1)
+    circ.h(1)
+    circ.cz(0,1)
+    circ.rx(2*gamma*J, 1)
+    circ.cz(0,1)
+    circ.h(1)
+    circ.rz(2*gamma*h1, 0)
+    circ.rz(2*gamma*h2, 1)
+    circ.rx(2*beta, 0)
+    circ.rx(2*beta,1)
+    return circ
+
+
 # Ising hHamiltonian, our cost function is the expectation value of this hamiltonian
 ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.PZ(qblist, 1)  # Maybe plus/minus
 
 # Changed the sign of J again and then it kinda worked
 
 # steps in algoritm (the ones that change will be updated for each step)
-steps = [gf.Add_step(["PX"],[1],[0.1]) for i in range(8)]  # zero angle rotation, will all be replaced
-
+#steps = [gf.Add_step(["PX"],[1],[0.1]) for i in range(8)]  # zero angle rotation, will all be replaced
+"""
 steps[0] = (gf.Add_step(["HD", "HD"], [0,1], [0, 0]))  # First we apply Hadamard to both qubits
 steps[1] = (gf.Add_step([ "HD"], [1], [0]))  # Then we apply Hadamard to the second qubit
 steps[2] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
 steps[4] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
-steps[5] = (gf.Add_step(["HD"], [1], [0]))
+steps[5] = (gf.Add_step(["HD"], [1], [0]))"""
 
 # iterating through list of angles and saving expectation values in matrix
 t00 = time.time()
@@ -76,9 +95,7 @@ for i in range(0, gamma_resolution):
         t0 = t
     for j in range(0, beta_resolution):
         beta = beta_vec[j]
-        steps[3] = (gf.Add_step(["PX"], [1], [2 * gamma * J]))
-        steps[6] = (gf.Add_step(["VPZ", "VPZ"], [0,1], [2 * gamma * h1, 2 * gamma * h2]))
-        steps[7] = (gf.Add_step(["PX", "PX"], [0,1], [2 * beta, 2 * beta]))
+        steps = opi.openqasm_interpreter(ourcirc(gamma, beta))
 # calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "e_ops_inp": e_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": False}
         state = ma.main_algorithm(args)
