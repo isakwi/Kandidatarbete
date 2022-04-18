@@ -57,7 +57,7 @@ e_ops = []
 ntraj = 1
 tmax= [20e-9, 200e-9]
 psi0 = qbc.create_psi0(qblist, 0)
-iterations = 10
+iterations = 40
 initial_points = 5
 
 
@@ -65,11 +65,11 @@ def circuit(theta_arr):
     steps.append(gf.Add_step(["PY", "PY", "PY", "PY"], [0, 1, 2, 3], [theta_arr[0],theta_arr[1],theta_arr[2],theta_arr[3],]))
     steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
     steps.append(gf.Add_step(["PY", "CZnew"], [0, [3, 1]], [theta_arr[4], 0]))
-    steps.append(gf.Add_step(["PY", "CZnew"], [0, [3, 2]], [theta_arr[5], 0]))
+    steps.append(gf.Add_step(["PY", "CZnew"], [3, [2, 1]], [theta_arr[5], 0]))
     steps.append(gf.Add_step(["PY", "PY"], [1, 2], [theta_arr[6], theta_arr[7]]))
     steps.append(gf.Add_step(["CZnew"], [[1, 0]], [0]))
     steps.append(gf.Add_step(["PY", "CZnew"], [0, [3, 1]], [theta_arr[8], 0]))
-    steps.append(gf.Add_step(["PY", "CZnew"], [3, [1, 2]], [theta_arr[11], 0]))
+    steps.append(gf.Add_step(["PY", "CZnew"], [3, [2, 1]], [theta_arr[11], 0]))
     steps.append(gf.Add_step(["PY", "PY"], [1, 2], [theta_arr[9], theta_arr[10]]))
 
     args = {"steps": steps, "c_ops": c_ops, "e_ops_inp": e_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax, "ntraj": ntraj, "StoreTimeDynamics": False}
@@ -120,7 +120,7 @@ new_optimizer.maximize(
 print("--- %s seconds ---" % (time.time() - tstart))
 print( "Trajectories:" ,(ntraj), "noise:", (c), "initpoints:", (initial_points), "iterations:" ,(iterations) )
 print(new_optimizer.max)
-no = new_optimizer.max["params"]
+"""no = new_optimizer.max["params"]
 x,y = {},{}
 for key in no.keys():
     if len(key) == 2:
@@ -130,7 +130,7 @@ for key in no.keys():
 
 no = {**x,**y}
 df = pd.DataFrame.from_dict(no, orient = "index").transpose()
-df.to_excel("temporaryBenchmmarkOutput.xlsx")
+df.to_excel("temporaryBenchmmarkOutput.xlsx")"""
 print('done')
 
 

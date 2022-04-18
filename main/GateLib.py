@@ -7,6 +7,11 @@ from qutip import *
 import numpy as np
 from scipy.linalg import *
 
+def ID(Qblist, target):
+    id = [qeye(Qb.level) for Qb in Qblist]
+
+    return tensor(id)
+
 def PX(Qblist, target):
     """Creates specific sigmax gate, maybe better than to create all gates? Then
     you can use only the operators you need.
@@ -62,13 +67,7 @@ def PZ(Qblist, target):
     #Made some wack ass solution by multiplying by -2 but not sure if this is legal
     return tensor(sz)
 
-def AnHarm(Qblist, target):
-    """Creates anharmonicty term of correct dimension
-    Input is list of qubits and which qubit you want to target with the operator
-    Returns Qobj anharmonicity operator for targeted qubit """
-    AH = [qeye(Qb.level) for Qb in Qblist]
-    AH[target] = create(Qblist[target].level)*create(Qblist[target].level)*destroy(Qblist[target].level)*destroy(Qblist[target].level)
-    return tensor(AH)
+
 
 def VPZ(Qblist, target, angle):
     """Creates virtual sigmaz gate, not sure if this is the way to do it though
@@ -225,9 +224,11 @@ def gate_expand_2toN(U, N, cz, control=None, target=None, targets=None):
         p[0], p[control] = p[control], p[0]
     return tensor([U] + cz).permute(p)
 
-
-
-
+def isVirtual(gate):
+    if gate.name in ["VPZ"]:
+        return True
+    else:
+        return False
 
 
 if __name__ == "__main__":
