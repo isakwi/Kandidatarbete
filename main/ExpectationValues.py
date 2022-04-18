@@ -53,6 +53,12 @@ def CreateE_opsList(Qblist, e_ops_inp):
 
 
 def main_algorithm_expectation(args):
+    """
+    mainAlgorithm modified to incorporate the StoreTimeDynamics option, by giving output:
+    -final state
+    -tlist for the entire algorithm
+    -expectation values for a user specified set of e_ops, at each time step in the tlist.
+    """
     steps = args["steps"]
     c_ops = args["c_ops"]
     init_state = args["psi0"] # maybe we should change the input so we can write args["init_state"] instead

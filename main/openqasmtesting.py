@@ -17,11 +17,12 @@ import qiskit
 
 pi = np.pi
 tstart = time.time()
-c = 0.01
+c = 0.0
 
 # qubits
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
+
 betaplot = True #make this true if we want 1D plots as well
 
 gamma_resolution = 8
@@ -38,7 +39,7 @@ if betaplot:
     state_mat = [[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)]
 c_ops = colf.create_c_ops(qblist)
 # number of trajectories
-ntraj = 20
+ntraj = 5
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
 problem = 'a'
@@ -68,13 +69,13 @@ def ourcirc(gamma, beta):
         circ.cz(0,1)
         circ.rx(2*gamma*J, 1)
         circ.cz(0,1)
-        #circ.barrier(0)
+        circ.barrier(0)
         circ.h(1)
         circ.rz(2*gamma*h1, 0)
         circ.rz(2*gamma*h2, 1)
         circ.rx(2*beta, 0)
         circ.rx(2*beta,1)
-
+        circ = qiskit.QuantumCircuit.from_qasm_file('bench2.qasm')
         return circ
 
 
