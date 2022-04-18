@@ -54,8 +54,16 @@ def CreateHfromStep(step, Qblist, t_max):
             print('Error: Qubit outside of the number of qubits is being targeted by Tar_Con')
             sys.exit(1)  # Stops the program with the same error code as above
         if step.angle[i] < 0 and step.name[i] not in ["VPZ"]:
-            print("Warning! Negative angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i]/np.pi+2),3)) + "π")
-            step.angle[i]=step.angle[i] + 2*np.pi
+            print("Warning! Negative angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i] % (2*np.pi))/np.pi,3)) + "π")
+            step.angle[i]=step.angle[i] % (2*np.pi)
+            print(step.angle[i])
+        if step.angle[i] > 2 * np.pi and step.name[i] not in ["VPZ","CZnew"]:
+            print("Warning! HUGE angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i] % (2*np.pi))/np.pi,3)) + "π")
+            step.angle[i]=step.angle[i] % (2*np.pi)
+        if step.angle[i] >  np.pi and step.name[i] not in ["VPZ", "CZnew"]:
+            print("Warning! Too big angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " QNAS is still working on a solution for this")
+
+
         """The error handling is probably not very good. I know one should be more specific in which errors
         to handle in each except, but all the errors in the try block must come from step.name[i] (given that
         the code works as it should), so this should be pretty safe.    
