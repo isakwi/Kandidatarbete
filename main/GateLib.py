@@ -8,8 +8,9 @@ import numpy as np
 from scipy.linalg import *
 
 def ID(Qblist, target):
+    """ Creates identity gate which can be used when creating a openQASM file to make
+    sure all gates are in the correct depth"""
     id = [qeye(Qb.level) for Qb in Qblist]
-
     return tensor(id)
 
 def PX(Qblist, target):
