@@ -61,8 +61,9 @@ def CreateHfromStep(step, Qblist, t_max):
         if step.angle[i] > 2 * np.pi and step.name[i] not in ["VPZ","CZnew"]:
             print("Warning! HUGE angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i] % (2*np.pi))/np.pi,3)) + "π")
             step.angle[i]=step.angle[i] % (2*np.pi)
-        if step.angle[i] >  np.pi and step.name[i] not in ["VPZ", "CZnew"]:
-            print("Warning! Too big angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " QNAS is still working on a solution for this")
+        #angles greater than pi is no problem right??
+        #if step.angle[i] >  np.pi and step.name[i] not in ["VPZ", "CZnew"]:
+         #   print("Warning! Too big angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " QNAS is still working on a solution for this")
 
 
         """The error handling is probably not very good. I know one should be more specific in which errors
