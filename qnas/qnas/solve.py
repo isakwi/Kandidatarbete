@@ -132,5 +132,5 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
     psi0 = qbc.create_psi0(Qblist, 0)
     c_ops = co.create_c_ops(Qblist)
 
-    args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": Qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": store_time_dynamics}
+    args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": Qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": store_time_dynamics, "e_ops_inp": e_ops}
     return ma.main_algorithm(args)
