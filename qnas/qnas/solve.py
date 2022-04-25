@@ -7,7 +7,7 @@ from . import CollapseOperator_function as co
 from . import main_Algorithm as ma
 from qutip import *
 
-def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops = []):
+def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops=None):
     """
     The main solver function. Basically a user calls this function and everything else is automatic
     :param Qbfile: File that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi
@@ -18,6 +18,8 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
     :param store_time_dynamics: True/False value to store time dynamics. Default - False
     :return: if store_time_dynamics is True: Not sure yet. Else: ntraj many final states
     """
+    if e_ops is None:
+        e_ops = []
     if OpenQASM is None:
         print("You didn't enter an OpenQASM circuit. QnAS will now exit?\t")
         return
@@ -107,7 +109,7 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
               "QnAS.solve() will now exit")
         return
     if store_time_dynamics == True:  # Only need to check e_ops if store_td is true
-        if e_ops == []:
+        if e_ops is None:
             print("You didn't enter any e_ops, no need to save time dynamics!")
             store_time_dynamics = False
         if type(e_ops) != list:
