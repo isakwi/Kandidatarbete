@@ -15,7 +15,7 @@ setuptools.setup(
     author='Isak Wikman, Edvin Martinson, Axel Blom, Albin Edenmyr, Didrik Palmqvist, Ludvig Nordqvist',
     author_email='isakwi@student.chalmers.se, edvmar@student.chalmers.se, bloaxel@student.chalmers.se, edenmyr@student.chalmers.se, didrikp@student.chalmers.se, ludnor@student.chalmers.se',
     url='https://github.com/isakwi/Kandidatarbete/tree/main/package_test',  # Skapa en ny git för detta?!
-    install_requires=['numpy, qutip', 'scipy', 'qiskit'],  # list all packages that your package uses
+    install_requires=['numpy, qutip', 'scipy', 'qiskit', 'pandas', 'sys'],  # list all packages that your package uses
     keywords=["pypi", "qnas", "algorithm-simulator"],  # descriptive meta-data
     classifiers=[  # https://pypi.org/classifiers
         'Development Status :: 3 - Alpha',

@@ -7,15 +7,15 @@ from . import CollapseOperator_function as co
 from . import main_Algorithm as ma
 from qutip import *
 
-def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops=None):
+def solve(Qbfile = None, OpenQASM = None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops=None):
     """
     The main solver function. Basically a user calls this function and everything else is automatic
     :param Qbfile: File that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi
     :param OpenQASM: File that specifies OpenQASM file. Default - Asks user to specify gates manually or not run
-    :param n: number of qubits. Default - Last qubit targeted by OpenQASM
     :param ntraj: number of trajectories for the Monte Carlo solver. Default - 500
     :param tmax: Max time for 1qb-gate and 2qb-gate ~ [t_1qb, t_2qb]. Default - [20e-9, 200e-9]
     :param store_time_dynamics: True/False value to store time dynamics. Default - False
+    :param e_ops: Expectation value operators for store_time_dynamics. Given as [[e_op1, Tar_Con],[e_op2, Tar_Con], ...]
     :return: if store_time_dynamics is True: Not sure yet. Else: ntraj many final states
     """
     if e_ops is None:
@@ -34,40 +34,25 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
         return
 
     # Check n
-    if n is None:
-        """
-        If n is none, we take the highest target as our number of qubits??
-        """
-        maxn = -1
-        print("You didn't specify the number of qubits. QnAS will use the number of qubits that are being targeted"
-              " by the algorithm")
-        for step in steps:
-            for target in step.Tar_Con:
-                if type(target) == int:
-                    if target > maxn:
-                        maxn = target
-                elif type(target) == list:
-                    if max(target) > maxn:
-                        maxn = target
-        if maxn == -1:
-            print("No qubit has been targeted by the algorithm, number of qubits could not be decided."
-                  " QnAS.solve() will now exit")
-            return
-        else:
-            n = maxn + 1
+    maxn = -1
+    for step in steps:
+        for target in step.Tar_Con:
+            if type(target) == int:
+                if target > maxn:
+                    maxn = target
+            elif type(target) == list:
+                if max(target) > maxn:
+                    maxn = target
+    if maxn == -1:
+        print("No qubit has been targeted by the algorithm, number of qubits could not be decided."
+                " QnAS.solve() will now exit")
+        return
     else:
-        maxn = -1
-        for step in steps:
-            for target in step.Tar_Con:
-                if type(target) == int:
-                    if target > maxn:
-                        maxn = target
-                elif type(target) == list:
-                    if max(target) > maxn:
-                        maxn = target
-        if not  (1 <= n <= 15 and n <= maxn+1):
-            print("Invalid value for number of qubits! Must be between 1 and 15! QnAS.solve() will now exit")
-            return
+        n = maxn + 1
+
+    if not  (1 <= n <= 15 and n <= maxn+1):
+        print("Invalid value for number of qubits! Must be between 1 and 15! QnAS.solve() will now exit")
+        return
 
     # Read qubit parameters
     if Qbfile is None:
