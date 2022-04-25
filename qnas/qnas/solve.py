@@ -5,8 +5,9 @@ import numpy as np
 from . import read_data as rd
 from . import CollapseOperator_function as co
 from . import main_Algorithm as ma
+from qutip import *
 
-def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_time_dynamics = False):
+def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops = []):
     """
     The main solver function. Basically a user calls this function and everything else is automatic
     :param Qbfile: File that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi
@@ -105,6 +106,28 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
         print("store_time_dynamics must be a boolean (True/False). "
               "QnAS.solve() will now exit")
         return
+    if store_time_dynamics == True:  # Only need to check e_ops if store_td is true
+        if e_ops == []:
+            print("You didn't enter any e_ops, no need to save time dynamics!")
+            store_time_dynamics = False
+        if type(e_ops) != list:
+            print("Wrong input type of e_ops! Input given on the form:\n"
+                  "e_ops_inp = [[e_op1, Tar_Con],[e_op2, Tar_Con], ... ]\n"
+                  "where e_op is a Qobj with the dimensions  ( qubit.level x qubit.level )\n"
+                  "and Tar_Con is the target and control in case of 2qb gate, as before.\n"
+                  "QnAS.solve() will now exit")
+            return
+        for e_op in e_ops:
+            if type(e_op) != list:
+                print("Wrong input type of e_ops! Input given on the form:\n"
+                      "e_ops_inp = [[e_op1, Tar_Con],[e_op2, Tar_Con], ... ]\n"
+                      "where e_op is a Qobj with the dimensions  ( qubit.level x qubit.level )\n"
+                      "and Tar_Con is the target and control in case of 2qb gate, as before.\n"
+                      "QnAS.solve() will now exit")
+                return
+            #if type(e_op[0]) != Qobj:  # Would like to add something like this but don't know how
+
+
 
     psi0 = qbc.create_psi0(Qblist, 0)
     c_ops = co.create_c_ops(Qblist)
