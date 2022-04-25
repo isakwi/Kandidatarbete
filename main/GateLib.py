@@ -118,18 +118,8 @@ def CZnew(Qblist, Tar_Con):
     H = |11><02|+|02><11| or |11><20|+|20><11|
     so only for 3level right?"""
     k11 = tensor(basis(3, 1), basis(3, 1))
-    k02 = tensor(basis(3, 2), basis(3, 0))
+    k02 = tensor(basis(3, 0), basis(3, 2))
     H = k11 * k02.dag() + k02 * k11.dag()
-    #alpha = 2 * Qblist[target].anharm
-    #H = QobjEvo([[k11 * k02.dag(), 'exp(-1j*alpha*t)'],  [k02 * k11.dag(),'exp(1j*alpha*t)']], args={"alpha":alpha})
-    # We must add diagonal ones in order to treat all possible states (right???)
-    #size = H.shape[0]  # H can be represented as an size x size matrix
-    #H2 = np.zeros([size, size])
-    #for i in range(size):
-    #    H2[i,i] = np.array_equal(H[i], H[i] * 0) # if this row is all zero, we have to put a 1 at position (i,i) to "do nothing"
-    #    # What does this do? np.array.equal() returns true or false? Yes, which python interprets as 1 or 0
-    #H2 = Qobj(H2, dims = H.dims)
-    #H = (H + H2)
     cz = [qeye(Qb.level) for Qb in Qblist]
     target = Tar_Con[0]  # index of the targeted qubit
     control = Tar_Con[1]  # index of the controlling qubit
