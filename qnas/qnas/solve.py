@@ -18,7 +18,7 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
     :return: if store_time_dynamics is True: Not sure yet. Else: ntraj many final states
     """
     if OpenQASM is None:
-        print("You didn't enter an OpenQASM file. QnAS will now exit?\t")
+        print("You didn't enter an OpenQASM circuit. QnAS will now exit?\t")
         return
 
     try:
@@ -53,8 +53,17 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
         else:
             n = maxn + 1
     else:
-        if not  1 <= n <= 15:
-            print("Invalid value for n! Must be between 1 and 15! QnAS.solve() will now exit")
+        maxn = -1
+        for step in steps:
+            for target in step.Tar_Con:
+                if type(target) == int:
+                    if target > maxn:
+                        maxn = target
+                elif type(target) == list:
+                    if max(target) > maxn:
+                        maxn = target
+        if not  (1 <= n <= 15 and n <= maxn+1):
+            print("Invalid value for number of qubits! Must be between 1 and 15! QnAS.solve() will now exit")
             return
 
     # Read qubit parameters

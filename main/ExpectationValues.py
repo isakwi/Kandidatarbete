@@ -61,7 +61,7 @@ def main_algorithm_expectation(args):
     """
     steps = args["steps"]
     c_ops = args["c_ops"]
-    init_state = args["psi0"]
+    init_state = args["psi0"] # maybe we should change the input so we can write args["init_state"] instead
     Qblist = args["Qblist"]
     t_max = args["t_max"]
     ntraj = args["ntraj"]
@@ -85,16 +85,18 @@ def main_algorithm_expectation(args):
         H0 = anharmonicity(Qblist)
 
     if c_ops != []:
-        for i in range(0, len(steps)):  # each step except the first one
+        for i in range(0, len(steps)):  # all steps
             physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist,t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
             Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
 
             # Create tlist for the entire process
-            if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
+            if GateLib.isVirtual(steps[i]): #Check if gate is virtual, then no time added to tlist
                 tlist_shifted = []
+            #if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
+            #    tlist_shifted = []
             else:
-                tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts.
+                tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts. #// should be previous ends, right? //Alb
             tlist_tot = np.concatenate((tlist_tot, tlist_shifted))
 
             if max(tlist) >= 1e-11:
@@ -113,8 +115,10 @@ def main_algorithm_expectation(args):
             Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
 
-            if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
+            if GateLib.isVirtual(steps[i]):
                 tlist_shifted = []
+            #if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
+            #    tlist_shifted = []
             else:
                 tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts.
             tlist_tot = np.concatenate((tlist_tot, tlist_shifted))  # Create tlist for the entire process
@@ -131,7 +135,7 @@ def main_algorithm_expectation(args):
 
     """CALCULATE EXPECTATION VALUES FROM ALL STATES HERE """
     allStates = np.reshape(allStates, (len(tlist_tot), ntraj))  # time resolution for each step is 10
-    if type(e_ops) == Qobj:
+    if type(e_ops) == Qobj: # Won't it always be a list? Even if it only has one element 
         expectvals = np.array([np.mean(expect(e_ops, parallelStates)) for parallelStates in allStates])
     elif type(e_ops) == list and type(e_ops[0] == Qobj):
         expectvals = [np.array([np.mean(expect(e, parallelStates)) for parallelStates in allStates]) for e in e_ops]
