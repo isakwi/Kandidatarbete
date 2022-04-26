@@ -225,20 +225,20 @@ def gate_expand_2toN(U, N, cz, control=None, target=None, targets=None):
 
 # Had to change the arrays from ["VPZ"] to [['VPZ]], don't know why, but if it causes trouble in the future this might 
 # be the reason (for the three following functions)
-def isVirtual(gate):
-    if gate.name in [['VPZ']]:
+def isVirtual(gate, i):
+    if gate.name[i] in ['VPZ']:
         return True
     else:
         return False
 
-def isTwoQubitGate(gate):
-    if gate.name in [['CZ'], ['iSWAP'],['CZnew']]:
+def isTwoQubitGate(gate, i):
+    if gate.name[i] in ['CZ', 'iSWAP','CZnew']:
         return True
     else:
         return False
 
-def isPhysicalGate(gate):
-    if gate.name in [['PX'], ['PY'], ['PZ'], ['PM']]:
+def isPhysicalGate(gate,i):
+    if gate.name[i] in ['PX', 'PY', 'PZ', 'PM']:
         return True
     else:
         return False
