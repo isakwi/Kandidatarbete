@@ -47,6 +47,18 @@ Qblist = []
 for i in range(0, n):  # Creates list with all qubits, for now the desig and init_vec are empty
     anharm[i] = -2*pi*abs(anharm[i])*1e6  # Convert linear frequency to angular (input seems to usually be linear)
     Qblist.append(Qb.Qubit(l[i], [relax[i], depha[i], therma[i]], anharm[i], [], []))
+
+# e_ops is currently defined here (again, needed the Qblist so just copied it down a little)
+"""Commented away until we can discuss expectation values
+e1 = [2 * create(3) * destroy(3) - qeye(3), 0] # First element is the expectation operator, the second is the target
+e2 = [destroy(3) + create(3), 0] # Should correspond to PX
+e3 = [-1j*(destroy(3) - create(3)), 0] # Should correspond to PY
+e_ops = [e1, e2, e3] # Parameter, don't know how we want to import this later, maybe some text file or something
+StoreTimeDynamics = False
+if e_ops != []:
+    StoreTimeDynamics = True # If we pass some expectation operator(s) we store time dynamics
+"""
+
 # Parameters for gates
 """ Maybe we can remove this? """
 t_1q = 20e-9  # Max time for 1 qubit gate
@@ -67,17 +79,34 @@ steps = []
 steps.append(gf.Add_step(["PX"], [0], [pi]))
 steps.append(gf.Add_step(["VPZ"], [0], [pi]))
 steps.append(gf.Add_step(["PX"], [0], [pi/2]))
+steps.append(gf.Add_step(["HD"], [0], [0])) # Added two to make some more interesting plots //Albin 
+steps.append(gf.Add_step(["PX"], [0], [pi/2]))
 
 
 args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj, "StoreTimeDynamics": StoreTimeDynamics, "e_ops_inp": e_ops}
 tic = time.perf_counter() # Start stopwatch in order to print the run time
 if StoreTimeDynamics:
-    result,allstates, expectvals, tlist_tot = mA.main_algorithm(args)
+    #result,allstates, expectvals, tlist_tot = mA.main_algorithm(args) # This didn't work so removed result
+    allstates, expectvals, tlist_tot = mA.main_algorithm(args)
 else:
     result = mA.main_algorithm(args)
 toc = time.perf_counter() # Stop stopwatch
 print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
 
+"""Plotting the expectation value over time"""
+#print(type(expectvals), shape(expectvals)) # for searching for errors in shapes etc. 
+#print(type(tlist_tot), shape(tlist_tot))
+
+#print(expectvals)
+#print(expectvals[0][:])
+#print("hej" + str(shape(expectvals[0][:])))
+""" COmmented away until we can discuss expecation values
+plt.plot(tlist_tot, [expectvals[0][:]], 'ro')
+plt.plot(tlist_tot, [expectvals[1][:]], 'bo')
+plt.plot(tlist_tot, [expectvals[2][:]], 'go')
+plt.show() """
+"""This plot looks a little weird. Expectation value for PZ, i.e. the measured state, starts at -1. 
+It shouldn't do that, right? // Albin """
 
 #Used for testing
 PrintStates = False

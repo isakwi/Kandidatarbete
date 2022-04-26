@@ -146,4 +146,7 @@ def main_algorithm_expectation(args):
     finalstate = psi0[-1] # or something like that ? Not sure exactly how psi0 looks. Sry
 
     return finalstate, expectvals, tlist_tot
+#    return finalstate, expectvals, [tlist_tot]
+"""Added parenthesis to tlist_tot so that tlist_tot will be an 2D array gives a reasonable format for plotting 
+(I got an error if I didn't have it, but maybe we can avoid it in the future) //Albin"""
 

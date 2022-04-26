@@ -72,7 +72,29 @@ def CreateHfromStep(step, Qblist, t_max):
         
         Maybe would be good to just have a negative envelope but not sure if that's legal     
         """
-
+# I implemented the isVirtual function from GateLib, and also made corresponding functions for two qubit gates
+# and anyPhysicalGate. My idea is that we will only have to add more gates in GateLib to add to the entire program. //Albo
+# (If we don't like it the old code is just commented away underneath)
+        if GateLib.isVirtual(step):
+            H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
+        elif GateLib.isPhysicalGate(step):
+            anyPhysicalGate = True
+            H_real.append(y(Qblist, step.Tar_Con[i]))
+        elif GateLib.isTwoQubitGate(step):
+            anyPhysicalGate = True
+            H_real.append(y(Qblist, step.Tar_Con))
+        elif step.name[i] in ["HD"]: # HD gate feels pretty unique so I left it as it was when I found it
+            anyPhysicalGate = True
+            step.angle[i] = np.pi/2
+            H = GateLib.HD(Qblist, step.Tar_Con[i])
+            H_real.append(H[0])
+            H_virt.append(H[1])
+        else:  # Else append as 1q gate
+            print(f"No gate added")
+        if not anyPhysicalGate:
+            tmax = 0
+    return H_real, H_virt, tmax
+"""
         if step.name[i] in ["VPZ"]:  # Check virtual gates
             H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
         elif step.name[i] in ["PX", "PY", "PZ", "PM"]:
@@ -95,6 +117,7 @@ def CreateHfromStep(step, Qblist, t_max):
         if not anyPhysicalGate:
             tmax = 0
     return H_real, H_virt, tmax
+"""
 
 
 def TimeDepend(step, gates, t_max, Qblist):

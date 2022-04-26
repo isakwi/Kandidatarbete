@@ -132,10 +132,18 @@ def CZnew(Qblist, Tar_Con):
     #H2 = Qobj(H2, dims = H.dims)
     #H = (H + H2)
     cz = [qeye(Qb.level) for Qb in Qblist]
+    #print(Tar_Con[0][0])
+    #print(Tar_Con[0][1])
     target = Tar_Con[0]  # index of the targeted qubit
     control = Tar_Con[1]  # index of the controlling qubit
     del(cz[max(Tar_Con)])  # Make room for the cz gate
     del(cz[min(Tar_Con)])  # Make room for the cz gate
+    """ Commented away until we discuss expectation values
+    target = Tar_Con[0][0]  # index of the targeted qubit
+    control = Tar_Con[0][1]  # index of the controlling qubit
+    del(cz[max(Tar_Con[0])])  # Make room for the cz gate
+    del(cz[min(Tar_Con[0])])  # Make room for the cz gate
+    """
     return gate_expand_2toN(H,len(Qblist),cz,control,target) # Found this function on qutip web and modified it a bit
 
 
@@ -225,12 +233,25 @@ def gate_expand_2toN(U, N, cz, control=None, target=None, targets=None):
         p[0], p[control] = p[control], p[0]
     return tensor([U] + cz).permute(p)
 
+# Had to change the arrays from ["VPZ"] to [['VPZ]], don't know why, but if it causes trouble in the future this might 
+# be the reason (for the three following functions)
 def isVirtual(gate):
-    if gate.name in ["VPZ"]:
+    if gate.name in [['VPZ']]:
         return True
     else:
         return False
 
+def isTwoQubitGate(gate):
+    if gate.name in [['CZ'], ['iSWAP'],['CZnew']]:
+        return True
+    else:
+        return False
+
+def isPhysicalGate(gate):
+    if gate.name in [['PX'], ['PY'], ['PZ'], ['PM']]:
+        return True
+    else:
+        return False
 
 if __name__ == "__main__":
     """ Troubleshooting"""

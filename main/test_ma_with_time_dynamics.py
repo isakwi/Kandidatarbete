@@ -4,8 +4,8 @@ Maybe you guys already did something similar, but I couldn't find any testing in
 import numpy as np
 import GateFuncs as gf
 import CollapseOperator_function as colf
-#import main_Algorithm as ma
-import main_Alg_parfortest as ma  #Uncomment to change to parfor from the start
+import main_Algorithm as ma
+#import main_Alg_parfortest as ma  #Uncomment to change to parfor from the start
 from qutip import *
 import GateLib as gl
 import time
