@@ -5,20 +5,23 @@ import numpy as np
 from . import read_data as rd
 from . import CollapseOperator_function as co
 from . import main_Algorithm as ma
+from qutip import *
 
-def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_time_dynamics = False):
+def solve(Qbfile = None, OpenQASM = None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops=None):
     """
     The main solver function. Basically a user calls this function and everything else is automatic
     :param Qbfile: File that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi
     :param OpenQASM: File that specifies OpenQASM file. Default - Asks user to specify gates manually or not run
-    :param n: number of qubits. Default - Last qubit targeted by OpenQASM
     :param ntraj: number of trajectories for the Monte Carlo solver. Default - 500
     :param tmax: Max time for 1qb-gate and 2qb-gate ~ [t_1qb, t_2qb]. Default - [20e-9, 200e-9]
     :param store_time_dynamics: True/False value to store time dynamics. Default - False
+    :param e_ops: Expectation value operators for store_time_dynamics. Given as [[e_op1, Tar_Con],[e_op2, Tar_Con], ...]
     :return: if store_time_dynamics is True: Not sure yet. Else: ntraj many final states
     """
+    if e_ops is None:
+        e_ops = []
     if OpenQASM is None:
-        print("You didn't enter an OpenQASM file. QnAS will now exit?\t")
+        print("You didn't enter an OpenQASM circuit. QnAS will now exit?\t")
         return
 
     try:
@@ -31,31 +34,25 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
         return
 
     # Check n
-    if n is None:
-        """
-        If n is none, we take the highest target as our number of qubits??
-        """
-        maxn = -1
-        print("You didn't specify the number of qubits. QnAS will use the number of qubits that are being targeted"
-              " by the algorithm")
-        for step in steps:
-            for target in step.Tar_Con:
-                if type(target) == int:
-                    if target > maxn:
-                        maxn = target
-                elif type(target) == list:
-                    if max(target) > maxn:
-                        maxn = target
-        if maxn == -1:
-            print("No qubit has been targeted by the algorithm, number of qubits could not be decided."
-                  " QnAS.solve() will now exit")
-            return
-        else:
-            n = maxn + 1
+    maxn = -1
+    for step in steps:
+        for target in step.Tar_Con:
+            if type(target) == int:
+                if target > maxn:
+                    maxn = target
+            elif type(target) == list:
+                if max(target) > maxn:
+                    maxn = target
+    if maxn == -1:
+        print("No qubit has been targeted by the algorithm, number of qubits could not be decided."
+                " QnAS.solve() will now exit")
+        return
     else:
-        if not  1 <= n <= 15:
-            print("Invalid value for n! Must be between 1 and 15! QnAS.solve() will now exit")
-            return
+        n = maxn + 1
+
+    if not  (1 <= n <= 15 and n <= maxn+1):
+        print("Invalid value for number of qubits! Must be between 1 and 15! QnAS.solve() will now exit")
+        return
 
     # Read qubit parameters
     if Qbfile is None:
@@ -96,9 +93,31 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
         print("store_time_dynamics must be a boolean (True/False). "
               "QnAS.solve() will now exit")
         return
+    if store_time_dynamics == True:  # Only need to check e_ops if store_td is true
+        if e_ops is None:
+            print("You didn't enter any e_ops, no need to save time dynamics!")
+            store_time_dynamics = False
+        if type(e_ops) != list:
+            print("Wrong input type of e_ops! Input given on the form:\n"
+                  "e_ops_inp = [[e_op1, Tar_Con],[e_op2, Tar_Con], ... ]\n"
+                  "where e_op is a Qobj with the dimensions  ( qubit.level x qubit.level )\n"
+                  "and Tar_Con is the target and control in case of 2qb gate, as before.\n"
+                  "QnAS.solve() will now exit")
+            return
+        for e_op in e_ops:
+            if type(e_op) != list:
+                print("Wrong input type of e_ops! Input given on the form:\n"
+                      "e_ops_inp = [[e_op1, Tar_Con],[e_op2, Tar_Con], ... ]\n"
+                      "where e_op is a Qobj with the dimensions  ( qubit.level x qubit.level )\n"
+                      "and Tar_Con is the target and control in case of 2qb gate, as before.\n"
+                      "QnAS.solve() will now exit")
+                return
+            #if type(e_op[0]) != Qobj:  # Would like to add something like this but don't know how
+
+
 
     psi0 = qbc.create_psi0(Qblist, 0)
     c_ops = co.create_c_ops(Qblist)
 
-    args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": Qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": store_time_dynamics}
+    args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": Qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": store_time_dynamics, "e_ops_inp": e_ops}
     return ma.main_algorithm(args)

@@ -11,6 +11,7 @@ import matplotlib.cm as cm
 import Qb_class as qbc
 import matplotlib as mpl
 import openqasm_interpreter as opi
+import qiskit
 pi = np.pi
 tstart = time.time()
 c = 0.01
@@ -95,7 +96,7 @@ for i in range(0, gamma_resolution):
         t0 = t
     for j in range(0, beta_resolution):
         beta = beta_vec[j]
-        steps = opi.openqasm_interpreter(ourcirc(gamma, beta))
+        steps = opi.qasm_to_qnas(ourcirc(gamma, beta))[0]
 # calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "e_ops_inp": e_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": False}
         state = ma.main_algorithm(args)
