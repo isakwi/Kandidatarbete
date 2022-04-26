@@ -74,12 +74,12 @@ def CreateHfromStep(step, Qblist, t_max):
 # I implemented the isVirtual function from GateLib, and also made corresponding functions for two qubit gates
 # and anyPhysicalGate. My idea is that we will only have to add more gates in GateLib to add to the entire program. //Albo
 # (If we don't like it the old code is just commented away underneath)
-        if GateLib.isVirtual(step):
+        if GateLib.isVirtual(step, i):
             H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
-        elif GateLib.isPhysicalGate(step):
+        elif GateLib.isPhysicalGate(step, i):
             anyPhysicalGate = True
             H_real.append(y(Qblist, step.Tar_Con[i]))
-        elif GateLib.isTwoQubitGate(step):
+        elif GateLib.isTwoQubitGate(step, i):
             anyPhysicalGate = True
             H_real.append(y(Qblist, step.Tar_Con[i]))
         elif step.name[i] in ["HD"]: # HD gate feels pretty unique so I left it as it was when I found it
@@ -89,7 +89,7 @@ def CreateHfromStep(step, Qblist, t_max):
             H_real.append(H[0])
             H_virt.append(H[1])
         else:  # Else append as 1q gate
-            print(f"No gate added")
+            print(f"No gate added for step {step.name}")
     if not anyPhysicalGate:
         tmax = 0
     return H_real, H_virt, tmax
