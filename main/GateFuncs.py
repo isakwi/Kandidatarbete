@@ -57,7 +57,6 @@ def CreateHfromStep(step, Qblist, t_max):
         if step.angle[i] < 0 and step.name[i] not in ["VPZ"]:
             print("Warning! Negative angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i] % (2*np.pi))/np.pi,3)) + "π")
             step.angle[i]=step.angle[i] % (2*np.pi)
-            print(step.angle[i])
         if step.angle[i] > 2 * np.pi and step.name[i] not in ["VPZ","CZnew"]:
             print("Warning! HUGE angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i] % (2*np.pi))/np.pi,3)) + "π")
             step.angle[i]=step.angle[i] % (2*np.pi)
@@ -82,7 +81,7 @@ def CreateHfromStep(step, Qblist, t_max):
             H_real.append(y(Qblist, step.Tar_Con[i]))
         elif GateLib.isTwoQubitGate(step):
             anyPhysicalGate = True
-            H_real.append(y(Qblist, step.Tar_Con))
+            H_real.append(y(Qblist, step.Tar_Con[i]))
         elif step.name[i] in ["HD"]: # HD gate feels pretty unique so I left it as it was when I found it
             anyPhysicalGate = True
             step.angle[i] = np.pi/2
@@ -91,8 +90,8 @@ def CreateHfromStep(step, Qblist, t_max):
             H_virt.append(H[1])
         else:  # Else append as 1q gate
             print(f"No gate added")
-        if not anyPhysicalGate:
-            tmax = 0
+    if not anyPhysicalGate:
+        tmax = 0
     return H_real, H_virt, tmax
 """
         if step.name[i] in ["VPZ"]:  # Check virtual gates
