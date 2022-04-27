@@ -5,6 +5,7 @@ import mcsolving
 from Anharmonicity import anharmonicity
 import ExpectationValues
 import ZZinteraction_function as zz
+from GateLib import *
 
 def main_algorithm(args):
     steps = args["steps"]
@@ -44,8 +45,6 @@ def main_algorithm(args):
                 physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
                 Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
                 H = Htd + H0
-                if steps[i].name  in [ ['VPZ', 'HD'], ['PX', 'VPZ']] and max(tlist) <= 1e-11:
-                    print(f"we're up to no gooood, cannot handle {steps[i].name} with angles {steps[i].angle} ")
                 if max(tlist) > 1e-11:
                     psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=[])
                 for vgate in virtualgates:

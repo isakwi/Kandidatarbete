@@ -128,6 +128,7 @@ def TimeDepend(step, gates, t_max, Qblist):
     the real part of the step .
     """
     angles = step.angle  # [ang1, ang2, ang3...]
+    angles = [angles[i] for i in range(len(angles)) if not GateLib.isVirtual(step,i)] #this eliminates the virutal angles
     # Create tlist
 
     # Find max drive time for 1qb gates ~ largest drive angle
