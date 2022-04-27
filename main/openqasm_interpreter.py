@@ -8,7 +8,7 @@ def qasm_to_qnas(circuit):
     qc = circuit
     qc.remove_final_measurements()  # Removing final measure
 
-    show_circuit = True  # you wish to see the circuit and how it's arguments are updated
+    show_circuit = False  # you wish to see the circuit and how it's arguments are updated
     if show_circuit:
         print(qc)
         # qc.draw(output='mpl')

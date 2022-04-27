@@ -108,7 +108,7 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
         Qblist = [qbc.Qubit(3, [0,0,0], -225e6 * 2 * np.pi, [], []) for i in range(n)]
     else:
         try:
-            relax, depha, therma, anharm, levels = rd.readfile(Qbfile)
+            relax, depha, therma, anharm, levels = rd.readfile(Qbfile,n)
             Qblist = []
         except:
             print(f"Couldn't find file {Qbfile}. QnAS.solve() will now exit")
@@ -148,4 +148,17 @@ def solve(Qbfile = None, OpenQASM = None, n=None, ntraj=500, tmax=None, store_ti
 
 
 if __name__ == "__main__":
-    help()
+    #help()
+
+    """Define parameters for the test"""
+    Qbfile = "qubit_data.csv"
+    OpenQASM = "bench1.qasm"
+    n = 2
+    ntraj = 2
+    tmax = [20e-9, 200e-9]
+    store_time_dynamics = True
+    e_ops = []
+
+    #rd.readfile(Qbfile,n) # Troubleshooting of readfile
+
+    solve(Qbfile=Qbfile, OpenQASM=OpenQASM, n=n, ntraj=ntraj, tmax=tmax, store_time_dynamics=store_time_dynamics)
