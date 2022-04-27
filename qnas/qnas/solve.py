@@ -7,7 +7,7 @@ from . import CollapseOperator_function as co
 from . import main_Algorithm as ma
 from qutip import *
 
-def solve(Qbfile = None, OpenQASM = None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops=None):
+def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops=None):
     """
     The main solver function. Basically a user calls this function and everything else is automatic
     :param Qbfile: File that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi
@@ -16,7 +16,8 @@ def solve(Qbfile = None, OpenQASM = None, ntraj=500, tmax=None, store_time_dynam
     :param tmax: Max time for 1qb-gate and 2qb-gate ~ [t_1qb, t_2qb]. Default - [20e-9, 200e-9]
     :param store_time_dynamics: True/False value to store time dynamics. Default - False
     :param e_ops: Expectation value operators for store_time_dynamics. Given as [[e_op1, Tar_Con],[e_op2, Tar_Con], ...]
-    :return: if store_time_dynamics is True: Not sure yet. Else: ntraj many final states
+    :return: if store_time_dynamics is True: Returns ntraj many final states and two lists with exp values
+            and corrrespnding timrs. Else: ntraj many final states
     """
     if e_ops is None:
         e_ops = []
@@ -24,7 +25,7 @@ def solve(Qbfile = None, OpenQASM = None, ntraj=500, tmax=None, store_time_dynam
         print("You didn't enter an OpenQASM circuit. QnAS will now exit?\t")
         return
 
-    try:
+    try:  # Input can either be openqasm file or qiskit circuit? Add functionality for that
         #steps = oqread.FUNCTION(Qbfile)  # Should return a list with Add_step objects?
         print("Reading OpenQASM file is not implemented yet!")
         steps = [gf.Add_step(["PX", "CZnew"], [0, [0,1]], [np.pi, 0])]  # Temporary steps to not get syntax errors everywhere
@@ -115,9 +116,27 @@ def solve(Qbfile = None, OpenQASM = None, ntraj=500, tmax=None, store_time_dynam
             #if type(e_op[0]) != Qobj:  # Would like to add something like this but don't know how
 
 
+    if type(int_matrix) != list:
+        print("Wrong format for the interaction matrix! Should be given as [[x1, x2, ... , x15], [...]]"
+              "\nand be of size 15x15! QnAS.solve() will now exit")
+        return
+    if len(int_matrix) != 15:
+        print("The matrix is not 15x15! QnAS.solve() will now exit")
+        return
+    for row in int_matrix:
+        if len(row) != 15:
+            print("The matrix is not 15x15! QnAS.solve() will now exit")
+            return
 
     psi0 = qbc.create_psi0(Qblist, 0)
     c_ops = co.create_c_ops(Qblist)
 
-    args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": Qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": store_time_dynamics, "e_ops_inp": e_ops}
+    if int_matrix is None:
+        args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": Qblist, "t_max": tmax, "ntraj" : ntraj,
+                "StoreTimeDynamics": store_time_dynamics, "e_ops_inp": e_ops}
+
+    else:
+        args = {"steps": steps, "c_ops": c_ops, "psi0": psi0, "Qblist": Qblist, "t_max": tmax, "ntraj": ntraj,
+                "StoreTimeDynamics": store_time_dynamics, "e_ops_inp": e_ops, "zz_mat": int_matrix}
+
     return ma.main_algorithm(args)
