@@ -1,7 +1,7 @@
 import pandas as pd
 import sys
 
-def readfile(filename):
+def readfile(filename, n):
     # Read the file
     relax = []
     depha = []
