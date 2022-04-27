@@ -12,6 +12,7 @@ def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=Non
     The main solver function. Basically a user calls this function and everything else is automatic
     :param Qbfile: File that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi
     :param OpenQASM: File that specifies OpenQASM file. Default - Asks user to specify gates manually or not run
+    :param int_matrix: 15x15 matrix that describes interaction between qubits
     :param ntraj: number of trajectories for the Monte Carlo solver. Default - 500
     :param tmax: Max time for 1qb-gate and 2qb-gate ~ [t_1qb, t_2qb]. Default - [20e-9, 200e-9]
     :param store_time_dynamics: True/False value to store time dynamics. Default - False
@@ -63,7 +64,7 @@ def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=Non
         Qblist = [qbc.Qubit(3, [0,0,0], -225e6 * 2 * np.pi, [], []) for i in range(n)]
     else:
         try:
-            relax, depha, therma, anharm, levels = rd.readfile(Qbfile, n)
+            relax, depha, therma, anharm, levels = rd.readfile(Qbfile,n)
             Qblist = []
         except:
             print(f"Couldn't find file {Qbfile}. QnAS.solve() will now exit")
