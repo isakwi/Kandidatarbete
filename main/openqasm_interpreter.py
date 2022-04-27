@@ -139,5 +139,3 @@ def num_qubits(qc): #useless function for getting number of qubits from circuit.
 """qc = qiskit.QuantumCircuit.from_qasm_file('bench2.qasm')  # For testing the file from here
 steve = qasm_to_qnas(qc)
 print(steve)""" #retrun "toqnas" if you wish to see QnAS style of adding gates.
-
-Testtest
