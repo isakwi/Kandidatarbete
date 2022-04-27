@@ -5,8 +5,8 @@ import qiskit
 import GateLib as gl
 import GateFuncs as gf
 
-"""basic inital idea: take in qasmfile and convert the steps to a array of strings [gate1 q[n],...,] and then extract
-an array that contains the order of gates being applied to qubits, use this array to determine wich gates should 
+"""basic initial idea: take in qasmfile and convert the steps to a array of strings [gate1 q[n],...,] and then extract
+an array that contains the order of gates being applied to qubits, use this array to determine which gates should 
 be in the same level when adding them as steps."""
 
 

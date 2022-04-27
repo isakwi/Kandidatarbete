@@ -82,6 +82,8 @@ def CreateHfromStep(step, Qblist, t_max):
         elif GateLib.isTwoQubitGate(step, i):
             anyPhysicalGate = True
             H_real.append(y(Qblist, step.Tar_Con[i]))
+            if step.name[i] in ["CZnew"]: #this is needed atm
+                step.angle[i] = 2* np.pi
         elif step.name[i] in ["HD"]: # HD gate feels pretty unique so I left it as it was when I found it
             anyPhysicalGate = True
             step.angle[i] = np.pi/2

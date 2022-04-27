@@ -12,7 +12,7 @@ import Qb_class as qbc
 import matplotlib as mpl
 pi = np.pi
 tstart = time.time()
-c = 0.01
+c = 0.00
 
 # qubits
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
@@ -59,9 +59,9 @@ steps = [gf.Add_step(["PX"],[1],[0.1]) for i in range(8)]  # zero angle rotation
 
 steps[0] = (gf.Add_step(["HD", "HD"], [0,1], [0, 0]))  # First we apply Hadamard to both qubits
 steps[1] = (gf.Add_step([ "HD"], [1], [0]))  # Then we apply Hadamard to the second qubit
-steps[2] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
-steps[4] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
-steps[5] = (gf.Add_step(["HD"], [1], [0]))
+steps[2] = (gf.Add_step(["CZnew"], [[1,0]], [0]))
+steps[4] = (gf.Add_step(["CZnew"], [[1,0]], [0]))
+
 
 # iterating through list of angles and saving expectation values in matrix
 t00 = time.time()
@@ -76,10 +76,13 @@ for i in range(0, gamma_resolution):
     for j in range(0, beta_resolution):
         beta = beta_vec[j]
         steps[3] = (gf.Add_step(["PX"], [1], [2 * gamma * J]))
+        steps[5] = (gf.Add_step(["HD"], [1], [0]))
         steps[6] = (gf.Add_step(["VPZ", "VPZ"], [0,1], [2 * gamma * h1, 2 * gamma * h2]))
         steps[7] = (gf.Add_step(["PX", "PX"], [0,1], [2 * beta, 2 * beta]))
 # calling main_algorithm
+        print(f"steps: {[step.name for step in steps]} targets : {[step.Tar_Con for step in steps]}, angles: {[step.angle for step in steps]} ")
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": False}
+        args["e_ops_inp"] = []
         state = ma.main_algorithm(args)
 # saving mean value of expectation value in matrix
         exp_mat[j, i] = np.mean(expect(ham, state))  # Beta y-axis and gamma x-axis

@@ -15,7 +15,7 @@ def EnvelopeFunc (t, beta, t_d, t_st):
      -t_d = drive time
      -t_st = start time (not used since we use different tlist for each step, => t_st = 0 always)
     """
-    E    = beta*np.sin((t-t_st)*np.pi/t_d)**2
+    E  = beta*np.sin((t-t_st)*np.pi/t_d)**2
     return E*np.heaviside(t_st+t_d-t,1)*np.heaviside(t-t_st,1)
 
 
