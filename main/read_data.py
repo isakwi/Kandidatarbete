@@ -23,7 +23,7 @@ def readfile(filename):
         raise sys.exit(1)
     return relax, depha, therma, anharm, levels
 
-def read_data():
+def read_data(filename):
     """Function that reads qubit number from user and qubit parameters from a .csv file
     Maybe change what parameters come from the file? Separation in csv must be ;
     Easiest is to create an excel and save it as a csv with ;
@@ -64,7 +64,7 @@ def read_data():
     anharm = []
     levels = []
     try:
-        data = pd.read_csv("qubit_data.csv", sep=";")
+        data = pd.read_csv(filename, sep=";")
         arr = data.to_numpy()
         for i in range(0, n):
             relax.append(arr[i, 1])

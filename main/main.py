@@ -35,7 +35,7 @@ if e_ops != []:
 That way we always store time dynamics if we're given an expectation value to work with"""
 
 # Parameters, eventually the number of qubits and the levels will be read from OpenQASM instead!
-n, ntraj, relax, depha, therma, anharm, l = rd.read_data()  # Parameters
+n, ntraj, relax, depha, therma, anharm, l = rd.read_data("qubit_data.csv")  # Parameters
 
 # e_ops is currently defined here
 e_ops = [] # Parameter, don't know how we want to import this later, maybe some text file or something
