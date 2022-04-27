@@ -16,7 +16,6 @@ import main_Algorithm as mA  #The main algorithm as we first wrote it
 import benchmarking_main as bm
 pi = np.pi
 
-
 """ True if we are doing the benchmark! """
 benchmark = False
 
