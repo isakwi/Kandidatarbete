@@ -25,7 +25,7 @@ def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=Non
         print("You didn't enter an OpenQASM circuit. QnAS will now exit?\t")
         return
 
-    try:
+    try:  # Input can either be openqasm file or qiskit circuit? Add functionality for that
         #steps = oqread.FUNCTION(Qbfile)  # Should return a list with Add_step objects?
         print("Reading OpenQASM file is not implemented yet!")
         steps = [gf.Add_step(["PX", "CZnew"], [0, [0,1]], [np.pi, 0])]  # Temporary steps to not get syntax errors everywhere
