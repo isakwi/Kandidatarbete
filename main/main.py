@@ -109,7 +109,7 @@ plt.show() """
 It shouldn't do that, right? // Albin """
 
 #Used for testing
-PrintStates = False
+PrintStates = True
 if PrintStates:
     print(f"Initial state: {psi0}")
     if isinstance(result, (list, tuple, np.ndarray)): # Basically, if noises (mcsolve)

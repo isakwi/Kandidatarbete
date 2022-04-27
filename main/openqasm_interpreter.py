@@ -20,8 +20,12 @@ def qasm_to_qnas(circuit):
             flt = float(s.split('*')[0]) * np.pi / float(s.split('/')[1])
         elif '*pi' in s:
             flt = float(s.split('*')[0]) * np.pi
+        elif '-pi/' in s:
+            flt = -np.pi / float(s.split('/')[1])
         elif 'pi/' in s:
             flt = np.pi / float(s.split('/')[1])
+        elif '-pi' in s:
+            flt = -np.pi
         elif 'pi' in s:
             flt = np.pi
         else:

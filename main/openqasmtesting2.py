@@ -14,7 +14,7 @@ import openqasm_interpreter as opi
 import qiskit
 pi = np.pi
 tstart = time.time()
-c = 0.01
+c = 0.00
 
 # qubits
 qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
@@ -58,11 +58,14 @@ def ourcirc(gamma, beta):
     circ = qiskit.QuantumCircuit(2)
     circ.h(0)
     circ.h(1)
+    #circ.id(0)
     circ.h(1)
-    circ.cz(0,1)
+    circ.cz(1,0)
+    #circ.id(0)
     circ.rx(2*gamma*J, 1)
-    circ.cz(0,1)
+    circ.cz(1,0)
     circ.h(1)
+    circ.id(0)
     circ.rz(2*gamma*h1, 0)
     circ.rz(2*gamma*h2, 1)
     circ.rx(2*beta, 0)
@@ -87,16 +90,17 @@ steps[5] = (gf.Add_step(["HD"], [1], [0]))"""
 # iterating through list of angles and saving expectation values in matrix
 t00 = time.time()
 t0 = time.time()
-for i in range(0, gamma_resolution):
+for i in range(gamma_resolution):
     gamma = gamma_vec[i]
     if i > 0:
         t = time.time()
         print("Time elapsed: %.2f seconds." %(t-t00))
         print("Estimated time left: %.2f seconds. \n" %((gamma_resolution-i) * (t-t0)))  # Change here
         t0 = t
-    for j in range(0, beta_resolution):
+    for j in range(beta_resolution):
         beta = beta_vec[j]
         steps = opi.qasm_to_qnas(ourcirc(gamma, beta))
+        #print(f"steps: {[step.name for step in steps]} targets : {[step.Tar_Con for step in steps]}, angles: {[step.angle for step in steps]} ")
 # calling main_algorithm
         args = {"steps" : steps, "c_ops" : c_ops, "e_ops_inp": e_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": False}
         state = ma.main_algorithm(args)

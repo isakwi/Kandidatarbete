@@ -35,7 +35,7 @@ def main_algorithm(args):
                 physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
                 Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
                 H = Htd + H0
-                if max(tlist) >= 1e-11:
+                if max(tlist) >= 1e-11:# might be unnecessary wrt the above if statement
                     psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=[])
                 for vgate in virtualgates:
                     psi0= parfor(mcsolving.virtgate, psi0, vgate=vgate)
@@ -44,6 +44,8 @@ def main_algorithm(args):
                 physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
                 Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
                 H = Htd + H0
+                if steps[i].name  in [ ['VPZ', 'HD'], ['PX', 'VPZ']] and max(tlist) <= 1e-11:
+                    print(f"we're up to no gooood, cannot handle {steps[i].name} with angles {steps[i].angle} ")
                 if max(tlist) > 1e-11:
                     psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=[])
                 for vgate in virtualgates:
