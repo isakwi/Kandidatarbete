@@ -64,7 +64,7 @@ def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=Non
         Qblist = [qbc.Qubit(3, [0,0,0], -225e6 * 2 * np.pi, [], []) for i in range(n)]
     else:
         try:
-            relax, depha, therma, anharm, levels = rd.readfile(Qbfile)
+            relax, depha, therma, anharm, levels = rd.readfile(Qbfile,n)
             Qblist = []
         except:
             print(f"Couldn't find file {Qbfile}. QnAS.solve() will now exit")
