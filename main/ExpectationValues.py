@@ -89,15 +89,16 @@ def main_algorithm_expectation(args):
             physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist,t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
             Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
-
+            print(steps)
             # Create tlist for the entire process
-            if GateLib.isVirtual(steps[i]): #Check if gate is virtual, then no time added to tlist
-                tlist_shifted = []
-            #if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
-            #    tlist_shifted = []
-            else:
-                tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts. #// should be previous ends, right? //Alb
-            tlist_tot = np.concatenate((tlist_tot, tlist_shifted))
+            for j in range(len(steps[i].name)): # Deals with steps with multiple gates in them
+                if GateLib.isVirtual(steps[i], j): #Check if gate is virtual, then no time added to tlist
+                    tlist_shifted = []
+                #if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
+                #    tlist_shifted = []
+                else:
+                    tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts. #// should be previous ends, right? //Alb
+                tlist_tot = np.concatenate((tlist_tot, tlist_shifted))
 
             if max(tlist) >= 1e-11:
                 allStates = np.append(allStates,np.transpose(parfor(mcsolving.mcs_expectation, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)))
@@ -115,7 +116,7 @@ def main_algorithm_expectation(args):
             Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
 
-            if GateLib.isVirtual(steps[i]):
+            if GateLib.isVirtual(steps, i):
                 tlist_shifted = []
             #if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
             #    tlist_shifted = []
@@ -134,6 +135,7 @@ def main_algorithm_expectation(args):
     tlist_tot = np.delete(tlist_tot, 0)  # We get double zero in the beginning since tlist_tot = [0] initially
 
     """CALCULATE EXPECTATION VALUES FROM ALL STATES HERE """
+    print(shape(allStates))
     allStates = np.reshape(allStates, (len(tlist_tot), ntraj))  # time resolution for each step is 10
     if type(e_ops) == Qobj: # Won't it always be a list? Even if it only has one element 
         expectvals = np.array([np.mean(expect(e_ops, parallelStates)) for parallelStates in allStates])
