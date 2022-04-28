@@ -6,7 +6,7 @@ def anharmonicity(Qblist):
     'Anharm' function tensors the gate out correctly """
     H = 0
     for i in range(len(Qblist)):
-        H = H + Qblist[i].anharm*AnHarm(Qblist, i)
+        H = H + Qblist[i].anharm/2*AnHarm(Qblist, i)
     return H
 
 def AnHarm(Qblist, target):
