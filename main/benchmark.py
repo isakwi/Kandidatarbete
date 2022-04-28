@@ -14,13 +14,22 @@ pi = np.pi
 tstart = time.time()
 c = 0.00
 
-# qubits
-qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
-qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
-betaplot = False #make this true if we want 1D plots as well
+T1qb1 = 77e-6 #relaxation time
+T1qb2 = 55e-6
 
-gamma_resolution = 8
-beta_resolution = 8
+T2qb1 = 49e-6 #free induction decay time (dephasing?)
+T2qb2 = 82e-6
+
+# qubits
+#qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
+#qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
+qb1 = qbc.Qubit(3, [T1qb1, T2qb1, c], -229e6 * 2 * pi, [1,1], [1,0,0]) # In other parts of the program we work linearly, right? 
+qb2 = qbc.Qubit(3, [T2qb1, T2qb2, c], -225e6 * 2 * pi, [2,2], [1,0,0])
+
+betaplot = True #make this true if we want 1D plots as well
+
+gamma_resolution = 61
+beta_resolution = 61
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -33,10 +42,10 @@ if betaplot:
     state_mat = [[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)]
 c_ops = colf.create_c_ops(qblist)
 # number of trajectories
-ntraj = 20
+ntraj = 1
 tmax= [50e-9, 271e-9]
 psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
-problem = 'a'
+problem = 'b'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
