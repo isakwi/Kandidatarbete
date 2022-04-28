@@ -28,8 +28,8 @@ qb2 = qbc.Qubit(3, [1/T2qb1, 1/T2qb2, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
 betaplot = True #make this true if we want 1D plots as well
 
-gamma_resolution = 61
-beta_resolution = 61
+gamma_resolution = 2
+beta_resolution = 2
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -115,6 +115,9 @@ plt.xticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labe
 plt.yticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
 plt.show()
 
+file = open("plotdata_" + problem + ".txt", "w+") #Seems to work
+file.write(str(exp_mat))
+file.close()
 
 # Find minima manually, will be fast for small matrices, like in the benchmark!
 # Only finds one minimum though, not if there are many

@@ -133,9 +133,12 @@ def TimeDepend(step, gates, t_max, Qblist):
 
     # Find max drive time for 1qb gates ~ largest drive angle
     if t_max < 100*1e-9:   #Python makes t_max not quite 200ns for 2qb, so we add a large safety margin ;).
-        t_dmax = t_max * abs(max(angles)) / np.pi  # Drive time for the largest angle in step
-        tlist = np.linspace(0, t_dmax, 10) #Maybe make resolution an input? Doesn't really matter.
-                                        # Only specifies times where to store the states/e_ops
+        try:
+            t_dmax = t_max * abs(max(angles)) / np.pi  # Drive time for the largest angle in step
+            tlist = np.linspace(0, t_dmax, 10) #Maybe make resolution an input? Doesn't really matter.
+                                            # Only specifies times where to store the states/e_ops
+        except: # If the gate only has virtual gates this happens
+            tlist = np.linspace(0,0,10) # Please change this if you have any idea of a better solution
     else:
         tlist = np.linspace(0,t_max,10)
     args=np.zeros(3)
