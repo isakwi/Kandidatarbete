@@ -23,8 +23,8 @@ T2qb2 = 82e-6
 # qubits
 #qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 #qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
-qb1 = qbc.Qubit(3, [T1qb1, T2qb1, c], -229e6 * 2 * pi, [1,1], [1,0,0]) # In other parts of the program we work linearly, right? 
-qb2 = qbc.Qubit(3, [T2qb1, T2qb2, c], -225e6 * 2 * pi, [2,2], [1,0,0])
+qb1 = qbc.Qubit(3, [1/T1qb1, 1/T2qb1, c], -229e6 * 2 * pi, [1,1], [1,0,0]) # In other parts of the program we work linearly, right? 
+qb2 = qbc.Qubit(3, [1/T2qb1, 1/T2qb2, c], -225e6 * 2 * pi, [2,2], [1,0,0])
 
 betaplot = True #make this true if we want 1D plots as well
 
