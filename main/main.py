@@ -38,8 +38,8 @@ That way we always store time dynamics if we're given an expectation value to wo
 n, ntraj, relax, depha, therma, anharm, l = rd.read_data("qubitData.csv")  # Parameters
 
 # e_ops is currently defined here
-e_ops = [] # Parameter, don't know how we want to import this later, maybe some text file or something
-StoreTimeDynamics = False
+e_ops = [[destroy(3),0]] # Parameter, don't know how we want to import this later, maybe some text file or something
+StoreTimeDynamics = True
 if e_ops != []:
     StoreTimeDynamics = True # If we pass some expectation operator(s) we store time dynamics
 
@@ -87,7 +87,7 @@ args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max":
 tic = time.perf_counter() # Start stopwatch in order to print the run time
 if StoreTimeDynamics:
     #result,allstates, expectvals, tlist_tot = mA.mainAlgorithm(args) # This didn't work so removed result
-    allstates, expectvals, tlist_tot = mA.mainAlgorithm(args)
+    result, expectvals, tlist_tot = mA.mainAlgorithm(args)
 else:
     result = mA.mainAlgorithm(args)
 toc = time.perf_counter() # Stop stopwatch
@@ -97,7 +97,8 @@ print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
 #print(type(expectvals), shape(expectvals)) # for searching for errors in shapes etc. 
 #print(type(tlist_tot), shape(tlist_tot))
 
-#print(expectvals)
+print(expectvals)
+print(tlist_tot)
 #print(expectvals[0][:])
 #print("hej" + str(shape(expectvals[0][:])))
 """ COmmented away until we can discuss expecation values

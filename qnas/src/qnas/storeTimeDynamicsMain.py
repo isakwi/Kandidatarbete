@@ -95,7 +95,7 @@ def mainAlgorithmExpectation(args):
                 tlist_tot = np.concatenate((tlist_tot, tlist_shifted))
             # TODO : KOLLA ATT DET HÄR VERKLIGEN BLIR RÄTT ^
             if max(tlist) >= 1e-11:
-                allStates = np.append(allStates, np.transpose(parfor(mcSolving.mcsTimeDynamics, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)))
+                allStates = np.append(allStates, np.transpose(parfor(mcSolving.mcsTimeDynamics, psi0, H=H, tlist=tlist, c_ops=c_ops)))
                 psi0 = allStates[-ntraj:]
             for vgate in virtualgates:
                 psi0 = parfor(mcSolving.virtgate, psi0, vgate=vgate)
@@ -112,7 +112,7 @@ def mainAlgorithmExpectation(args):
             tlist_tot = np.concatenate((tlist_tot, tlist_shifted))  # Create tlist for the entire process
 
             if max(tlist) > 1e-11:
-                allStates = np.append(allStates, np.transpose(parfor(mcSolving.mcsTimeDynamics, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)))
+                allStates = np.append(allStates, np.transpose(parfor(mcSolving.mcsTimeDynamics, psi0, H=H, tlist=tlist, c_ops=c_ops)))
                 psi0 = allStates[-ntraj:]
             for vgate in virtualgates:
                 psi0 = parfor(mcSolving.virtgate, psi0, vgate=vgate)

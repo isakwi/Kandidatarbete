@@ -66,5 +66,5 @@ def mainAlgorithm(args):
         return psi0
     if StoreTimeDynamics:
         psi, expectvals, tlist_tot = storeTimeDynamicsMain.mainAlgorithmExpectation(args)
-        return psi0, expectvals, tlist_tot
+        return psi, expectvals, tlist_tot
     
