@@ -33,7 +33,7 @@ Gphiqb2 = 1/Tphiqb2
 # qubits
 #qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 #qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
-qb1 = qbc.Qubit(3, [G1qb1, Gphiqb1, c], -229e6 * 2 * pi) # In other parts of the program we work linearly, right? 
+qb1 = qbc.Qubit(3, [G1qb1, Gphiqb1, c], -229e6 * 2 * pi) # In other parts of the program we work linearly, right? Should be angular, So this is correct. Input in .csv is linear
 qb2 = qbc.Qubit(3, [G1qb2, Gphiqb2, c], -225e6 * 2 * pi)
 
 zz_mat = [[0, 1e5], [0, 1e5]]

@@ -45,7 +45,6 @@ if e_ops != []:
 
 Qblist = []
 for i in range(0, n):  # Creates list with all qubits, for now the desig and init_vec are empty
-    anharm[i] = -2*pi*abs(anharm[i])*1e6  # Convert linear frequency to angular (input seems to usually be linear) #Why -? /A
     Qblist.append(Qb.Qubit(l[i], [relax[i], depha[i], therma[i]], anharm[i]))
 
 # e_ops is currently defined here (again, needed the Qblist so just copied it down a little)
