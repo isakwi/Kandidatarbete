@@ -2,7 +2,7 @@
 Backend with definition of 1qb and 2qb gates
 """
 
-import qubitClass as Qb
+from . import qubitClass as Qb
 from qutip import *
 import numpy as np
 

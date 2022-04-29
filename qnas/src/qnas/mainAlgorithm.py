@@ -1,9 +1,9 @@
-import gateFuncs as gf
-import mcSolving
-from anharmonicity import anharmonicity
-import storeTimeDynamicsMain
-import zzInteractionFunction as zz
-from gateLib import *
+from . import gateFuncs as gf
+from . import mcSolving
+from .anharmonicity import anharmonicity
+from . import storeTimeDynamicsMain
+from . import zzInteractionFunction as zz
+from .gateLib import *
 
 def mainAlgorithm(args):
     """

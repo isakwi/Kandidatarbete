@@ -1,13 +1,11 @@
-
-import qubitClass as Qb
 from qutip import *
 import numpy as np
-import gateLib
+from . import gateLib
 import sys
-import gateFuncs as gf
-import mcSolving
-from anharmonicity import anharmonicity
-import zzInteractionFunction as zz
+from . import gateFuncs as gf
+from . import mcSolving
+from .anharmonicity import anharmonicity
+from . import zzInteractionFunction as zz
 
 
 def tensorifyExpectationOperator(Qblist, Tar_Con, Gate):
@@ -32,7 +30,7 @@ def tensorifyExpectationOperator(Qblist, Tar_Con, Gate):
             sys.exit(1)
         del (gateList[max(Tar_Con)])  # Make room for the gate
         del (gateList[min(Tar_Con)])  # Make room for the gate
-        return gateLib.gate_expand_2toN(Gate, len(Qblist), gateList, Tar_Con[1],Tar_Con[0])
+        return gateLib.gate_expand_2toN(Gate, len(Qblist), gateList, Tar_Con[1], Tar_Con[0])
     else:
         print('Error: QnAS only handles 1 or 2 qubit operators as e_ops. \n See \'ExpectationValues\' for more info')
         sys.exit(1)  # Stops the program with the same error code as above
