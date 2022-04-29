@@ -12,7 +12,7 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
     The main solver function. Basically a user calls this function and everything else is automatic
     :param Qbfile: File that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi
     :param circuit: Qiskit QuantumCircuit object to specify quantum circuit. Can't run without
-    :param zz_int: 15x15 matrix that describes interaction between qubits
+    :param zz_int: symmetrical square (n x n) matrix that describes interaction between qubits
     :param ntraj: number of trajectories for the Monte Carlo solver. Default - 500
     :param tmax: Max time for 1qb-gate and 2qb-gate ~ [t_1qb, t_2qb]. Default - [20e-9, 200e-9]
     :param store_time_dynamics: True/False value to store time dynamics. Default - False
