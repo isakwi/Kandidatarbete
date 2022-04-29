@@ -116,7 +116,7 @@ def timeDepend(step, gates, t_max, Qblist):
         if step.name[i] in ['CZ']:
             for j in range(2): # Removing anharmonicity for the gates targeted by CZ
                 target = step.Tar_Con[i][j]
-                H = H - Qblist[target].anharm * anharmonicity.AnHarm(Qblist, target)
+                H = H - Qblist[target].anharm/2 * anharmonicity.AnHarm(Qblist, target)
     for i in range(len(gates)):
         if abs(angles[i]) >= tol:  # Can't add gates which have a too small angle
             gate = gates[i]

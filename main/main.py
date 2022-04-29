@@ -21,7 +21,7 @@ pi = np.pi
 benchmark = False
 
 """ False if we only care about the final states"""
-StoreTimeDynamics = True
+StoreTimeDynamics = False
 
 """ e_ops are currently defined here """
 e_ops = []
@@ -76,7 +76,7 @@ c_ops = co.createCollapseOperators(Qblist)  # Create c_ops (only relaxation and 
 """ Adding the algorithm steps! """
 steps = []
 #steps.append(gf.Add_step(["PX"], [0], [pi/2]))
-steps.append(gf.AlgStep(["PX", "PX"], [0,1], [pi/2, pi]))
+steps.append(gf.AlgStep(["PX", "PX"], [0,1], [pi, pi]))
 steps.append(gf.AlgStep(["VPZ", "VPZ"], [0, 1], [pi, pi]))
 steps.append(gf.AlgStep(["CZ"], [[0, 1]], [pi]))
 steps.append(gf.AlgStep(["HD"], [0], [pi]))
@@ -120,17 +120,17 @@ plt.show() """
 It shouldn't do that, right? // Albin """
 
 #Used for testing
-PrintStates = False
+PrintStates = True
 if PrintStates:
     print(f"Initial state: {psi0}")
     if isinstance(result, (list, tuple, np.ndarray)): # Basically, if noises (mcsolve)
-        print(f"Final state: {result[-1].tidyup(atol=1e-4)}") # Prints one of the final states
+        print(f"Final state: {result[-1].tidyup(atol=1e-3)}") # Prints one of the final states
         vec2 = result[-1]
     elif type(result) == Qobj:
-        print(f"Final state: {result.tidyup(atol=1e-4)}")
+        print(f"Final state: {result.tidyup(atol=1e-3)}")
         vec2 = result
     else:
-        print(f"Final state: {result.states[-1].tidyup(atol=1e-4)}") # If no noises sesolve => only one state
+        print(f"Final state: {result.states[-1].tidyup(atol=1e-3)}") # If no noises sesolve => only one state
         vec2 = result[-1]
     if len(Qblist) == 1 and Qblist[0].level == 2:
         # Bloch sphere only if 1qb 2 level
