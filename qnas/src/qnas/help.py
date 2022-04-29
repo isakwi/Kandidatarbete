@@ -23,7 +23,7 @@ def help():
           "solve(Qbfile, OpenQASM, n, ntraj, tmax, store_time_dynamics)\n"
           "\t:param Qbfile: Filepath that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi\n"
           "\t:param OpenQASM: Filepath that specifies OpenQASM file. Default - Asks user to specify gates manually or not run\n"
-          "\t:param int_matrix: 15x15 matrix that describes interaction between qubits."
+          "\t:param zz_int: 15x15 matrix that describes interaction between qubits."
           "\t:param ntraj: number of trajectories for the Monte Carlo solver. Default - 500\n"
           "\t:param tmax: Max time for 1qb-gate and 2qb-gate ~ [t_1qb, t_2qb]. Default - [20e-9, 200e-9]\n"
           "\t:param store_time_dynamics: True/False value to store time dynamics. Default - False\n"

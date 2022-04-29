@@ -85,15 +85,18 @@ def mainAlgorithmExpectation(args):
             physicalgates, virtualgates, tmax = gf.createGatesFromStep(steps[i], Qblist, t_max)
             Htd, tlist = gf.timeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
-            print(steps)
             # Create tlist for the entire process
+            OnlyVirtualGates = True
             for j in range(len(steps[i].name)): # Deals with steps with multiple gates in them
-                if gateLib.isVirtual(steps[i], j): #Check if gate is virtual, then no time added to tlist
-                    tlist_shifted = []
-                else:
-                    tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous ends.
-                tlist_tot = np.concatenate((tlist_tot, tlist_shifted))
+                if gateLib.isPhysicalGate(steps[i], j) or gateLib.isTwoQubitGate(steps[i], j) or steps[i].name[j] in ["HD"]:
+                    OnlyVirtualGates = False
+            if OnlyVirtualGates:
+                tlist_shifted = []
+            else:
+                tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous ends.
+            tlist_tot = np.concatenate((tlist_tot, tlist_shifted))
             # TODO : KOLLA ATT DET HÄR VERKLIGEN BLIR RÄTT ^
+            # Jag tror att det ska funka som det är nu. / Ed
             if max(tlist) >= 1e-11:
                 allStates = np.append(allStates, np.transpose(parfor(mcSolving.mcsTimeDynamics, psi0, H=H, tlist=tlist, c_ops=c_ops)))
                 psi0 = allStates[-ntraj:]
