@@ -70,6 +70,7 @@ def createGatesFromStep(step, Qblist, t_max):
             H_real.append(y(Qblist, step.Tar_Con[i]))
             if step.name[i] in ["CZ"]: #this is needed atm
                 step.angle[i] = 2* np.pi
+                tmax = t_max[1]
         elif step.name[i] in ["HD"]: # HD gate feels pretty unique so I left it as it was when I found it
             anyPhysicalGate = True
             step.angle[i] = np.pi/2
@@ -96,14 +97,13 @@ def timeDepend(step, gates, t_max, Qblist):
     Output: Time dependant Hamiltonian and tlist for the step
     """
     angles = step.angle
-    angles = [angles[i] for i in range(len(angles)) if not gateLib.isVirtual(step, i)] # this eliminates the virtual angles
-
+    angles = [angles[i] for i in range(len(angles)) if not gateLib.isVirtual(step,i)] # this eliminates the virtual angles
     # Find max drive time for 1qb gates ~ largest drive angle
     if t_max < 100*1e-9:  # Two qubit gates have longer drive time than 100ns
-        try:
+        if angles != []: # If only virtual gates no angles
             t_dmax = t_max * abs(max(angles)) / np.pi  # Drive time for the largest angle in step
             tlist = np.linspace(0, t_dmax, 10)
-        except ValueError:  # If the gate only has virtual gates this happens
+        else:
             tlist = np.linspace(0,0,10)
     else:
         tlist = np.linspace(0,t_max,10)

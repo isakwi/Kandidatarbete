@@ -76,11 +76,13 @@ c_ops = co.createCollapseOperators(Qblist)  # Create c_ops (only relaxation and 
 """ Adding the algorithm steps! """
 steps = []
 #steps.append(gf.Add_step(["PX"], [0], [pi/2]))
-steps.append(gf.AlgStep(["PX"], [0], [pi]))
-steps.append(gf.AlgStep(["VPZ"], [0], [pi]))
-steps.append(gf.AlgStep(["PX"], [0], [pi / 2]))
-steps.append(gf.AlgStep(["HD"], [0], [0])) # Added two to make some more interesting plots //Albin
-steps.append(gf.AlgStep(["PX"], [0], [pi / 2]))
+steps.append(gf.AlgStep(["PX", "PX"], [0,1], [pi/2, pi]))
+steps.append(gf.AlgStep(["VPZ", "VPZ"], [0, 1], [pi, pi/2]))
+steps.append(gf.AlgStep(["CZ"], [[0, 1]], [pi]))
+steps.append(gf.AlgStep(["HD"], [0], [pi]))
+steps.append(gf.AlgStep(["PX","VPZ"], [0,1], [pi/2, pi]))
+#steps.append(gf.AlgStep(["HD"], [0], [0])) # Added two to make some more interesting plots //Albin
+#steps.append(gf.AlgStep(["PX"], [0], [pi / 2]))
 
 
 args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj, "StoreTimeDynamics": StoreTimeDynamics, "e_ops_inp": e_ops}
@@ -110,7 +112,7 @@ plt.show() """
 It shouldn't do that, right? // Albin """
 
 #Used for testing
-PrintStates = True
+PrintStates = False
 if PrintStates:
     print(f"Initial state: {psi0}")
     if isinstance(result, (list, tuple, np.ndarray)): # Basically, if noises (mcsolve)
