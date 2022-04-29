@@ -5,14 +5,15 @@ import numpy as np
 from . import readData as rd
 from . import collapseOperatorFunction as co
 from . import mainAlgorithm as ma
+from . import openqasmInterpreter as opq
 from qutip import *
-
-def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops=None):
+#TODO Maybe change name from OpenQASM to circuit or something? More accurate?
+def solve(Qbfile = None, OpenQASM = None, zz_int = None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops=None):
     """
     The main solver function. Basically a user calls this function and everything else is automatic
     :param Qbfile: File that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi
-    :param OpenQASM: File that specifies OpenQASM file. Default - Asks user to specify gates manually or not run
-    :param int_matrix: 15x15 matrix that describes interaction between qubits
+    :param OpenQASM: Qiskit QuantumCircuit object to specify quantum circuit. Can't run without
+    :param zz_int: 15x15 matrix that describes interaction between qubits
     :param ntraj: number of trajectories for the Monte Carlo solver. Default - 500
     :param tmax: Max time for 1qb-gate and 2qb-gate ~ [t_1qb, t_2qb]. Default - [20e-9, 200e-9]
     :param store_time_dynamics: True/False value to store time dynamics. Default - False
@@ -27,11 +28,9 @@ def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=Non
         return
 
     try:  # Input can either be openqasm file or qiskit circuit? Add functionality for that
-        #steps = oqread.FUNCTION(Qbfile)  # Should return a list with Add_step objects?
-        print("Reading OpenQASM file is not implemented yet!")
-        steps = [gf.AlgStep(["PX", "CZ"], [0, [0, 1]], [np.pi, 0])]  # Temporary steps to not get syntax errors everywhere
+        steps = opq.qasmToQnas(OpenQASM)
     except:
-        print(f"Couldn't read the OpenQASM file! Check that the filename, {OpenQASM}, is correct and that the file is "
+        print(f"Couldn't read the OpenQASM file! Check that the circuit, {OpenQASM}, is correct and that the circuit is"
               "constructed correctly. QnAS.solve() will now exit")
         return
 
@@ -117,14 +116,14 @@ def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=Non
             #if type(e_op[0]) != Qobj:  # Would like to add something like this but don't know how
 
 
-    if type(int_matrix) != list:
+    if type(zz_int) != list:
         print("Wrong format for the interaction matrix! Should be given as [[x1, x2, ... , x15], [...]]"
               "\nand be of size 15x15! QnAS.solve() will now exit")
         return
-    if len(int_matrix) != 15:
+    if len(zz_int) != 15:
         print("The matrix is not 15x15! QnAS.solve() will now exit")
         return
-    for row in int_matrix:
+    for row in zz_int:
         if len(row) != 15:
             print("The matrix is not 15x15! QnAS.solve() will now exit")
             return
@@ -132,12 +131,12 @@ def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=Non
     psi0 = qbc.createPsi0(Qblist, 0)
     c_ops = co.createCollapseOperators(Qblist)
 
-    if int_matrix is None:
+    if zz_int is None:
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": Qblist, "t_max": tmax, "ntraj" : ntraj,
                 "StoreTimeDynamics": store_time_dynamics, "e_ops_inp": e_ops}
 
     else:
         args = {"steps": steps, "c_ops": c_ops, "psi0": psi0, "Qblist": Qblist, "t_max": tmax, "ntraj": ntraj,
-                "StoreTimeDynamics": store_time_dynamics, "e_ops_inp": e_ops, "zz_mat": int_matrix}
+                "StoreTimeDynamics": store_time_dynamics, "e_ops_inp": e_ops, "zz_mat": zz_int}
 
     return ma.mainAlgorithm(args)
