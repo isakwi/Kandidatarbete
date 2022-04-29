@@ -23,12 +23,12 @@ def tensorifyExpectationOperator(Qblist, Tar_Con, Gate):
     if type(Tar_Con) == int:  # 1qb gate
         gateList[Tar_Con] = Gate
         if Gate.shape[0] != Qblist[Tar_Con].level:
-            print('Error: Shape of e_ops doesn\'t match the targeted qubit level. \n See \'ExpectationValues\' for more info')
+            print('Error: Shape of e_ops doesn\'t match the targeted qubit level. \n See \'storeTimeDynamics\' for more info')
             sys.exit(1)
         return tensor(gateList)
     elif len(Tar_Con) == 2: # 2qb gate
         if Gate.shape[0] != Qblist[Tar_Con[0]].level*Qblist[Tar_Con[1]].level:
-            print('Error: Shape of e_ops doesn\'t match the targeted qubits levels. \n See \'ExpectationValues\' for more info')
+            print('Error: Shape of e_ops doesn\'t match the targeted qubits levels. \n See \'storeTimeDynamics\' for more info')
             sys.exit(1)
         del (gateList[max(Tar_Con)])  # Make room for the gate
         del (gateList[min(Tar_Con)])  # Make room for the gate
