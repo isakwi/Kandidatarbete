@@ -69,7 +69,7 @@ def CreateHfromStep(step, Qblist, t_max):
         elif step.name[i] in ["PX", "PY", "PZ", "PM", "RPY"]:
             H_real.append(y(Qblist, step.Tar_Con[i]))
             real_angles.append(step.angle[i])
-        elif step.name[i] in ["CZ", "iSWAP","CZnew"]:  # Check 2q gates
+        elif step.name[i] in ["CZ", "iSWAP","CZ"]:  # Check 2q gates
             H_real.append(y(Qblist, step.Tar_Con[i]))
             step.angle[i] = 2*np.pi  # Should it be 2*pi for all 2qb gatess??
             real_angles.append(step.angle[i])
@@ -111,7 +111,7 @@ def TimeDepend(step, angles, gates, td, Qblist, t_st, tlist, t_max):
                      # Now set to be able to handle at least one degree and upwards
     H=0
     for i in range(len(step.name)):
-        if step.name[i] in ['CZnew']:
+        if step.name[i] in ['CZ']:
             for j in range(2): # Removing anharmonicity for the gates targeted by CZ
                 #OBS: Has to be time dependant in BigMC solution
                 target = step.Tar_Con[i][j]

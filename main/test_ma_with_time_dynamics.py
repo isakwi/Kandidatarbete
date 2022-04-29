@@ -2,16 +2,16 @@
 time dynamics implementation.
 Maybe you guys already did something similar, but I couldn't find any testing in the repository."""
 import numpy as np
-import GateFuncs as gf
-import CollapseOperator_function as colf
-import main_Algorithm as ma
+import gateFuncs as gf
+import collapseOperatorFunction as colf
+import mainAlgorithm as ma
 #import main_Alg_parfortest as ma  #Uncomment to change to parfor from the start
 from qutip import *
-import GateLib as gl
+import gateLib as gl
 import time
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-import Qb_class as qbc
+import qubitClass as qbc
 import matplotlib as mpl
 
 "Global parameters"
@@ -25,30 +25,30 @@ c3 = 0 #Thermal excitation? Yet to be implemented in CollapseOperator_function
 qb1 = qbc.Qubit(3, [c1, c2, c3], -229e6 * 2 * pi, [1,1], [1,0,0]) #levels, c_parameters, anharm_freq, positional coordinates, initial state
 qb2 = qbc.Qubit(3, [c1, c2, c3], -225e6 * 2 * pi, [1,2], [1,0,0])
 qblist = [qb1, qb2]
-psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
+psi0 = qbc.createPsi0(qblist, 0)  # 0 is the groundstate
 steps = []
-c_ops = colf.create_c_ops(qblist)
+c_ops = colf.createCollapseOperators(qblist)
 J, h1, h2 = 1, 0, 0
 gamma1, gamma2 = 0.498, 0.675
 beta1, beta2 = 0.386, 0.934
 
 # {'bangle1': 0.38625749927352887, 'bangle2': 0.9338998705777307, 'cangle1': 0.4983658373499303, 'cangle2': 0.6747157321745737}}
 
-steps.append(gf.Add_step(["HD", "HD"], [0,1], [0, 0]))  # First we apply Hadamard to both qubits
-steps.append(gf.Add_step([ "HD"], [1], [0]))  # Then we apply Hadamard to the second qubit
-steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
-steps.append(gf.Add_step(["PX"], [1], [2 * gamma1 * J]))
-steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
-steps.append(gf.Add_step(["HD"], [1], [0]))
-steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * gamma1 * h1, 2 * gamma1 * h2]))
-steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * beta1, 2 * beta1]))
-steps.append(gf.Add_step([ "HD"], [1], [0]))  # Then we apply Hadamard to the second qubit
-steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
-steps.append(gf.Add_step(["PX"], [1], [2 * gamma2 * J]))
-steps.append(gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
-steps.append(gf.Add_step(["HD"], [1], [0]))
-steps.append(gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * gamma2 * h1, 2 * gamma2 * h2]))
-steps.append(gf.Add_step(["PX", "PX"], [0, 1], [2 * beta2, 2 * beta2]))
+steps.append(gf.AlgStep(["HD", "HD"], [0, 1], [0, 0]))  # First we apply Hadamard to both qubits
+steps.append(gf.AlgStep(["HD"], [1], [0]))  # Then we apply Hadamard to the second qubit
+steps.append(gf.AlgStep(["CZ"], [[1, 0]], [2 * pi]))
+steps.append(gf.AlgStep(["PX"], [1], [2 * gamma1 * J]))
+steps.append(gf.AlgStep(["CZ"], [[1, 0]], [2 * pi]))
+steps.append(gf.AlgStep(["HD"], [1], [0]))
+steps.append(gf.AlgStep(["VPZ", "VPZ"], [0, 1], [2 * gamma1 * h1, 2 * gamma1 * h2]))
+steps.append(gf.AlgStep(["PX", "PX"], [0, 1], [2 * beta1, 2 * beta1]))
+steps.append(gf.AlgStep(["HD"], [1], [0]))  # Then we apply Hadamard to the second qubit
+steps.append(gf.AlgStep(["CZ"], [[1, 0]], [2 * pi]))
+steps.append(gf.AlgStep(["PX"], [1], [2 * gamma2 * J]))
+steps.append(gf.AlgStep(["CZ"], [[1, 0]], [2 * pi]))
+steps.append(gf.AlgStep(["HD"], [1], [0]))
+steps.append(gf.AlgStep(["VPZ", "VPZ"], [0, 1], [2 * gamma2 * h1, 2 * gamma2 * h2]))
+steps.append(gf.AlgStep(["PX", "PX"], [0, 1], [2 * beta2, 2 * beta2]))
 
 
 
@@ -79,8 +79,8 @@ args["e_ops_inp"] = [[expectop1, [0,1]], [expectop2, 1]]
 
 
 """We test our program"""
-finalstates, expvals, tlist = ma.main_algorithm(args)
-#finalstates, expvals, tlist = ma.main_algorithm(args)
+finalstates, expvals, tlist = ma.mainAlgorithm(args)
+#finalstates, expvals, tlist = ma.mainAlgorithm(args)
 """Visualize result as desired"""
 #print("time list: ", tlist)
 print("final states data type:" , type(finalstates))

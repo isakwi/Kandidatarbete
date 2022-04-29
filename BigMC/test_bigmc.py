@@ -57,8 +57,8 @@ steps = [gf.Add_step(["PX"],[0],[0.1]) for i in range(7)]  # zero angle rotation
 
 steps[0] = (gf.Add_step(["PX", "PX"], [0, 1], [pi/2, pi/2]))  # First we apply Hadamard to both qubits
 steps[1] = (gf.Add_step(["PX"], [ 1], [pi/2]))  # Then we apply Hadamard to the second qubit
-steps[2] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
-steps[4] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
+steps[2] = (gf.Add_step(["CZ"], [[1,0]], [2*pi]))
+steps[4] = (gf.Add_step(["CZ"], [[1,0]], [2*pi]))
 steps[5] = (gf.Add_step(["PY"], [1], [pi/2]))
 
 
@@ -77,7 +77,7 @@ for i in range(0, gamma_resolution):
         steps[3] = (gf.Add_step(["PX"], [1], [2 * gamma * J]))
         #steps[6] = (gf.Add_step(["VPZ", "VPZ"], [0, 1], [2 * gamma * h1, 2 * gamma * h2]))
         steps[6] = (gf.Add_step(["PX", "PX"], [0, 1], [2 * beta, 2 * beta]))
-# calling main_algorithm
+# calling mainAlgorithm
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "t_st": t_st}
         state = ma.main_algorithm(args)
 # saving mean value of expectation value in matrix

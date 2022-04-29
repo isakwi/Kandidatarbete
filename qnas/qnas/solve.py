@@ -1,10 +1,10 @@
 #import openqasmreader as oqread
-from . import GateFuncs as gf
-from . import Qb_class as qbc
+from . import gateFuncs as gf
+from . import qubitClass as qbc
 import numpy as np
-from . import read_data as rd
-from . import CollapseOperator_function as co
-from . import main_Algorithm as ma
+from . import readData as rd
+from . import collapseOperatorFunction as co
+from . import mainAlgorithm as ma
 from qutip import *
 
 def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops=None):
@@ -29,7 +29,7 @@ def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=Non
     try:  # Input can either be openqasm file or qiskit circuit? Add functionality for that
         #steps = oqread.FUNCTION(Qbfile)  # Should return a list with Add_step objects?
         print("Reading OpenQASM file is not implemented yet!")
-        steps = [gf.Add_step(["PX", "CZnew"], [0, [0,1]], [np.pi, 0])]  # Temporary steps to not get syntax errors everywhere
+        steps = [gf.AlgStep(["PX", "CZ"], [0, [0, 1]], [np.pi, 0])]  # Temporary steps to not get syntax errors everywhere
     except:
         print(f"Couldn't read the OpenQASM file! Check that the filename, {OpenQASM}, is correct and that the file is "
               "constructed correctly. QnAS.solve() will now exit")
@@ -64,7 +64,7 @@ def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=Non
         Qblist = [qbc.Qubit(3, [0,0,0], -225e6 * 2 * np.pi, [], []) for i in range(n)]
     else:
         try:
-            relax, depha, therma, anharm, levels = rd.readfile(Qbfile,n)
+            relax, depha, therma, anharm, levels = rd.readFile(Qbfile, n)
             Qblist = []
         except:
             print(f"Couldn't find file {Qbfile}. QnAS.solve() will now exit")
@@ -129,8 +129,8 @@ def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=Non
             print("The matrix is not 15x15! QnAS.solve() will now exit")
             return
 
-    psi0 = qbc.create_psi0(Qblist, 0)
-    c_ops = co.create_c_ops(Qblist)
+    psi0 = qbc.createPsi0(Qblist, 0)
+    c_ops = co.createCollapseOperators(Qblist)
 
     if int_matrix is None:
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": Qblist, "t_max": tmax, "ntraj" : ntraj,
@@ -140,4 +140,4 @@ def solve(Qbfile = None, OpenQASM = None, int_matrix = None, ntraj=500, tmax=Non
         args = {"steps": steps, "c_ops": c_ops, "psi0": psi0, "Qblist": Qblist, "t_max": tmax, "ntraj": ntraj,
                 "StoreTimeDynamics": store_time_dynamics, "e_ops_inp": e_ops, "zz_mat": int_matrix}
 
-    return ma.main_algorithm(args)
+    return ma.mainAlgorithm(args)

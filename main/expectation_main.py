@@ -1,16 +1,16 @@
 """ Main program, this is the one you should run! """
 import time
 import matplotlib.pyplot as plt
-import read_data as rd
-import Qb_class as Qb
+import readData as rd
+import qubitClass as Qb
 import numpy as np
-import CollapseOperator_function as co
+import collapseOperatorFunction as co
 from qutip import *
-import GateFuncs as gf
-import GateLib as gl
+import gateFuncs as gf
+import gateLib as gl
 
 "One of these should be used."
-import main_Algorithm as mA  #The main algorithm as we first wrote it
+import mainAlgorithm as mA  #The main algorithm as we first wrote it
 #import main_Alg_parfortest as mA # The main algorithm using parfor for all steps
 
 import benchmarking_main as bm
@@ -20,7 +20,7 @@ pi = np.pi
 benchmark = False
 
 # Parameters, eventually the number of qubits and the levels will be read from OpenQASM instead!
-n, ntraj, relax, depha, therma, anharm, l = rd.read_data("qubit_data.csv")  # Parameters
+n, ntraj, relax, depha, therma, anharm, l = rd.read_data("qubitData.csv")  # Parameters
 
 Qblist = []
 for i in range(0, n):  # Creates list with all qubits, for now the desig and init_vec are empty
@@ -47,26 +47,26 @@ beta1 = pi/t_1q  # Driving strength for 1q gate
 beta2 = pi/t_2q  # Driving strength for 2q gate
 """Change TimeFunc / Envelope so that it takes beta as parameter?"""
 
-psi0 = Qb.create_psi0(Qblist, 0)  # Create initial state with all qubits in ground state
-c_ops = co.create_c_ops(Qblist)  # Create c_ops (only relaxation and dephasing for now)
+psi0 = Qb.createPsi0(Qblist, 0)  # Create initial state with all qubits in ground state
+c_ops = co.createCollapseOperators(Qblist)  # Create c_ops (only relaxation and dephasing for now)
 
 """ Adding the algorithm steps! """
 steps = []
 #steps.append(gf.Add_step(["PX"], [0], [pi/2]))
-steps.append(gf.Add_step(["PX"], [0], [pi]))
-steps.append(gf.Add_step(["VPZ"], [0], [pi]))
-steps.append(gf.Add_step(["PX"], [0], [pi/2]))
-steps.append(gf.Add_step(["HD"], [0], [0])) # Added two to make some more interesting plots //Albin 
-steps.append(gf.Add_step(["PX"], [0], [pi/2]))
+steps.append(gf.AlgStep(["PX"], [0], [pi]))
+steps.append(gf.AlgStep(["VPZ"], [0], [pi]))
+steps.append(gf.AlgStep(["PX"], [0], [pi / 2]))
+steps.append(gf.AlgStep(["HD"], [0], [0])) # Added two to make some more interesting plots //Albin
+steps.append(gf.AlgStep(["PX"], [0], [pi / 2]))
 
 
 args = {"psi0": psi0, "Qblist": Qblist, "c_ops": c_ops, "steps": steps, "t_max": [t_1q, t_2q], "ntraj": ntraj, "StoreTimeDynamics": StoreTimeDynamics, "e_ops_inp": e_ops}
 tic = time.perf_counter() # Start stopwatch in order to print the run time
 if StoreTimeDynamics:
-    #result,allstates, expectvals, tlist_tot = mA.main_algorithm(args) # This didn't work so removed result
-    allstates, expectvals, tlist_tot = mA.main_algorithm(args)
+    #result,allstates, expectvals, tlist_tot = mA.mainAlgorithm(args) # This didn't work so removed result
+    allstates, expectvals, tlist_tot = mA.mainAlgorithm(args)
 else:
-    result = mA.main_algorithm(args)
+    result = mA.mainAlgorithm(args)
 toc = time.perf_counter() # Stop stopwatch
 print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
 

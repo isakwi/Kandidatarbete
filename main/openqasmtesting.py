@@ -1,18 +1,18 @@
 import numpy as np
-import GateFuncs as gf
-import CollapseOperator_function as colf
-import main_Algorithm as ma
+import gateFuncs as gf
+import collapseOperatorFunction as colf
+import mainAlgorithm as ma
 #import main_Alg_parfortest as ma  #Uncomment to change to parfor from the start
 from qutip import *
-import GateLib as gl
+import gateLib as gl
 import time
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-import Qb_class as qbc
+import qubitClass as qbc
 import matplotlib as mpl
 import pandas as pd
 from bayes_opt import BayesianOptimization
-import openqasm_interpreter as oqi
+import openqasmInterpreter as oqi
 import qiskit
 
 pi = np.pi
@@ -38,12 +38,12 @@ qblist = [qb1, qb2]
 exp_mat = np.zeros((beta_resolution, gamma_resolution))
 if betaplot:
     state_mat = [[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)]
-c_ops = colf.create_c_ops(qblist)
+c_ops = colf.createCollapseOperators(qblist)
 e_ops = []
 # number of trajectories
 ntraj = 5
 tmax= [50e-9, 271e-9]
-psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
+psi0 = qbc.createPsi0(qblist, 0)  # 0 is the groundstate
 problem = 'a'
 
 
@@ -91,12 +91,12 @@ for i in range(0, gamma_resolution):
         t0 = t
     for j in range(0, beta_resolution):
         beta = beta_vec[j]
-        steps = oqi.qasm_to_qnas(ourcirc(gamma, beta))[0]
+        steps = oqi.qasmToQnas(ourcirc(gamma, beta))[0]
 
 
         args = {"steps": steps, "e_ops_inp": e_ops, "c_ops": c_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax, "ntraj": ntraj,
                 "StoreTimeDynamics": False}
-        state = ma.main_algorithm(args)
+        state = ma.mainAlgorithm(args)
         #print(state)
 
         exp_mat[j, i] = 100*np.mean(expect(ham, state))  # Beta y-axis and gamma x-axis

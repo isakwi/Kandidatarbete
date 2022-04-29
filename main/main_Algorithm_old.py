@@ -8,10 +8,10 @@
 ##THis program should return the final state
 from qutip import *
 import numpy as np
-import GateFuncs as gf
-import mcsolving
-from Anharmonicity import anharmonicity
-import ZZinteraction_function as zz
+import gateFuncs as gf
+import mcSolving
+from anharmonicity import anharmonicity
+import zzInteractionFunction as zz
 
 def main_algorithm(args):
     """ The main algorithm.
@@ -46,15 +46,15 @@ def main_algorithm(args):
     #temporary soltuion for zz interaction below
     try:
         zz_mat = args["zz_mat"]
-        H0 = anharmonicity(Qblist) + zz.ZZ_interaction(Qblist, zz_mat)
+        H0 = anharmonicity(Qblist) + zz.zzInteraction(Qblist, zz_mat)
     except:
         #if zz interactions not specified, we skip them
         H0 = anharmonicity(Qblist)
 
 
     ## Do first iteration for ntraj trajectories to split the mcsolve
-    physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[0], Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
-    Htd, tlist = gf.TimeDepend(steps[0], physicalgates, tmax, Qblist)
+    physicalgates, virtualgates, tmax = gf.createGatesFromStep(steps[0], Qblist, t_max)  # gates contains physical gates, virtual gates, t_max, IN THAT ORDER
+    Htd, tlist = gf.timeDepend(steps[0], physicalgates, tmax, Qblist)
     H = Htd + H0
     numberOfPhysicalSteps = len(steps)
 
@@ -91,7 +91,7 @@ def main_algorithm(args):
             "e_ops here? ^ //Albin"
             "We could do that but I think that it is easier to do at the end of the code, since we easily can" \
             "obtain e_ops from allstates. /Axel"
-            "Om vi ska beräkna e_ops med mcsolvern måste ett option läggas till, se kommentarer i mcsolving.py /Ed "
+            "Om vi ska beräkna e_ops med mcsolvern måste ett option läggas till, se kommentarer i mcSolving.py /Ed "
             psi0 = allStates[-ntraj:]
 
 
@@ -100,8 +100,8 @@ def main_algorithm(args):
     '''
     if c_ops != []:
         for i in range(1,len(steps)): #each step except the first one
-            physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
-            Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
+            physicalgates, virtualgates, tmax = gf.createGatesFromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
+            Htd, tlist = gf.timeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
             if StoreTimeDynamics:
                 if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
@@ -125,8 +125,8 @@ def main_algorithm(args):
                     psi0 = allStates[-ntraj:]
     else:
         for i in range(1,len(steps)): #each step except the first one
-            physicalgates, virtualgates, tmax = gf.CreateHfromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
-            Htd, tlist = gf.TimeDepend(steps[i], physicalgates, tmax, Qblist)
+            physicalgates, virtualgates, tmax = gf.createGatesFromStep(steps[i], Qblist, t_max)  # gates contains "physical gates", virtual gates, t_list, IN THAT ORDER
+            Htd, tlist = gf.timeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
             if StoreTimeDynamics:
                 if steps[i].name[0] in ["VPZ"]:  # Check if VPZ step, then no time added to tlist
@@ -144,7 +144,7 @@ def main_algorithm(args):
                     psi0 = allStates[-ntraj:]
             else:
                 if max(tlist) > 1e-11:
-                    psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=[])
+                    psi0 = parfor(mcSolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=[])
                 for vgate in virtualgates:
                     psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
 

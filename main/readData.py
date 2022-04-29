@@ -1,8 +1,15 @@
 import pandas as pd
 import sys
 
-def readfile(filename,n):
-    # Read the file
+def readFile(filename, n):
+    """
+    Reads the data in the file qubitData.csv
+    Input:
+    - filename = name of file to be read
+    - n = number of qubits (rows of paramaters in the file to be read)
+    Output: data in the file
+    (Qubit data: relax, depha, therma, anharm, levels)
+    """
     relax = []
     depha = []
     therma = []
@@ -18,7 +25,7 @@ def readfile(filename,n):
             anharm.append(arr[i, 4])
             levels.append(int(arr[i, 5]))
     except Exception as error:
-        print("Something is wrong with the csv file! Check the example-file 'qubit_data.csv' for how it should look."
+        print("Something is wrong with the csv file! Check the example-file 'qubitData.csv' for how it should look."
               " Remember to use correct separation of values")
         raise sys.exit(1)
     return relax, depha, therma, anharm, levels

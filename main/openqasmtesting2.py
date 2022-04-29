@@ -1,16 +1,16 @@
 import numpy as np
-import GateFuncs as gf
-import CollapseOperator_function as colf
-import main_Algorithm as ma
+import gateFuncs as gf
+import collapseOperatorFunction as colf
+import mainAlgorithm as ma
 #import main_Alg_parfortest as ma  #Uncomment to change to parfor from the start
 from qutip import *
-import GateLib as gl
+import gateLib as gl
 import time
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-import Qb_class as qbc
+import qubitClass as qbc
 import matplotlib as mpl
-import openqasm_interpreter as opi
+import openqasmInterpreter as opi
 import qiskit
 pi = np.pi
 tstart = time.time()
@@ -33,12 +33,12 @@ qblist = [qb1, qb2]
 exp_mat = np.zeros((beta_resolution, gamma_resolution))
 if betaplot:
     state_mat = [[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)]
-c_ops = colf.create_c_ops(qblist)
+c_ops = colf.createCollapseOperators(qblist)
 e_ops = []
 # number of trajectories
 ntraj = 20
 tmax= [50e-9, 271e-9]
-psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
+psi0 = qbc.createPsi0(qblist, 0)  # 0 is the groundstate
 problem = 'a'
 
 if problem == 'a':
@@ -83,8 +83,8 @@ ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.
 """
 steps[0] = (gf.Add_step(["HD", "HD"], [0,1], [0, 0]))  # First we apply Hadamard to both qubits
 steps[1] = (gf.Add_step([ "HD"], [1], [0]))  # Then we apply Hadamard to the second qubit
-steps[2] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
-steps[4] = (gf.Add_step(["CZnew"], [[1,0]], [2*pi]))
+steps[2] = (gf.Add_step(["CZ"], [[1,0]], [2*pi]))
+steps[4] = (gf.Add_step(["CZ"], [[1,0]], [2*pi]))
 steps[5] = (gf.Add_step(["HD"], [1], [0]))"""
 
 # iterating through list of angles and saving expectation values in matrix
@@ -99,11 +99,11 @@ for i in range(gamma_resolution):
         t0 = t
     for j in range(beta_resolution):
         beta = beta_vec[j]
-        steps = opi.qasm_to_qnas(ourcirc(gamma, beta))
+        steps = opi.qasmToQnas(ourcirc(gamma, beta))
         #print(f"steps: {[step.name for step in steps]} targets : {[step.Tar_Con for step in steps]}, angles: {[step.angle for step in steps]} ")
-# calling main_algorithm
+# calling mainAlgorithm
         args = {"steps" : steps, "c_ops" : c_ops, "e_ops_inp": e_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": False}
-        state = ma.main_algorithm(args)
+        state = ma.mainAlgorithm(args)
 # saving mean value of expectation value in matrix
         exp_mat[j, i] = np.mean(expect(ham, state))  # Beta y-axis and gamma x-axis
         if betaplot:

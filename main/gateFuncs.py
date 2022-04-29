@@ -8,16 +8,14 @@ Contains:
   and tlist being a list of times over which the simulation will run.
 """
 
-import GateLib
-from qutip import * # Will probably only need 
-import numpy as np
-import Qb_class as Qb
-from Envelope import *
-import sys # For terminating upon error. We will see if this is a good way to do it
-import math
-import Anharmonicity
+import gateLib
+from qutip import *
+import qubitClass as Qb
+from envelopeFunction import *
+import sys
+import anharmonicity
 
-class Add_step:
+class AlgStep:
     """
     Class for creating each step in an algorithm.
     Initialises name of gate, target qubit(s) (Tar_Con) and angle of rotation
@@ -27,19 +25,21 @@ class Add_step:
         self.Tar_Con = Tar_Con
         self.angle = angle
 
-"""
-Function for creating a Hamiltonian from a given step in the algorithm
-"""
 
-def CreateHfromStep(step, Qblist, t_max):
+def createGatesFromStep(step, Qblist, t_max):
     """ Create two lists of Qobj from a step in the step_list, one for virtual and one for real gates
-    Also return a tlist depending on what gates there are in the step
-    t_max[0] = max for 1qb gate (~20ns) and t_max[1] = max for 2ab gate (~200ns)"""
-    anyPhysicalGate = False #assume we have no physical gates until the we're told the opposite
-    H_real = []  # Try to make H pre defined in size!!! 
-    # Might be hard to do since we don't know how many gates will be real
+    Also return the max drive time depending on what gates there are in the step
+    t_max[0] = max for 1qb gate (~20ns) and t_max[1] = max for 2ab gate (~200ns)
+    Input:
+    -step = AlgStep object
+    -Qblist = list of Qubit objects
+    -t_max = list of max gate times for 1 and 2qb gates
+    Output: list of real gates, list of virtual gates and max time for the step"""
+
+    anyPhysicalGate = False  # assume no physical gates until they're detected.
+    H_real = []
     H_virt = []
-    tmax = t_max[0] # Defaults to time for single qubit gate
+    tmax = t_max[0]  # Defaults to time for single qubit gate
     if len(step.name) > len(Qblist):
         print('Error: More gates than qubits have been put to a single depth.')
         sys.exit(1)  # Stops the program with an error code stating that it did not run as it should
@@ -54,26 +54,12 @@ def CreateHfromStep(step, Qblist, t_max):
                 step.Tar_Con[i] > len(Qblist) - 1:
             print('Error: Qubit outside of the number of qubits is being targeted by Tar_Con')
             sys.exit(1)  # Stops the program with the same error code as above
-        if step.angle[i] < 0 and step.name[i] not in ["VPZ"]:
+        if step.angle[i] < 0 and not (GateLib.isVirtual(step,i) or step.name[i] in ["CZ", "HD"]):
             print("Warning! Negative angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i] % (2*np.pi))/np.pi,3)) + "π")
             step.angle[i]=step.angle[i] % (2*np.pi)
-        if step.angle[i] > 2 * np.pi and step.name[i] not in ["VPZ","CZnew"]:
+        if step.angle[i] > 2 * np.pi and not (GateLib.isVirtual(step,i) or step.name[i] in ["CZ", "HD"]):
             print("Warning! HUGE angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i] % (2*np.pi))/np.pi,3)) + "π")
             step.angle[i]=step.angle[i] % (2*np.pi)
-        #angles greater than pi is no problem right??
-        #if step.angle[i] >  np.pi and step.name[i] not in ["VPZ", "CZnew"]:
-         #   print("Warning! Too big angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " QNAS is still working on a solution for this")
-
-
-        """The error handling is probably not very good. I know one should be more specific in which errors
-        to handle in each except, but all the errors in the try block must come from step.name[i] (given that
-        the code works as it should), so this should be pretty safe.    
-        
-        Maybe would be good to just have a negative envelope but not sure if that's legal     
-        """
-# I implemented the isVirtual function from GateLib, and also made corresponding functions for two qubit gates
-# and anyPhysicalGate. My idea is that we will only have to add more gates in GateLib to add to the entire program. //Albo
-# (If we don't like it the old code is just commented away underneath)
         if GateLib.isVirtual(step, i):
             H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
         elif GateLib.isPhysicalGate(step, i):
@@ -82,7 +68,7 @@ def CreateHfromStep(step, Qblist, t_max):
         elif GateLib.isTwoQubitGate(step, i):
             anyPhysicalGate = True
             H_real.append(y(Qblist, step.Tar_Con[i]))
-            if step.name[i] in ["CZnew"]: #this is needed atm
+            if step.name[i] in ["CZ"]: #this is needed atm
                 step.angle[i] = 2* np.pi
         elif step.name[i] in ["HD"]: # HD gate feels pretty unique so I left it as it was when I found it
             anyPhysicalGate = True
@@ -90,55 +76,35 @@ def CreateHfromStep(step, Qblist, t_max):
             H = GateLib.HD(Qblist, step.Tar_Con[i])
             H_real.append(H[0])
             H_virt.append(H[1])
-        else:  # Else append as 1q gate
+        else:
             print(f"No gate added for step {step.name}")
     if not anyPhysicalGate:
         tmax = 0
     return H_real, H_virt, tmax
-"""
-        if step.name[i] in ["VPZ"]:  # Check virtual gates
-            H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
-        elif step.name[i] in ["PX", "PY", "PZ", "PM"]:
-            anyPhysicalGate = True
-            H_real.append(y(Qblist, step.Tar_Con[i]))
-        elif step.name[i] in ["CZ", "iSWAP","CZnew"]:  # Check 2q gates
-            anyPhysicalGate = True
-            H_real.append(y(Qblist, step.Tar_Con[i]))
-            if step.name[i] in ["CZ","CZnew"]:  # If we want to keep the possibility to drive 2qb gates at different angles..
-                step.angle[i] = 2*np.pi
-            tmax =t_max[1] # If there is a 2qb gate the maximal time changes to match that
-        elif step.name[i] in ["HD"]:
-            anyPhysicalGate = True
-            step.angle[i] = np.pi/2
-            H = GateLib.HD(Qblist, step.Tar_Con[i])
-            H_real.append(H[0])
-            H_virt.append(H[1])
-        else:  # Else append as 1q gate
-            print(f"No gate added")
-    if not anyPhysicalGate:
-        tmax = 0
-    return H_real, H_virt, tmax
-"""
 
 
-def TimeDepend(step, gates, t_max, Qblist):
+def timeDepend(step, gates, t_max, Qblist):
     """
     Translates the H_real from Qobj to QobjEvo by including the drive envelope corresponding to the
     angle specified in the step, and sums all the QobjEvos together to return the entire Hamiltonian for
-    the real part of the step .
+    the real part of the step, as well as a time list (tlist) .
+    input:
+    - step = AlgStep object
+    - gates = real gates from createGatesFromStep
+    - t_max = max gate time for the step from createGatesFromStep
+    - Oblist = list of Qubit objects
+    Output: Time dependant Hamiltonian and tlist for the step
     """
-    angles = step.angle  # [ang1, ang2, ang3...]
-    angles = [angles[i] for i in range(len(angles)) if not GateLib.isVirtual(step,i)] #this eliminates the virutal angles
-    # Create tlist
+    angles = step.angle
+    angles = [angles[i] for i in range(len(angles)) if not GateLib.isVirtual(step,i)] # this eliminates the virtual angles
 
     # Find max drive time for 1qb gates ~ largest drive angle
-    if t_max < 100*1e-9:   #Python makes t_max not quite 200ns for 2qb, so we add a large safety margin ;).
+    if t_max < 100*1e-9:  # Two qubit gates have longer drive time than 100ns
         try:
             t_dmax = t_max * abs(max(angles)) / np.pi  # Drive time for the largest angle in step
-            tlist = np.linspace(0, t_dmax, 10) #Maybe make resolution an input? Doesn't really matter.
-                                            # Only specifies times where to store the states/e_ops
-        except: # If the gate only has virtual gates this happens
-            tlist = np.linspace(0,0,10) # Please change this if you have any idea of a better solution
+            tlist = np.linspace(0, t_dmax, 10)
+        except ValueError:  # If the gate only has virtual gates this happens
+            tlist = np.linspace(0,0,10)
     else:
         tlist = np.linspace(0,t_max,10)
     args=np.zeros(3)
@@ -147,17 +113,17 @@ def TimeDepend(step, gates, t_max, Qblist):
                      # Now set to be able to handle at least one degree and upwards
     H=0
     for i in range(len(step.name)):
-        if step.name[i] in ['CZnew']:
+        if step.name[i] in ['CZ']:
             for j in range(2): # Removing anharmonicity for the gates targeted by CZ
                 target = step.Tar_Con[i][j]
                 H = H - Qblist[target].anharm*Anharmonicity.AnHarm(Qblist, target)
     for i in range(len(gates)):
-        if abs(angles[i]) >= tol:  # Dont add gates which have a too small angle
+        if abs(angles[i]) >= tol:  # Can't add gates which have a too small angle
             gate = gates[i]
             args[0] = angles[i]  # Drive angle
             args[1] = t_max  # Theoretical max gate time (~ ang=π)
             args[2] = 0   # Start time for drive
-            H = H + QobjEvo([[gate, TimeFunc(tlist, args)]], tlist=tlist)
+            H = H + QobjEvo([[gate, timeFunc(tlist, args)]], tlist=tlist)
     return H, tlist
 
 if __name__ == "__main__":
@@ -168,8 +134,8 @@ if __name__ == "__main__":
     Qblist.append(Qb.Qubit(3, [], [], []))
 
     steps = []
-    steps.append(Add_step(["iswap", "PY", "VPZ"], [[0,1], 1, 1], [0, np.pi, np.pi]))
-    hej_real, hej_virt, tlist = CreateHfromStep(steps[0], Qblist, t_max= [20e-9,20e-9,20e-9])
+    steps.append(AlgStep(["iswap", "PY", "VPZ"], [[0, 1], 1, 1], [0, np.pi, np.pi]))
+    hej_real, hej_virt, tlist = createGatesFromStep(steps[0], Qblist, t_max= [20e-9, 20e-9, 20e-9])
     print(hej_real)
     print(tlist)
 """

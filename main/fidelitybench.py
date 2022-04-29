@@ -1,18 +1,18 @@
 import numpy as np
 from qutip.qip.circuit import QubitCircuit
 
-import GateFuncs as gf
-import CollapseOperator_function as colf
-import main_Algorithm as ma
+import gateFuncs as gf
+import collapseOperatorFunction as colf
+import mainAlgorithm as ma
 #import main_Alg_parfortest as ma  #Uncomment to change to parfor from the start
 from qutip import *
-import GateLib as gl
+import gateLib as gl
 import time
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-import Qb_class as qbc
+import qubitClass as qbc
 import matplotlib as mpl
-import openqasm_interpreter as opi
+import openqasmInterpreter as opi
 import qiskit
 
 
@@ -39,12 +39,12 @@ ntraj_id = 1
 qblist = [qb1,qb2]
 steps=[]
 tot_prop=[]
-c_ops = colf.create_c_ops(qblist)
+c_ops = colf.createCollapseOperators(qblist)
 e_ops = []
 # number of trajectories
 ntraj = 20
 tmax= [50e-9, 271e-9]
-psi0 = qbc.create_psi0(qblist, 0)  # 0 is the groundstate
+psi0 = qbc.createPsi0(qblist, 0)  # 0 is the groundstate
 initstate = tensor(basis(2,0), basis(2,0))
 
 
@@ -90,7 +90,7 @@ for p in range(0, nlevel):
     """simulating algorithm with noise"""
     args = {"steps": steps, "c_ops": c_ops, "e_ops_inp": e_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax,
             "ntraj": ntraj, "StoreTimeDynamics": False}
-    state = ma.main_algorithm(args)
+    state = ma.mainAlgorithm(args)
     elt_list.append(time.time() - tstart)
 
 
@@ -98,7 +98,7 @@ for p in range(0, nlevel):
     args_id = {"steps": steps, "c_ops": c_ops_none, "e_ops_inp": e_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax,
             "ntraj": ntraj_id, "StoreTimeDynamics": False}
 
-    state_id = ma.main_algorithm(args_id)
+    state_id = ma.mainAlgorithm(args_id)
 
     #tot_prop.extend(prop_onestp)
 
@@ -118,7 +118,6 @@ for p in range(0, nlevel):
     fid_list.append(np.mean(fmed))
 
 
-    p = p+1
 
 print('tlist:', elt_list)
 print('fidelity list:', fid_list)

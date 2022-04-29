@@ -1,20 +1,28 @@
 import qiskit
 import re
 import numpy as np
-import GateFuncs as gf
+import gateFuncs as gf
+from matplotlib import pyplot as plt
 
 
-def qasm_to_qnas(circuit):
+def qasmToQnas(circuit):
+    """
+    Translates qiskit circuits to QnAS circuit.
+    Input:
+    - OpenQASM quantum circuit (qiskit QuantumCircuit object)
+    - show_circuit = option to print circuit, optional
+    Output: list of AlgStep objects for the algorithm.
+    """
     qc = circuit
     qc.remove_final_measurements()  # Removing final measure
 
-    show_circuit = False  # you wish to see the circuit and how it's arguments are updated
-    if show_circuit:
-        print(qc)
-        # qc.draw(output='mpl')
-        # plt.show()
-
-    def pi_delivery(s):  # takes in string s and returns float of string
+    def piDelivery(s):  # takes in string s and returns float of string
+        """
+        Translates strings to float
+        Input:
+        - string
+        Output: float
+        """
         flt = 0
         if '*pi/' in s:
             flt = float(s.split('*')[0]) * np.pi / float(s.split('/')[1])
@@ -67,11 +75,9 @@ def qasm_to_qnas(circuit):
                     del newgatelist[qc.depth() - 1 - k][j]
                     break
 
-    # ny del av program. parser
-
     a = newgatelist
 
-    allgates = []  # lists that will contain the
+    allgates = []  # lists that will contain the gates
     allargs = []
     allqubits = []
 
@@ -90,7 +96,7 @@ def qasm_to_qnas(circuit):
         args = []
         for i in range(len(a[k])):
             if "(" in a[k][i]:
-                args.append(pi_delivery(a[k][i][a[k][i].find("(") + 1:a[k][i].find(
+                args.append(piDelivery(a[k][i][a[k][i].find("(") + 1:a[k][i].find(
                     ")")]))  # find item inside parenthesis, if no parenthesis current append 0
             else:
                 args.append(0)
@@ -112,7 +118,7 @@ def qasm_to_qnas(circuit):
     for i in range(qc.depth()):
         for j in range(len(allgates[i])):
             if allgates[i][j] == "cz":
-                allgates[i][j] = "CZnew"
+                allgates[i][j] = "CZ"
             if allgates[i][j] == "ry":
                 allgates[i][j] = "PY"
             if allgates[i][j] == "rx":
@@ -132,14 +138,5 @@ def qasm_to_qnas(circuit):
 
     steps = []
     for stp in enumerate(toqnas):
-        steps.append(gf.Add_step(stp[1][0], stp[1][1], stp[1][2]))
+        steps.append(gf.AlgStep(stp[1][0], stp[1][1], stp[1][2]))
     return steps
-
-
-def num_qubits(qc): #useless function for getting number of qubits from circuit. Use qc.num_qubits instead
-    return qc.num_qubits
-
-
-"""qc = qiskit.QuantumCircuit.from_qasm_file('bench2.qasm')  # For testing the file from here
-steve = qasm_to_qnas(qc)
-print(steve)""" #retrun "toqnas" if you wish to see QnAS style of adding gates.

@@ -1,23 +1,19 @@
 import numpy as np
 from qutip import *
-import Qb_class as qc
 
-"""Creates ZZ-interaction term for hamiltonian , input is list fo qubits and interaction matrix containing interaction strength 
-between qubits, returns term for hamiltonian"""
-
-
-
-
-
-
-
-
-def ZZ_interaction(Qblist, interaction_mat):
+def zzInteraction(Qblist, interaction_mat):
+    """Creates ZZ-interaction term for hamiltonian
+    Inputs:
+    - Qblist = list of Qubit objects
+    - interaction_mat = symmetric matrix containing the coupling constants between qubits as off diagonal elements
+    Outputs: Constant zz-interaction term for the Hamiltonian"""
     eye_vec = []
     H_intlist = []
     H_interaction = 0
     inter = 0
 
+    if type(interaction_mat) == list:
+        interaction_mat = np.array(interaction_mat)
     for QB in enumerate(Qblist):  #creates array of identity matrices of correct dimensions
         eye_vec.append(qeye(QB[1].level))
 

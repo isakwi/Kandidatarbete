@@ -2,77 +2,84 @@
 Backend with definition of 1qb and 2qb gates
 """
 
-import Qb_class as Qb
+import qubitClass as Qb
 from qutip import *
 import numpy as np
-from scipy.linalg import *
 
-def ID(Qblist, target):
-    """ Creates identity gate which can be used when creating a openQASM file to make
+def ID(Qblist, target=None):
+    """Creates identity gate which can be used when creating a openQASM file to make
     sure all gates are in the correct depth"""
     id = [qeye(Qb.level) for Qb in Qblist]
     return tensor(id)
 
 def PX(Qblist, target):
-    """Creates specific sigmax gate, maybe better than to create all gates? Then
-    you can use only the operators you need.
-    Input is list of qubits and which qubit you want to target with the operator
-    Returns a Qobj that operates on qubit[target] with the gate"""
+    """Creates specific sigmax gate.
+    Input:
+    - Qblist = list of Qubit objects
+    - target = qubit to be targeted by the operator
+    Output: Qobj that operates on qubit[target] with correct dimensions"""
     sx = [qeye(Qb.level) for Qb in Qblist]
     sx[target] = destroy(Qblist[target].level) + create(Qblist[target].level)
     return tensor(sx)
 
 def PY(Qblist, target):
-    """Creates specific sigmay gate, maybe better than to create all gates? Then
-    you can use only the operators you need.
-    Input is list of qubits and which qubit you want to target with the operator
-    Returns a Qobj that operates on qubit[target] with the gate"""
+    """Creates specific sigmay gate.
+    Input:
+    - Qblist = list of Qubit objects
+    - target = qubit to be targeted by the operator
+    Output: Qobj that operates on qubit[target] with correct dimensions"""
     sy = [qeye(Qb.level) for Qb in Qblist]
     sy[target] = -1j * (destroy(Qblist[target].level) - create(Qblist[target].level))
-    # OBS: Positive rotation, in HD we now use -PY for negative rotation... unclear if this should be so..
     return tensor(sy)
 
 def RPY(Qblist, target):
     """REVERSED SIGMAY, TO BE USED IN HADAMARD
-    Creates specific sigmay gate, maybe better than to create all gates? Then
-    you can use only the operators you need.
-    Input is list of qubits and which qubit you want to target with the operator
-    Returns a Qobj that operates on qubit[target] with the gate"""
+    Input:
+    - Qblist = list of Qubit objects
+    - target = qubit to be targeted by the operator
+    Output: Qobj that operates on qubit[target] with correct dimensions"""
     rsy = [qeye(Qb.level) for Qb in Qblist]
     rsy[target] = 1j* (destroy(Qblist[target].level) - create(Qblist[target].level))
-    # OBS: Positive rotation, in HD we now use -PY for negative rotation... unclear if this should be so..
+    # OBS: In HD we use -PY for negative rotation.
     return tensor(rsy)
 
 def PM(Qblist, target):
-    """Creates specific sigma- gate, maybe better than to create all gates? Then
-    you can use only the operators you need.
-    Input is list of qubits and which qubit you want to target with the operator
-    Returns a Qobj that operates on qubit[target] with the gate"""
+    """Creates specific sigma- gate
+    Input:
+    - Qblist = list of Qubit objects
+    - target = qubit to be targeted by the operator
+    Output: Qobj that operates on qubit[target] with correct dimensions"""
     sm = [qeye(Qb.level) for Qb in Qblist]
     sm[target] = destroy(Qblist[target].level)
     return tensor(sm)
 
-def PZ(Qblist, target):
-    """Creates specific sigmaz gate, maybe better than to create all gates? Then
-    you can use only the operators you need.
-    Input is list of qubits and which qubit you want to target with the operator
-    Returns a Qobj that operates on qubit[target] with the gate"""
-    sz = [qeye(Qb.level) for Qb in Qblist]
-    #sz[target] = destroy(Qblist[target].level)*create(Qblist[target].level) - create(Qblist[target].level)*destroy(Qblist[target].level)
-    sz[target] = 2 * create(Qblist[target].level) * destroy(Qblist[target].level) - qeye(Qblist[target].level)
-    #Maybe -1 instead of -qeye()...?
+def PP(Qblist, target):
+    """Creates specific sigma+ gate
+    Input:
+    - Qblist = list of Qubit objects
+    - target = qubit to be targeted by the operator
+    Output: Qobj that operates on qubit[target] with correct dimensions"""
+    sp = [qeye(Qb.level) for Qb in Qblist]
+    sp[target] = create(Qblist[target].level)
+    return tensor(sm)
 
-    #If we intend this to rotate around z-axis it should be defined differently.. but I guess we us VPZ for that?
-    #Yes probably
-    #But we need it to work for expectation values!!
-    #Made some wack ass solution by multiplying by -2 but not sure if this is legal
+def PZ(Qblist, target):
+    """Creates specific sigmaz gate
+    Input:
+    - Qblist = list of Qubit objects
+    - target = qubit to be targeted by the operator
+    Output: Qobj that operates on qubit[target] with correct dimensions"""
+    sz = [qeye(Qb.level) for Qb in Qblist]
+    sz[target] = 2 * create(Qblist[target].level) * destroy(Qblist[target].level) - qeye(Qblist[target].level)
     return tensor(sz)
 
-
-
 def VPZ(Qblist, target, angle):
-    """Creates virtual sigmaz gate, not sure if this is the way to do it though
-    Returns Qobj that operates on targeted qubit with specified angle"""
+    """Creates virtual sigmaz gate,
+    Input:
+    - Qblist = list of Qubit objects
+    - target = qubit to be targeted by the operator
+    - angle = angle which to virtually rotate around z-axis
+    Output: Qobj that operates on qubit[target] with correct dimensions and angle"""
     vsz = [qeye(Qb.level) for Qb in Qblist]
     try:
         if Qblist[target].level == 2:
@@ -89,54 +96,31 @@ def VPZ(Qblist, target, angle):
 
 def HD(Qblist, target):
     """Create Hadamard gate
-    Returns two operations, one real and one virtual. The virtual is to be applied after the alg-step
-    NOTE: Angle for HD_real is always pi/2 and for HD_virt always pi"""
-    HD_real = RPY(Qblist, target) # OBS negative PY rotation, that's why we call RPY
+    NOTE: Angle for HD_real is always pi/2 and for HD_virt always pi
+    Input:
+    - Qblist = list of Qubit objects
+    - target = qubit to be targeted by the operator
+    Output: Qobj that operates on qubit[target] with correct dimensions"""
+    HD_real = RPY(Qblist, target)  # OBS negative PY rotation, that's why we call RPY
     HD_virt = VPZ(Qblist, target, np.pi)
     return [HD_real, HD_virt]
 
-
-def CZ_old(Qblist, Tar_Con):#DO NOT USE THIS
-    """Create a controlled-Z gate, so far only for 2-level qubits"""
-    target = Tar_Con[0] #index of the targeted qubit
-    control = Tar_Con[1] #index of the controlling qubit
-    if Qblist[target].level != 2: #we will probably allow higher levels later
-        raise Exception("Qubit level needs to be 2!")
-    outerproducts = [basis(2, 0) * basis(2,0).dag(), basis(2, 1) * basis(2,1).dag()] #[|0><0|, |1><1|]
-    #we make one list for the control = 0 case and one for the control = 1
-    CZ_list_0 = [qeye(Qb.level) for Qb in Qblist] #some of these will be replaced below
-    CZ_list_1 = [qeye(Qb.level) for Qb in Qblist] #some of these will be replaced below
-    CZ_list_0[control] = outerproducts[0] #this is the projection onto psi_control = 0
-    CZ_list_1[control] = outerproducts[1] #this is the projection onto psi_control = 1
-    CZ_list_1[target] = sigmaz() #if psi_control = 1, then we will apply sz on the target
-    CZ = tensor(CZ_list_0) + tensor(CZ_list_1) #we make Kronecker products and add them up
-    return CZ
-
-
-
-def CZnew(Qblist, Tar_Con):
-    """
-    H = |11><02|+|02><11| or |11><20|+|20><11|
-    so only for 3level right?"""
+def CZ(Qblist, Tar_Con):
+    """Create specific CZ gate, modelled as H = |11><02|+|02><11| or |11><20|+|20><11|
+    NOTE: Only works for 3level qubits.
+    Input:
+    - Qblist = list of Qubit objects
+    - Tar_Con = qubits to be targeted by the operator
+    Output: Qobj that operates on the targeted qubits with correct dimensions"""
     k11 = tensor(basis(3, 1), basis(3, 1))
     k02 = tensor(basis(3, 0), basis(3, 2))
     H = k11 * k02.dag() + k02 * k11.dag()
     cz = [qeye(Qb.level) for Qb in Qblist]
-    #print(Tar_Con[0][0])
-    #print(Tar_Con[0][1])
     target = Tar_Con[0]  # index of the targeted qubit
     control = Tar_Con[1]  # index of the controlling qubit
     del(cz[max(Tar_Con)])  # Make room for the cz gate
     del(cz[min(Tar_Con)])  # Make room for the cz gate
-    """ Commented away until we discuss expectation values
-    target = Tar_Con[0][0]  # index of the targeted qubit
-    control = Tar_Con[0][1]  # index of the controlling qubit
-    del(cz[max(Tar_Con[0])])  # Make room for the cz gate
-    del(cz[min(Tar_Con[0])])  # Make room for the cz gate
-    """
-    return gate_expand_2toN(H,len(Qblist),cz,control,target) # Found this function on qutip web and modified it a bit
-
-
+    return gate_expand_2toN(H,len(Qblist),cz,control,target)
 
 def iSWAP(Qblist, Tar_Con):
     """
@@ -149,7 +133,7 @@ def iSWAP(Qblist, Tar_Con):
     -------
     iSWAP_gate : qobj
         Quantum object representation of iSWAP gate
-    """
+
     target = Tar_Con[0]  # index of the targeted qubit
     control = Tar_Con[1]  # index of the controlling qubit
     tarLevel = Qblist[target].level
@@ -167,12 +151,14 @@ def iSWAP(Qblist, Tar_Con):
     iSWAP = [qeye(Qb.level) for Qb in Qblist]
     del (iSWAP[max(Tar_Con)])  # Make room for the iSWAP gate
     del (iSWAP[min(Tar_Con)])  # Make room for the iSWAP gate
-    return gate_expand_2toN(H, len(Qblist), iSWAP, control, target)
+    return gate_expand_2toN(H, len(Qblist), iSWAP, control, target)"""
+    raise Exception ("iSWAP is not implemented. See gateLib for more info")
 
 
 
 def gate_expand_2toN(U, N, cz, control=None, target=None, targets=None):
-    #FOUND THIS AT QUTIP! Noice
+    """Modified QuTiP function.
+    Original source code: https://qutip.org/docs/latest/modules/qutip/qip/operations/gates.html"""
     """
     Create a Qobj representing a two-qubit gate that act on a system with N
     qubits.
@@ -223,8 +209,7 @@ def gate_expand_2toN(U, N, cz, control=None, target=None, targets=None):
         p[0], p[control] = p[control], p[0]
     return tensor([U] + cz).permute(p)
 
-# Had to change the arrays from ["VPZ"] to [['VPZ]], don't know why, but if it causes trouble in the future this might 
-# be the reason (for the three following functions)
+"""Classification of gates"""
 def isVirtual(gate, i):
     if gate.name[i] in ['VPZ']:
         return True
@@ -232,7 +217,7 @@ def isVirtual(gate, i):
         return False
 
 def isTwoQubitGate(gate, i):
-    if gate.name[i] in ['CZ', 'iSWAP','CZnew']:
+    if gate.name[i] in ['CZ', 'iSWAP','CZ']:
         return True
     else:
         return False
@@ -297,9 +282,9 @@ if __name__ == "__main__":
 
     print(sx*iSWAP)
 
-    # Test CZnew
+    # Test CZ
     Qblist = [Qb.Qubit(3, [], [], [], []) for i in range(2)] + [Qb.Qubit(3, [], [], [], [])]
-    CZnew = CZnew(Qblist, [0,1])
+    CZnew = CZ(Qblist, [0, 1])
     q1 = tensor(basis(3,0), basis(3,2)) # the state |02>
     q2 = tensor(basis(3,1), basis(3,1)) # the state |11>
     print("CZ: ", CZnew)
