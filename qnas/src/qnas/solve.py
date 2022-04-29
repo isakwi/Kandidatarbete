@@ -26,7 +26,7 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
         print("You didn't enter an circuit circuit. QnAS will now exit?\t")
         return
 
-    try:  # Input can either be openqasm file or qiskit circuit? Add functionality for that
+    try:
         steps = opq.qasmToQnas(circuit)
     except:
         print(f"Couldn't read the circuit file! Check that the circuit, {circuit}, is correct and that the circuit is"
@@ -34,7 +34,7 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
         return
 
     # Check n
-    # Think this will work instead
+    # Think this will work
     try:
         n = circuit.num_qubits
     except:
@@ -71,7 +71,7 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
         print("No input for tmax! QnAS will use 1qb gate time: 20ns and 2qb gate time: 200ns!")
         tmax = [20e-9, 200e-9]
 
-    if not type(tmax) == list:
+    if not (type(tmax) == list and len(tmax) == 2):
         print("Invalid input for tmax! tmax must be a list of the form [1qb, 2qb] with "
               "max gate times for 1-qubit-gates and 2-qubit-gates given in seconds!"
               " QnAS.solve() will now exit")
