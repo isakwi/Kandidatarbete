@@ -18,7 +18,7 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
     :param store_time_dynamics: True/False value to store time dynamics. Default - False
     :param e_ops: Expectation value operators for store_time_dynamics. Given as [[e_op1, Tar_Con],[e_op2, Tar_Con], ...]
     :return: if store_time_dynamics is True: Returns ntraj many final states and two lists with exp values
-            and corrrespnding timrs. Else: ntraj many final states
+            and corresponding times. Else: ntraj many final states
     """
     if e_ops is None:
         e_ops = []
