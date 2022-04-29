@@ -51,9 +51,9 @@ def mainAlgorithm(args):
                 Htd, tlist = gf.timeDepend(steps[i], physicalgates, tmax, Qblist)
                 H = Htd + H0
                 if max(tlist) >= 1e-11:  # To avoid integration error
-                    psi0 = parfor(mcsolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
+                    psi0 = parfor(mcSolving.mcs, psi0, H=H, tlist=tlist, c_ops=c_ops)
                 for vgate in virtualgates:
-                    psi0= parfor(mcsolving.virtgate, psi0, vgate=vgate)
+                    psi0= parfor(mcSolving.virtgate, psi0, vgate=vgate)
         else:
             for i in range(0,len(steps)):
                 physicalgates, virtualgates, tmax = gf.createGatesFromStep(steps[i], Qblist, t_max)

@@ -32,7 +32,7 @@ def tensorifyExpectationOperator(Qblist, Tar_Con, Gate):
             sys.exit(1)
         del (gateList[max(Tar_Con)])  # Make room for the gate
         del (gateList[min(Tar_Con)])  # Make room for the gate
-        return GateLib.gate_expand_2toN(Gate, len(Qblist), gateList, Tar_Con[1],Tar_Con[0])
+        return gateLib.gate_expand_2toN(Gate, len(Qblist), gateList, Tar_Con[1],Tar_Con[0])
     else:
         print('Error: QnAS only handles 1 or 2 qubit operators as e_ops. \n See \'ExpectationValues\' for more info')
         sys.exit(1)  # Stops the program with the same error code as above
@@ -90,34 +90,34 @@ def mainAlgorithmExpectation(args):
             print(steps)
             # Create tlist for the entire process
             for j in range(len(steps[i].name)): # Deals with steps with multiple gates in them
-                if GateLib.isVirtual(steps[i], j): #Check if gate is virtual, then no time added to tlist
+                if gateLib.isVirtual(steps[i], j): #Check if gate is virtual, then no time added to tlist
                     tlist_shifted = []
                 else:
                     tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous ends.
                 tlist_tot = np.concatenate((tlist_tot, tlist_shifted))
             # TODO : KOLLA ATT DET HÄR VERKLIGEN BLIR RÄTT ^
             if max(tlist) >= 1e-11:
-                allStates = np.append(allStates, np.transpose(parfor(mcsolving.mcsTimeDynamics, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)))
+                allStates = np.append(allStates, np.transpose(parfor(mcSolving.mcsTimeDynamics, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)))
                 psi0 = allStates[-ntraj:]
             for vgate in virtualgates:
-                psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
+                psi0 = parfor(mcSolving.virtgate, psi0, vgate=vgate)
     else:
         for i in range(0, len(steps)):
             physicalgates, virtualgates, tmax = gf.createGatesFromStep(steps[i], Qblist, t_max)
             Htd, tlist = gf.timeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
 
-            if GateLib.isVirtual(steps, i):
+            if gateLib.isVirtual(steps, i):
                 tlist_shifted = []
             else:
                 tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts.
             tlist_tot = np.concatenate((tlist_tot, tlist_shifted))  # Create tlist for the entire process
 
             if max(tlist) > 1e-11:
-                allStates = np.append(allStates, np.transpose(parfor(mcsolving.mcsTimeDynamics, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)))
+                allStates = np.append(allStates, np.transpose(parfor(mcSolving.mcsTimeDynamics, psi0, H=H, tlist=tlist, c_ops=c_ops, e_ops=e_ops)))
                 psi0 = allStates[-ntraj:]
             for vgate in virtualgates:
-                psi0 = parfor(mcsolving.virtgate, psi0, vgate=vgate)
+                psi0 = parfor(mcSolving.virtgate, psi0, vgate=vgate)
 
     tlist_tot = np.delete(tlist_tot, 0)  # We get double zero in the beginning since tlist_tot = [0] initially
 
