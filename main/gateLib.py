@@ -61,7 +61,7 @@ def PP(Qblist, target):
     Output: Qobj that operates on qubit[target] with correct dimensions"""
     sp = [qeye(Qb.level) for Qb in Qblist]
     sp[target] = create(Qblist[target].level)
-    return tensor(sm)
+    return tensor(sp)
 
 def PZ(Qblist, target):
     """Creates specific sigmaz gate
