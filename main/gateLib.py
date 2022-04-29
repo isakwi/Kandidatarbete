@@ -223,7 +223,7 @@ def isTwoQubitGate(gate, i):
         return False
 
 def isPhysicalGate(gate,i):
-    if gate.name[i] in ['PX', 'PY', 'PZ', 'PM', 'ID']:
+    if gate.name[i] in ['PX', 'PY', 'PZ', 'PM', 'PP', 'ID']:
         return True
     else:
         return False
