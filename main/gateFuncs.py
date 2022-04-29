@@ -45,7 +45,7 @@ def createGatesFromStep(step, Qblist, t_max):
         sys.exit(1)  # Stops the program with an error code stating that it did not run as it should
     for i in range(len(step.name)):
         try: 
-            y = eval("GateLib." + step.name[i])  # Calls the gate corresponding to the step.name[i]
+            y = eval("gateLib." + step.name[i])  # Calls the gate corresponding to the step.name[i]
         except Exception as error:
             print('Error: A gate you are trying to perform cannot be executed. \
             \nQNAS only handles gates avaliable at Chalmers quantum computer')
@@ -54,18 +54,18 @@ def createGatesFromStep(step, Qblist, t_max):
                 step.Tar_Con[i] > len(Qblist) - 1:
             print('Error: Qubit outside of the number of qubits is being targeted by Tar_Con')
             sys.exit(1)  # Stops the program with the same error code as above
-        if step.angle[i] < 0 and not (GateLib.isVirtual(step,i) or step.name[i] in ["CZ", "HD"]):
+        if step.angle[i] < 0 and not (gateLib.isVirtual(step,i) or step.name[i] in ["CZ", "HD"]):
             print("Warning! Negative angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i] % (2*np.pi))/np.pi,3)) + "π")
             step.angle[i]=step.angle[i] % (2*np.pi)
-        if step.angle[i] > 2 * np.pi and not (GateLib.isVirtual(step,i) or step.name[i] in ["CZ", "HD"]):
+        if step.angle[i] > 2 * np.pi and not (gateLib.isVirtual(step,i) or step.name[i] in ["CZ", "HD"]):
             print("Warning! HUGE angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i] % (2*np.pi))/np.pi,3)) + "π")
             step.angle[i]=step.angle[i] % (2*np.pi)
-        if GateLib.isVirtual(step, i):
+        if gateLib.isVirtual(step, i):
             H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
-        elif GateLib.isPhysicalGate(step, i):
+        elif gateLib.isPhysicalGate(step, i):
             anyPhysicalGate = True
             H_real.append(y(Qblist, step.Tar_Con[i]))
-        elif GateLib.isTwoQubitGate(step, i):
+        elif gateLib.isTwoQubitGate(step, i):
             anyPhysicalGate = True
             H_real.append(y(Qblist, step.Tar_Con[i]))
             if step.name[i] in ["CZ"]: #this is needed atm
@@ -73,7 +73,7 @@ def createGatesFromStep(step, Qblist, t_max):
         elif step.name[i] in ["HD"]: # HD gate feels pretty unique so I left it as it was when I found it
             anyPhysicalGate = True
             step.angle[i] = np.pi/2
-            H = GateLib.HD(Qblist, step.Tar_Con[i])
+            H = gateLib.HD(Qblist, step.Tar_Con[i])
             H_real.append(H[0])
             H_virt.append(H[1])
         else:
@@ -96,7 +96,7 @@ def timeDepend(step, gates, t_max, Qblist):
     Output: Time dependant Hamiltonian and tlist for the step
     """
     angles = step.angle
-    angles = [angles[i] for i in range(len(angles)) if not GateLib.isVirtual(step,i)] # this eliminates the virtual angles
+    angles = [angles[i] for i in range(len(angles)) if not gateLib.isVirtual(step,i)] # this eliminates the virtual angles
 
     # Find max drive time for 1qb gates ~ largest drive angle
     if t_max < 100*1e-9:  # Two qubit gates have longer drive time than 100ns
@@ -116,7 +116,7 @@ def timeDepend(step, gates, t_max, Qblist):
         if step.name[i] in ['CZ']:
             for j in range(2): # Removing anharmonicity for the gates targeted by CZ
                 target = step.Tar_Con[i][j]
-                H = H - Qblist[target].anharm*Anharmonicity.AnHarm(Qblist, target)
+                H = H - Qblist[target].anharm*anharmonicity.AnHarm(Qblist, target)
     for i in range(len(gates)):
         if abs(angles[i]) >= tol:  # Can't add gates which have a too small angle
             gate = gates[i]
