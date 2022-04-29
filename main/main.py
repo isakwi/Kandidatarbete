@@ -21,7 +21,7 @@ pi = np.pi
 benchmark = False
 
 """ False if we only care about the final states"""
-StoreTimeDynamics = True
+StoreTimeDynamics = False
 
 """ e_ops are currently defined here """
 e_ops = []
@@ -38,7 +38,7 @@ That way we always store time dynamics if we're given an expectation value to wo
 n, ntraj, relax, depha, therma, anharm, l = rd.read_data("qubitData.csv")  # Parameters
 
 # e_ops is currently defined here
-e_ops = [[destroy(3),0]] # Parameter, don't know how we want to import this later, maybe some text file or something
+e_ops = [[create(3)*destroy(3),0],[create(3)*destroy(3),1]] # Parameter, don't know how we want to import this later, maybe some text file or something
 StoreTimeDynamics = True
 if e_ops != []:
     StoreTimeDynamics = True # If we pass some expectation operator(s) we store time dynamics
@@ -76,8 +76,8 @@ c_ops = co.createCollapseOperators(Qblist)  # Create c_ops (only relaxation and 
 """ Adding the algorithm steps! """
 steps = []
 #steps.append(gf.Add_step(["PX"], [0], [pi/2]))
-steps.append(gf.AlgStep(["PX", "PX"], [0,1], [pi/2, pi]))
-steps.append(gf.AlgStep(["VPZ", "VPZ"], [0, 1], [pi, pi/2]))
+steps.append(gf.AlgStep(["PX", "PX"], [0,1], [pi, pi]))
+steps.append(gf.AlgStep(["VPZ", "VPZ"], [0, 1], [pi, pi]))
 steps.append(gf.AlgStep(["CZ"], [[0, 1]], [pi]))
 steps.append(gf.AlgStep(["HD"], [0], [pi]))
 steps.append(gf.AlgStep(["PX","VPZ"], [0,1], [pi/2, pi]))
@@ -99,8 +99,16 @@ print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
 #print(type(expectvals), shape(expectvals)) # for searching for errors in shapes etc. 
 #print(type(tlist_tot), shape(tlist_tot))
 
-print(expectvals)
+print("Evals[0]")
+print(expectvals[0])
+print("tlist_tot")
 print(tlist_tot)
+
+import matplotlib.pyplot as plt
+plt.plot(tlist_tot, expectvals[0])
+plt.plot(tlist_tot, expectvals[1])
+plt.show()
+
 #print(expectvals[0][:])
 #print("hej" + str(shape(expectvals[0][:])))
 """ COmmented away until we can discuss expecation values
@@ -112,17 +120,17 @@ plt.show() """
 It shouldn't do that, right? // Albin """
 
 #Used for testing
-PrintStates = False
+PrintStates = True
 if PrintStates:
     print(f"Initial state: {psi0}")
     if isinstance(result, (list, tuple, np.ndarray)): # Basically, if noises (mcsolve)
-        print(f"Final state: {result[-1].tidyup(atol=1e-4)}") # Prints one of the final states
+        print(f"Final state: {result[-1].tidyup(atol=1e-3)}") # Prints one of the final states
         vec2 = result[-1]
     elif type(result) == Qobj:
-        print(f"Final state: {result.tidyup(atol=1e-4)}")
+        print(f"Final state: {result.tidyup(atol=1e-3)}")
         vec2 = result
     else:
-        print(f"Final state: {result.states[-1].tidyup(atol=1e-4)}") # If no noises sesolve => only one state
+        print(f"Final state: {result.states[-1].tidyup(atol=1e-3)}") # If no noises sesolve => only one state
         vec2 = result[-1]
     if len(Qblist) == 1 and Qblist[0].level == 2:
         # Bloch sphere only if 1qb 2 level
