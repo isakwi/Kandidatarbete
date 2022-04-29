@@ -76,8 +76,8 @@ c_ops = co.createCollapseOperators(Qblist)  # Create c_ops (only relaxation and 
 """ Adding the algorithm steps! """
 steps = []
 #steps.append(gf.Add_step(["PX"], [0], [pi/2]))
-steps.append(gf.AlgStep(["PX", "PX"], [0,1], [pi/2, pi]))
-steps.append(gf.AlgStep(["VPZ", "VPZ"], [0, 1], [pi, pi/2]))
+steps.append(gf.AlgStep(["PX", "PX"], [0,1], [pi/2, pi/2]))
+steps.append(gf.AlgStep(["VPZ", "VPZ"], [0, 1], [pi, pi]))
 steps.append(gf.AlgStep(["CZ"], [[0, 1]], [pi]))
 steps.append(gf.AlgStep(["HD"], [0], [pi]))
 steps.append(gf.AlgStep(["PX","VPZ"], [0,1], [pi/2, pi]))
@@ -99,8 +99,13 @@ print("Done! Total mainAlgorithm run time = " + str(round(toc-tic,2)) + "s.")
 #print(type(expectvals), shape(expectvals)) # for searching for errors in shapes etc. 
 #print(type(tlist_tot), shape(tlist_tot))
 
-print(expectvals)
+print(expectvals[0])
 print(tlist_tot)
+
+import matplotlib.pyplot as plt
+plt.plot(tlist_tot, expectvals[0])
+plt.show()
+
 #print(expectvals[0][:])
 #print("hej" + str(shape(expectvals[0][:])))
 """ COmmented away until we can discuss expecation values
