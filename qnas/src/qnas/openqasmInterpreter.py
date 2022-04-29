@@ -1,7 +1,7 @@
 import qiskit
 import re
 import numpy as np
-import gateFuncs as gf
+from . import gateFuncs as gf
 from matplotlib import pyplot as plt
 
 
