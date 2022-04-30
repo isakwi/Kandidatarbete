@@ -36,7 +36,7 @@ Gphiqb2 = 1/Tphiqb2
 qb1 = qbc.Qubit(3, [G1qb1, Gphiqb1, c], -229e6 * 2 * pi) # In other parts of the program we work linearly, right? Should be angular, So this is correct. Input in .csv is linear
 qb2 = qbc.Qubit(3, [G1qb2, Gphiqb2, c], -225e6 * 2 * pi)
 
-zz_mat = [[0, 1e5], [0, 1e5]]
+zz_mat = [[0, 2*pi*1e5], [0, 2*pi*1e5]]
 
 betaplot = True #make this true if we want 1D plots as well
 storeData = True  # To store data in a txt file
