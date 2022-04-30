@@ -102,30 +102,36 @@ def mainAlgorithmExpectation(args):
                 psi0 = allStates[-ntraj:]
             for vgate in virtualgates:
                 psi0 = parfor(mcSolving.virtgate, psi0, vgate=vgate)
+        tlist_tot = np.delete(tlist_tot, 0)  # We get double zero in the beginning since tlist_tot = [0] initially
+        allStates = np.reshape(allStates, (len(tlist_tot), ntraj))
+        # TODO: Koolla på detta igen ^
     else:
-        for i in range(0, len(steps)):
+        psi0 = psi0[0]#we only need one simulation if there is no noise
+        allStates = []
+        for i in range(0, len(steps)):  # all steps
             physicalgates, virtualgates, tmax = gf.createGatesFromStep(steps[i], Qblist, t_max)
             Htd, tlist = gf.timeDepend(steps[i], physicalgates, tmax, Qblist)
             H = Htd + H0
-
-            if gateLib.isVirtual(steps, i):
+            # Create tlist for the entire process
+            OnlyVirtualGates = True
+            for j in range(len(steps[i].name)):  # Deals with steps with multiple gates in them
+                if gateLib.isPhysicalGate(steps[i], j) or gateLib.isTwoQubitGate(steps[i], j) or steps[i].name[j] in [
+                    "HD"]:
+                    OnlyVirtualGates = False
+            if OnlyVirtualGates:
                 tlist_shifted = []
             else:
-                tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous starts.
-            tlist_tot = np.concatenate((tlist_tot, tlist_shifted))  # Create tlist for the entire process
-
+                tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous ends.
+            tlist_tot = np.concatenate((tlist_tot, tlist_shifted))
             if max(tlist) > 1e-11:
-                allStates = np.append(allStates, np.transpose(parfor(mcSolving.mcsTimeDynamics, psi0, H=H, tlist=tlist, c_ops=c_ops)))
-                psi0 = allStates[-ntraj:]
+                allStates = allStates + ((((mcSolving.mcsTimeDynamics( psi0, H=H, tlist=tlist, c_ops=c_ops)))))
+                psi0 = allStates[-1]
             for vgate in virtualgates:
-                psi0 = parfor(mcSolving.virtgate, psi0, vgate=vgate)
+                psi0 = mcSolving.virtgate( psi0, vgate=vgate)
+        tlist_tot = np.delete(tlist_tot, 0)  # We get double zero in the beginning since tlist_tot = [0] initially
 
-    tlist_tot = np.delete(tlist_tot, 0)  # We get double zero in the beginning since tlist_tot = [0] initially
-
+       
     """CALCULATE EXPECTATION VALUES FROM ALL STATES HERE """
-    print(shape(allStates))
-    allStates = np.reshape(allStates, (len(tlist_tot), ntraj))
-    # TODO: Koolla på detta igen ^
     if type(e_ops) == list and type(e_ops[0] == Qobj):
         expectvals = [np.array([np.mean(expect(e, parallelStates)) for parallelStates in allStates]) for e in e_ops]
     else:
