@@ -25,7 +25,7 @@ Tphiqb2 = 1/(1/T2qb2 - 1/(2 * T1qb2))
 
 """Calculate rates"""
 G1qb1 = 1/T1qb1
-G1qb2 =1/T1qb2
+G1qb2 = 1/T1qb2
 
 Gphiqb1 = 1/Tphiqb1
 Gphiqb2 = 1/Tphiqb2
@@ -33,13 +33,16 @@ Gphiqb2 = 1/Tphiqb2
 # qubits
 #qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
 #qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
-qb1 = qbc.Qubit(3, [G1qb1, Gphiqb1, c], -229e6 * 2 * pi) # In other parts of the program we work linearly, right? 
+qb1 = qbc.Qubit(3, [G1qb1, Gphiqb1, c], -229e6 * 2 * pi) # In other parts of the program we work linearly, right? Should be angular, So this is correct. Input in .csv is linear
 qb2 = qbc.Qubit(3, [G1qb2, Gphiqb2, c], -225e6 * 2 * pi)
 
-betaplot = True #make this true if we want 1D plots as well
+zz_mat = [[0, 1e5], [0, 1e5]]
 
-gamma_resolution = 5
-beta_resolution = 5
+betaplot = True #make this true if we want 1D plots as well
+storeData = True  # To store data in a txt file
+
+gamma_resolution = 60
+beta_resolution = 60
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -55,7 +58,7 @@ c_ops = colf.createCollapseOperators(qblist)
 ntraj = 500
 tmax= [50e-9, 271e-9]
 psi0 = qbc.createPsi0(qblist, 0)  # 0 is the groundstate
-problem = 'b'
+problem = 'c'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -100,7 +103,7 @@ for i in range(0, gamma_resolution):
         steps[7] = (gf.AlgStep(["PX", "PX"], [0, 1], [2 * beta, 2 * beta]))
 # calling mainAlgorithm
         #print(f"steps: {[step.name for step in steps]} targets : {[step.Tar_Con for step in steps]}, angles: {[step.angle for step in steps]} ")
-        args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": False}
+        args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": False, "zz_mat":zz_mat}
         args["e_ops_inp"] = []
         state = ma.mainAlgorithm(args)
 # saving mean value of expectation value in matrix
@@ -125,9 +128,6 @@ plt.xticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labe
 plt.yticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
 plt.show()
 
-file = open("plotdata_" + problem + ".txt", "w+") #Seems to work
-file.write("For contourf:" + '\n' + "gamma_vec = " + str(gamma_vec) + '\n' + "beta_vec = " + str(beta_vec) + '\n' "exp_mat = " + str(exp_mat) + '\n')
-file.close()
 
 # Find minima manually, will be fast for small matrices, like in the benchmark!
 # Only finds one minimum though, not if there are many
@@ -141,6 +141,11 @@ for i in range(len(beta_vec)):
 print(f"Minimum value is {minima} and matrix indices [{coord[0]}, {coord[1]}]")
 print(f"It is located at gamma = {gamma_vec[coord[1]]} and beta at {beta_vec[coord[0]]}")
 
+if storeData:
+    with np.printoptions(threshold=np.inf):
+        file = open("plotdata_" + problem + ".txt", "w+") #Seems to work
+        file.write("For contourf:" + '\n' + "gamma_vec = " + str(gamma_vec) + '\n' + "beta_vec = " + str(beta_vec) + '\n' "exp_mat = " + str(exp_mat) + '\n' "minima = " + str(minima) + '\n' "coord = " + str(coord) + '\n')
+        file.close()
 
 if betaplot:
     fig, ax2 = plt.subplots()
