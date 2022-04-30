@@ -14,23 +14,19 @@ import openqasmInterpreter as opi
 import qiskit
 pi = np.pi
 tstart = time.time()
-c = 0.01
+c = 1e-1 * 0
 
 # qubits
-qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi)
-qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi)
+qb1 = qbc.Qubit(3, [c, c, 0], -229e6 * 2 * pi)
+qb2 = qbc.Qubit(3, [c, c, 0], -225e6 * 2 * pi)
 betaplot = False #make this true if we want 1D plots as well
 
-gamma_resolution = 8
-beta_resolution = 8
 
 # list of angles for parameters
-gamma_vec = np.linspace(0, pi, gamma_resolution)
-beta_vec = np.linspace(0, pi, beta_resolution)
+
+
 qblist = [qb1, qb2]
 
-# zeros matrix for saving expectation value of hamiltonian
-exp_mat = np.zeros((beta_resolution, gamma_resolution))
 if betaplot:
     state_mat = [[qeye(1) for i in range(gamma_resolution)] for j in range(beta_resolution)]
 c_ops = colf.createCollapseOperators(qblist)
@@ -39,7 +35,7 @@ e_ops = []
 ntraj = 20
 tmax= [50e-9, 271e-9]
 psi0 = qbc.createPsi0(qblist, 0)  # 0 is the groundstate
-problem = 'a'
+problem = 'd'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -78,12 +74,11 @@ ham = h1 * gl.PZ(qblist, 0) + h2 * gl.PZ(qblist, 1) + J * gl.PZ(qblist, 0) * gl.
 
 
 # iterating through list of angles and saving expectation values in matrix
-beta, gamma = np.pi, np.pi
+beta, gamma = np.pi/4, np.pi/4
 steps = opi.qasmToQnas(ourcirc(gamma, beta))
         #print(f"steps: {[step.name for step in steps]} targets : {[step.Tar_Con for step in steps]}, angles: {[step.angle for step in steps]} ")
 # calling mainAlgorithm
 e_ops_inp = [[basis(3,0)*basis(3,0).dag(),0],[basis(3,0)*basis(3,0).dag(),1],[basis(3,1)*basis(3,1).dag(),0],[basis(3,1)*basis(3,1).dag(),1],[basis(3,2)*basis(3,2).dag(),0],[basis(3,2)*basis(3,2).dag(),1]]
-#todo define eops above
 args = {"steps" : steps, "c_ops" : c_ops, "e_ops_inp": e_ops_inp, "psi0" : psi0, "Qblist": qblist, "t_max": tmax, "ntraj" : ntraj, "StoreTimeDynamics": True}
 state, expval, tlist = ma.mainAlgorithm(args)
 # saving mean value of expectation value in matrix
@@ -103,11 +98,20 @@ fig, ax = plt.subplots()
 #labels = ["0", "$\pi$/2", "$\pi$"]
 #plt.xticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
 #plt.yticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
-ax.plot(tlist, np.abs(expval[0]) )
-ax.plot(tlist, np.abs(expval[2]) )
-ax.plot(tlist, np.abs(expval[4]) )
+#ax.plot(tlist, np.abs(expval[0]) )
+#ax.plot(tlist, np.abs(expval[2]) )
 
-ax.plot(tlist,np.abs(expval[0]) +  np.abs(expval[2]) + np.abs(expval[4]) )
+ax.plot(tlist,np.abs(expval[0]) *  np.abs(expval[1]) )
+#ax.plot(tlist,np.abs(expval[0]) *  np.abs(expval[3]) )
+ax.plot(tlist,np.abs(expval[0]) *  np.abs(expval[5]) )
+#ax.plot(tlist,np.abs(expval[2]) *  np.abs(expval[1]) )
+#ax.plot(tlist,np.abs(expval[2]) *  np.abs(expval[3]) )
+#ax.plot(tlist,np.abs(expval[2]) *  np.abs(expval[5]) )
+#ax.plot(tlist,np.abs(expval[4]) *  np.abs(expval[1]) )
+#ax.plot(tlist,np.abs(expval[4]) *  np.abs(expval[3]) )
+#ax.plot(tlist,np.abs(expval[4]) *  np.abs(expval[5]) )
+
+#ax.plot(tlist,np.abs(expval[0]) +  np.abs(expval[2]) + np.abs(expval[4]) )
 plt.show()
 
 

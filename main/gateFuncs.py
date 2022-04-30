@@ -102,11 +102,11 @@ def timeDepend(step, gates, t_max, Qblist):
     if t_max < 100*1e-9:  # Two qubit gates have longer drive time than 100ns
         if angles != []: # If only virtual gates there's no angles
             t_dmax = t_max * abs(max(angles)) / np.pi  # Drive time for the largest angle in step
-            tlist = np.linspace(0, t_dmax, 10)
+            tlist = np.linspace(0, t_dmax, 100)
         else:
-            tlist = np.linspace(0,0,10)
+            tlist = np.linspace(0,0,100)
     else:
-        tlist = np.linspace(0,t_max,10)
+        tlist = np.linspace(0,t_max,100)
     args=np.zeros(3)
     #Create time dep H from angles
     tol = np.pi/180  # Tolerance for how small angle we can handle, when an angle is "0"
