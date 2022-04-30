@@ -58,7 +58,7 @@ c_ops = colf.createCollapseOperators(qblist)
 ntraj = 500
 tmax= [50e-9, 271e-9]
 psi0 = qbc.createPsi0(qblist, 0)  # 0 is the groundstate
-problem = 'c'
+problem = 'b'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
