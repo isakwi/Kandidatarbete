@@ -3,7 +3,7 @@ import numpy as np
 '''Put in the correct file names for each run here'''
 with open('plotdata_d_longrun.txt', 'r') as fa:   # OBS, correct the filename
     linesA = fa.readlines()
-with open('plotdata_d_longrun.txt', 'r') as fb:   # OBS, correct the filename
+with open('plotdata_b_longrun.txt', 'r') as fb:
     linesB = fb.readlines()
 with open('plotdata_c_longrun2.txt', 'r') as fc:
     linesC = fc.readlines()
