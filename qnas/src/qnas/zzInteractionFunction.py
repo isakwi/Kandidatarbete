@@ -1,5 +1,7 @@
-import numpy as np
-from qutip import *
+__all__ = ['zzInteraction']
+
+from numpy import array
+from qutip import qeye, destroy, tensor
 
 def zzInteraction(Qblist, interaction_mat):
     """Creates ZZ-interaction term for hamiltonian
@@ -13,7 +15,7 @@ def zzInteraction(Qblist, interaction_mat):
     inter = 0
 
     if type(interaction_mat) == list:
-        interaction_mat = np.array(interaction_mat)
+        interaction_mat = array(interaction_mat)
     for QB in enumerate(Qblist):  #creates array of identity matrices of correct dimensions
         eye_vec.append(qeye(QB[1].level))
 
