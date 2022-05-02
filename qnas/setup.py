@@ -1,12 +1,10 @@
 import setuptools
 
-# Reads the content of your README.md into a variable to be used in the setup below
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name='qnas',  # should match the package folder
-    packages=['qnas'],  # should match the package folder
     version='0.0.1',  # important for updates
     license='MIT',  # should match your chosen license
     description='QnAS package',
@@ -28,5 +26,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.9',
     ],
 
-    download_url="https://github.com/isakwi/Kandidatarbete/tree/main/qnas",  # zip-downloadable?
+    package_dir={"": "src"},
+    packages=setuptools.find_packages(where="src"),
+    python_requires=">=3.9",
 )
