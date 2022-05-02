@@ -7,8 +7,8 @@ Backend with definition of 1qb and 2qb gates
 """
 
 from . import qubitClass as Qb
-from qutip import *
-import numpy as np
+from qutip import qeye, create, destroy, tensor, Qobj, basis, sigmax, sigmay
+from numpy import pi, exp
 
 def ID(Qblist, target=None):
     """Creates identity gate which can be used when creating a openQASM file to make
@@ -87,11 +87,11 @@ def VPZ(Qblist, target, angle):
     vsz = [qeye(Qb.level) for Qb in Qblist]
     try:
         if Qblist[target].level == 2:
-            vsz[target] = Qobj([[np.exp(-1j*angle/2), 0], [0, np.exp(1j*angle/2)]])
+            vsz[target] = Qobj([[exp(-1j*angle/2), 0], [0, exp(1j*angle/2)]])
         elif Qblist[target].level == 3:
-            vsz[target] = Qobj([[np.exp(-1j * angle / 2), 0, 0], [0, np.exp(1j * angle / 2), 0], [0, 0, 1]])
+            vsz[target] = Qobj([[exp(-1j * angle / 2), 0, 0], [0, exp(1j * angle / 2), 0], [0, 0, 1]])
         elif Qblist[target].level == 4:
-            vsz[target] = Qobj([[np.exp(-1j * angle / 2), 0, 0, 0], [0, np.exp(1j * angle / 2), 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+            vsz[target] = Qobj([[exp(-1j * angle / 2), 0, 0, 0], [0, exp(1j * angle / 2), 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
     except:
         print("Couldn't create Virtual Pauli Z gate! Maybe you dont have qubit level between 2 and 4?")
         print("Calculates the virtual pauli z gate as identity matrix!")
@@ -106,7 +106,7 @@ def HD(Qblist, target):
     - target = qubit to be targeted by the operator
     Output: Qobj that operates on qubit[target] with correct dimensions"""
     HD_real = RPY(Qblist, target)  # OBS negative PY rotation, that's why we call RPY
-    HD_virt = VPZ(Qblist, target, np.pi)
+    HD_virt = VPZ(Qblist, target, pi)
     return [HD_real, HD_virt]
 
 def CZ(Qblist, Tar_Con):

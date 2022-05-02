@@ -1,6 +1,6 @@
 __all__ = ['mcs', 'mcsTimeDynamics', 'virtgate']
 
-from qutip import *
+from qutip import mcsolve, sesolve
 
 def mcs(psi,H,tlist,c_ops):
     """

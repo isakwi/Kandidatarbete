@@ -1,14 +1,11 @@
 __all__ = ['solve']
 
-#import openqasmreader as oqread
-from . import gateFuncs as gf
 from . import qubitClass as qbc
-import numpy as np
+from numpy import pi
 from . import readData as rd
 from . import collapseOperatorFunction as co
 from . import mainAlgorithm
 from . import openqasmInterpreter as opq
-from qutip import *
 def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops=None):
     """
     The main solver function. Basically a user calls this function and everything else is automatic
@@ -52,7 +49,7 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
         print("You didn't specify a file for the qubit parameters! \n"
               "QnAS assumes you have 3 levels, no noises and sets the anharmonicity to"
               " -225e6*2*pi for all qubits")
-        Qblist = [qbc.Qubit(3, [0,0,0], -225e6 * 2 * np.pi) for i in range(n)]
+        Qblist = [qbc.Qubit(3, [0,0,0], -225e6 * 2 * pi) for i in range(n)]
     else:
         try:
             relax, depha, therma, anharm, levels = rd.readFile(Qbfile, n)
@@ -61,7 +58,7 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
             print(f"Couldn't find file {Qbfile}. QnAS.solve() will now exit")
             return
         for i in range(0, n):  # Creates list with all qubits, for now the desig and init_vec are empty
-            anharm[i] = -2 * np.pi * abs(anharm[i]) * 1e6  # Convert linear frequency to angular (input seems to usually be linear)
+            anharm[i] = -2 * pi * abs(anharm[i]) * 1e6  # Convert linear frequency to angular (input seems to usually be linear)
             Qblist.append(qbc.Qubit(levels[i], [relax[i], depha[i], therma[i]], anharm[i]))
 
     if not 1 <= ntraj <= 100000:
