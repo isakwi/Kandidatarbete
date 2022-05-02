@@ -20,6 +20,8 @@ def tensorifyExpectationOperator(Qblist, Tar_Con, Gate):
     Output: Tensored gate with correct dimension
     """
     gateList = [qeye(Qb.level) for Qb in Qblist]
+    if Gate.shape[0] == Qblist[0].level ** len(Qblist): #If the user wants entanglement or something. Note: all qubits must have same energy level
+        return Gate
     if type(Tar_Con) == int:  # 1qb gate
         gateList[Tar_Con] = Gate
         if Gate.shape[0] != Qblist[Tar_Con].level:
@@ -92,7 +94,7 @@ def mainAlgorithmExpectation(args):
             for j in range(len(steps[i].name)): # Deals with steps with multiple gates in them
                 if gateLib.isPhysicalGate(steps[i], j) or gateLib.isTwoQubitGate(steps[i], j) or steps[i].name[j] in ["HD"]:
                     OnlyVirtualGates = False
-            if OnlyVirtualGates:
+            if OnlyVirtualGates or max(steps[i].angle) < 0.01:
                 tlist_shifted = []
             else:
                 tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous ends.
@@ -120,7 +122,7 @@ def mainAlgorithmExpectation(args):
                 if gateLib.isPhysicalGate(steps[i], j) or gateLib.isTwoQubitGate(steps[i], j) or steps[i].name[j] in [
                     "HD"]:
                     OnlyVirtualGates = False
-            if OnlyVirtualGates:
+            if OnlyVirtualGates or max(steps[i].angle) < 0.01:
                 tlist_shifted = []
             else:
                 tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous ends.
