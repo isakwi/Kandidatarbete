@@ -24,11 +24,13 @@ def circuit(N):
     if N > 3:
         for k in range(0,N):
             u = 2*k +1
-            J = 2k
+
 
             if u < N:
                 circ.cz(u, u+1)
 
+        for k in range(0,N):
+            J = 2*k
             if J +1< N:
                 circ.cz(J, J + 1)
 
@@ -37,6 +39,44 @@ def circuit(N):
     elif N == 3:
         circ.cz(0,1)
         circ.cz(1,2)
+
+    for n in range(0, N):
+        circ.h(n)
+
+    for n in range(0, N):
+        circ.rx(2*np.pi,n)
+
+    for n in range(0, N):
+        circ.ry(2 * np.pi, n)
+
+    for n in range(0, N):
+        circ.rx(2 * np.pi, n)
+
+    if N > 3:
+        for k in range(0,N):
+            u = 2*k +1
+
+
+            if u < N:
+                circ.cz(u, u+1)
+
+        for k in range(0,N):
+            J = 2*k
+            if J +1< N:
+                circ.cz(J, J + 1)
+
+    elif N == 2:
+        circ.cz(0,1)
+    elif N == 3:
+        circ.cz(0,1)
+        circ.cz(1,2)
+
+
+
+
+
+
+
 
 
 
