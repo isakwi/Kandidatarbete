@@ -64,10 +64,10 @@ def circuit(N):
         circ.rx(2*np.pi,n)
 
     for n in range(0, N):
-        circ.ry(2 * np.pi, n)
+        circ.ry(np.pi, n)
 
     for n in range(0, N):
-        circ.rx(2 * np.pi, n)
+        circ.rx(np.pi, n)
 
     if N > 3:
         for k in range(0,N):
@@ -89,13 +89,13 @@ def circuit(N):
         circ.cz(1,2)
 
     for n in range(0, N):
-        circ.rx(2*np.pi,n)
+        circ.rx(np.pi,n)
 
     for n in range(0, N):
-        circ.ry(2 * np.pi, n)
+        circ.ry(np.pi, n)
 
     for n in range(0, N):
-        circ.rx(2 * np.pi, n)
+        circ.rx(np.pi, n)
 
 
 qblist = [qb1] * N
