@@ -4,7 +4,7 @@ import sys
 
 def readFile(filename, n):
     """
-    Reads the data in the file qubitData.csv
+    Reads the data in the file
     Input:
     - filename = name of file to be read
     - n = number of qubits (rows of paramaters in the file to be read)
