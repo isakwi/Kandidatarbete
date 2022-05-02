@@ -1,3 +1,5 @@
+__all__ = ['tensorifyExpectationOperator', 'createExpectOpsList', 'mainAlgorithmExpectation']
+
 from qutip import *
 import numpy as np
 from . import gateLib

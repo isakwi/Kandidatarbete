@@ -1,3 +1,5 @@
+__all__ = ['zzInteraction']
+
 import numpy as np
 from qutip import *
 

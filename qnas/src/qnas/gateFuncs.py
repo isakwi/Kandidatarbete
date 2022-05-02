@@ -1,3 +1,5 @@
+__all__ = ['AlgStep', 'createGatesFromStep', 'timeDepend']
+
 """
 Contains: 
 - Class Add_step for initialising a new step in the algorithm. 

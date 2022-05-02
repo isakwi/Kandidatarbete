@@ -1,3 +1,5 @@
+__all__ = ['mainAlgorithm']
+
 from . import gateFuncs as gf
 from . import mcSolving
 from .anharmonicity import anharmonicity

@@ -1,3 +1,7 @@
+__all__ = ['PX', 'PY', 'PZ', 'PM', 'PP', 'VPZ', 'RPY', 'ID', 'HD',
+           'CZ', 'iSWAP', 'gate_expand_2toN', 'isVirtual', 'isPhysicalGate',
+           'isTwoQubitGate']
+
 """
 Backend with definition of 1qb and 2qb gates
 """

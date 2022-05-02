@@ -1,3 +1,5 @@
+__all__ = ['qasmToQnas']
+
 import qiskit
 import re
 import numpy as np

@@ -1,3 +1,5 @@
+__all__ = ['solve']
+
 #import openqasmreader as oqread
 from . import gateFuncs as gf
 from . import qubitClass as qbc

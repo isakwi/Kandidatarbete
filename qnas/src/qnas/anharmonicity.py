@@ -1,3 +1,5 @@
+__all__ = ['anharmonicity', 'AnHarm']
+
 from qutip import *
 
 def anharmonicity(Qblist):

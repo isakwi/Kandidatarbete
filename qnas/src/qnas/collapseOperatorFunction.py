@@ -1,3 +1,5 @@
+__all__ = ['createCollapseOperators']
+
 import math
 from . import gateLib as gl
 

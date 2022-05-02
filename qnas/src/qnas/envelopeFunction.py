@@ -1,3 +1,5 @@
+__all__ = ['envelopeFunc', 'timeFunc']
+
 import numpy as np
 
 
