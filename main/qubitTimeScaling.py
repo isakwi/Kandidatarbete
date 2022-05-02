@@ -25,25 +25,25 @@ plist= []
 fid_list = []
 flist=[]
 
-N=5
+
 
 
 # qubits
-qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * np.pi, [1,1], [1,0,0])
+qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * np.pi)
 
 
 def circuit(N):
 
-    circ= qiskit.QuantumCircuit(N)
+    circ = qiskit.QuantumCircuit(N)
 
-    for n in range(0,N):
+    for n in range(0,N): #hadamar on all qubits
         circ.h(n)
     if N > 3:
         for k in range(0,N):
             u = 2*k +1
 
 
-            if u < N:
+            if u < N-1:
                 circ.cz(u, u+1)
 
         for k in range(0,N):
@@ -74,7 +74,7 @@ def circuit(N):
             u = 2*k +1
 
 
-            if u < N:
+            if u < N-1:
                 circ.cz(u, u+1)
 
         for k in range(0,N):
@@ -97,12 +97,15 @@ def circuit(N):
     for n in range(0, N):
         circ.rx(np.pi, n)
 
-
-qblist = [qb1] * N
-
+    return circ
 
 
+ant = 10
+qblist = [qb1] * ant
 
+qc = circuit(8)
+
+print(qc.draw())
 
 
 
