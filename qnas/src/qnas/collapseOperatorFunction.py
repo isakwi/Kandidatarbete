@@ -1,6 +1,6 @@
 __all__ = ['createCollapseOperators']
 
-import math
+from math import sqrt
 from . import gateLib as gl
 
 
@@ -11,9 +11,9 @@ def createCollapseOperators(Qblist):
     c_ops = []
     for i in range(0, len(Qblist)):
         if Qblist[i].noisert_vec[0] > 0.0:  # Relaxation
-            c_ops.append(math.sqrt(Qblist[i].noisert_vec[0]) * gl.PM(Qblist, i))
+            c_ops.append(sqrt(Qblist[i].noisert_vec[0]) * gl.PM(Qblist, i))
         if Qblist[i].noisert_vec[1] > 0.0:  # Dephasing
-            c_ops.append(math.sqrt(Qblist[i].noisert_vec[1]) * gl.PZ(Qblist, i)/2)
+            c_ops.append(sqrt(Qblist[i].noisert_vec[1]) * gl.PZ(Qblist, i)/2)
         if Qblist[i].noisert_vec[2] > 0.0:  # Thermal
-            c_ops.append(math.sqrt(Qblist[i].noisert_vec[3]) * gl.PP(Qblist, i))
+            c_ops.append(sqrt(Qblist[i].noisert_vec[3]) * gl.PP(Qblist, i))
     return c_ops
