@@ -26,7 +26,7 @@ def readFile(filename, n):
             anharm.append(arr[i, 4]*2*np.pi*1e6)  # Transfer from [MHz] to angular frequency
             levels.append(int(arr[i, 5]))
     except Exception as error:
-        print("Something is wrong with the csv file! Check the example-file 'qubitData.csv' for how it should look."
+        print("Something is wrong with the csv file! Check the example-file in git for how it should look."
               " Remember to use correct separation of values")
         raise sys.exit(1)
     return relax, depha, therma, anharm, levels
