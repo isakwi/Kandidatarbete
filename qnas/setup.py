@@ -13,7 +13,7 @@ setuptools.setup(
     author='Isak Wikman, Edvin Martinson, Axel Blom, Albin Edenmyr, Didrik Palmqvist, Ludvig Nordqvist',
     author_email='isakwi@student.chalmers.se, edvmar@student.chalmers.se, bloaxel@student.chalmers.se, edenmyr@student.chalmers.se, didrikp@student.chalmers.se, ludnor@student.chalmers.se',
     url='https://github.com/isakwi/Kandidatarbete/tree/main/qnas',  # Skapa en ny git för detta?!
-    install_requires=['numpy', 'math', 'qutip', 'qiskit', 'pandas', 'sys', 're'],  # list all packages that your package uses
+    install_requires=['numpy', 'math', 'qutip', 'qiskit', 'pandas', 'sys', 'regex'],  # list all packages that your package uses
     keywords=["pypi", "qnas", "algorithm-simulator", "quantum", "quantum-algorithm-simulator", "algorithm","noise","simulator"],  # descriptive meta-data
     classifiers=[  # https://pypi.org/classifiers
         'Development Status :: 3 - Alpha',
