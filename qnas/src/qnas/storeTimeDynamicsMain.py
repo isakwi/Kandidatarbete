@@ -90,7 +90,7 @@ def mainAlgorithmExpectation(args):
             for j in range(len(steps[i].name)): # Deals with steps with multiple gates in them
                 if gateLib.isPhysicalGate(steps[i], j) or gateLib.isTwoQubitGate(steps[i], j) or steps[i].name[j] in ["HD"]:
                     OnlyVirtualGates = False
-            if OnlyVirtualGates:
+            if OnlyVirtualGates or max(steps[i].angle) < 0.01:
                 tlist_shifted = []
             else:
                 tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous ends.
@@ -118,7 +118,7 @@ def mainAlgorithmExpectation(args):
                 if gateLib.isPhysicalGate(steps[i], j) or gateLib.isTwoQubitGate(steps[i], j) or steps[i].name[j] in [
                     "HD"]:
                     OnlyVirtualGates = False
-            if OnlyVirtualGates:
+            if OnlyVirtualGates or max(steps[i].angle) < 0.01:
                 tlist_shifted = []
             else:
                 tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous ends.
