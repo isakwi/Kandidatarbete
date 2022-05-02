@@ -1,10 +1,11 @@
+__all__ = ['mainAlgorithm']
+
 from . import gateFuncs as gf
 from . import mcSolving
 from .anharmonicity import anharmonicity
 from . import storeTimeDynamicsMain
 from . import zzInteractionFunction as zz
-from .gateLib import *
-
+from qutip import parfor
 def mainAlgorithm(args):
     """
     Main algorithm.

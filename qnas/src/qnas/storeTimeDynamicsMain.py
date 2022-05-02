@@ -1,7 +1,9 @@
-from qutip import *
-import numpy as np
+__all__ = ['tensorifyExpectationOperator', 'createExpectOpsList', 'mainAlgorithmExpectation']
+
+from qutip import qeye, tensor, parfor, Qobj, expect
+from numpy import pi, array, concatenate, transpose, delete, reshape, append, mean
 from . import gateLib
-import sys
+from sys import exit
 from . import gateFuncs as gf
 from . import mcSolving
 from .anharmonicity import anharmonicity
@@ -22,18 +24,18 @@ def tensorifyExpectationOperator(Qblist, Tar_Con, Gate):
         gateList[Tar_Con] = Gate
         if Gate.shape[0] != Qblist[Tar_Con].level:
             print('Error: Shape of e_ops doesn\'t match the targeted qubit level. \n See \'storeTimeDynamics\' for more info')
-            sys.exit(1)
+            exit(1)
         return tensor(gateList)
     elif len(Tar_Con) == 2: # 2qb gate
         if Gate.shape[0] != Qblist[Tar_Con[0]].level*Qblist[Tar_Con[1]].level:
             print('Error: Shape of e_ops doesn\'t match the targeted qubits levels. \n See \'storeTimeDynamics\' for more info')
-            sys.exit(1)
+            exit(1)
         del (gateList[max(Tar_Con)])  # Make room for the gate
         del (gateList[min(Tar_Con)])  # Make room for the gate
         return gateLib.gate_expand_2toN(Gate, len(Qblist), gateList, Tar_Con[1], Tar_Con[0])
     else:
         print('Error: QnAS only handles 1 or 2 qubit operators as e_ops. \n See \'ExpectationValues\' for more info')
-        sys.exit(1)  # Stops the program with the same error code as above
+        exit(1)  # Stops the program with the same error code as above
 
 def createExpectOpsList(Qblist, e_ops_inp):
     """
@@ -66,7 +68,7 @@ def mainAlgorithmExpectation(args):
     ntraj = args["ntraj"]
     tlist_tot = [0]
     e_ops_inp = args["e_ops_inp"]
-    allStates = np.array([])  # a list where all states are saved
+    allStates = array([])  # a list where all states are saved
 
     psi0 = []
     for i in range(ntraj):
@@ -94,16 +96,16 @@ def mainAlgorithmExpectation(args):
                 tlist_shifted = []
             else:
                 tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous ends.
-            tlist_tot = np.concatenate((tlist_tot, tlist_shifted))
+            tlist_tot = concatenate((tlist_tot, tlist_shifted))
             # TODO : KOLLA ATT DET HÄR VERKLIGEN BLIR RÄTT ^
             # Jag tror att det ska funka som det är nu. / Ed
             if max(tlist) >= 1e-11:
-                allStates = np.append(allStates, np.transpose(parfor(mcSolving.mcsTimeDynamics, psi0, H=H, tlist=tlist, c_ops=c_ops)))
+                allStates = append(allStates, transpose(parfor(mcSolving.mcsTimeDynamics, psi0, H=H, tlist=tlist, c_ops=c_ops)))
                 psi0 = allStates[-ntraj:]
             for vgate in virtualgates:
                 psi0 = parfor(mcSolving.virtgate, psi0, vgate=vgate)
-        tlist_tot = np.delete(tlist_tot, 0)  # We get double zero in the beginning since tlist_tot = [0] initially
-        allStates = np.reshape(allStates, (len(tlist_tot), ntraj))
+        tlist_tot = delete(tlist_tot, 0)  # We get double zero in the beginning since tlist_tot = [0] initially
+        allStates = reshape(allStates, (len(tlist_tot), ntraj))
         # TODO: Koolla på detta igen ^
     else:
         psi0 = psi0[0]#we only need one simulation if there is no noise
@@ -122,18 +124,18 @@ def mainAlgorithmExpectation(args):
                 tlist_shifted = []
             else:
                 tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous ends.
-            tlist_tot = np.concatenate((tlist_tot, tlist_shifted))
+            tlist_tot = concatenate((tlist_tot, tlist_shifted))
             if max(tlist) > 1e-11:
                 allStates = allStates + ((((mcSolving.mcsTimeDynamics( psi0, H=H, tlist=tlist, c_ops=c_ops)))))
                 psi0 = allStates[-1]
             for vgate in virtualgates:
                 psi0 = mcSolving.virtgate( psi0, vgate=vgate)
-        tlist_tot = np.delete(tlist_tot, 0)  # We get double zero in the beginning since tlist_tot = [0] initially
+        tlist_tot = delete(tlist_tot, 0)  # We get double zero in the beginning since tlist_tot = [0] initially
 
        
     """CALCULATE EXPECTATION VALUES FROM ALL STATES HERE """
     if type(e_ops) == list and type(e_ops[0] == Qobj):
-        expectvals = [np.array([np.mean(expect(e, parallelStates)) for parallelStates in allStates]) for e in e_ops]
+        expectvals = [array([mean(expect(e, parallelStates)) for parallelStates in allStates]) for e in e_ops]
     else:
         raise Exception("e_ops needs to be a list of Qobj")
 

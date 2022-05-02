@@ -1,8 +1,9 @@
-import qiskit
-import re
-import numpy as np
+__all__ = ['qasmToQnas']
+
+from qiskit.converters import circuit_to_dag, dag_to_circuit
+from re import search
+from numpy import pi
 from . import gateFuncs as gf
-from matplotlib import pyplot as plt
 
 
 def qasmToQnas(circuit):
@@ -25,24 +26,24 @@ def qasmToQnas(circuit):
         """
         flt = 0
         if '*pi/' in s:
-            flt = float(s.split('*')[0]) * np.pi / float(s.split('/')[1])
+            flt = float(s.split('*')[0]) * pi / float(s.split('/')[1])
         elif '*pi' in s:
-            flt = float(s.split('*')[0]) * np.pi
+            flt = float(s.split('*')[0]) * pi
         elif '-pi/' in s:
-            flt = -np.pi / float(s.split('/')[1])
+            flt = -pi / float(s.split('/')[1])
         elif 'pi/' in s:
-            flt = np.pi / float(s.split('/')[1])
+            flt = pi / float(s.split('/')[1])
         elif '-pi' in s:
-            flt = -np.pi
+            flt = -pi
         elif 'pi' in s:
-            flt = np.pi
+            flt = pi
         else:
             flt = float(s)
         return flt
 
     gatelist = []
     for i in range(qc.depth()):  # splits circuit into steps
-        dag = qiskit.converters.circuit_to_dag(qc)
+        dag = circuit_to_dag(qc)
         layers = list(dag.multigraph_layers())
         n_remove = qc.depth() - i
 
@@ -53,7 +54,7 @@ def qasmToQnas(circuit):
                 if node.type == 'op':
                     dag.remove_op_node(node)
 
-        new_qc = qiskit.converters.dag_to_circuit(dag)
+        new_qc = dag_to_circuit(dag)
         gatelist.append(new_qc.qasm())
 
     newgatelist = []  # function for splitting lines in gatelist. gatelist[n][k] gives nth depth, and kth element
@@ -105,7 +106,7 @@ def qasmToQnas(circuit):
         qubits = []
         for i in range(len(a[k])):
             lastbit = a[k][i][-3:-2]
-            result = (re.search(r"\[([A-Za-z0-9_]+)\]", a[k][i]))
+            result = (search(r"\[([A-Za-z0-9_]+)\]", a[k][i]))
             if result.group(1) == lastbit:
                 qubits.append(int(lastbit))
             else:

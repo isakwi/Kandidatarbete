@@ -18,11 +18,11 @@ import qiskit
 
 
 
-nlevel = 2
+nlevel = 15
 
 pi = np.pi
 tstart = time.time()
-c = 0.01
+c = 1000000
 
 #lists of elapsed time for number of levels and fidelities
 elt_list = []
@@ -31,11 +31,11 @@ fid_list = []
 flist=[]
 
 # qubits
-qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi, [1,1], [1,0,0])
-qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi, [2,2], [1,0,0])
+qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi)
+qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi)
 
 c_ops_none= []
-ntraj_id = 1
+ntraj_id = 200
 qblist = [qb1,qb2]
 steps=[]
 tot_prop=[]
@@ -61,7 +61,7 @@ circ.rz(2*pi, 1)
 circ.rx(2*pi, 0)
 circ.rx(2*pi,1)
 
-onestep = opi.openqasm_interpreter(circ)[0]
+onestep = opi.qasmToQnas(circ)
 
 """
 qtp_circuit = QubitCircuit(2)
@@ -83,6 +83,7 @@ prop_onestp = qtp_circuit.propagators()
 
 
 for p in range(0, nlevel):
+    print(p)
     plist.append(p)
     steps.extend(onestep)
     tstart = time.time()
@@ -113,7 +114,7 @@ for p in range(0, nlevel):
     fmed = []
 
     for t in enumerate(state):
-         fmed.append(fidelity(t[1]), state_id)
+         fmed.append(fidelity(t[1], state_id[0]))
 
     fid_list.append(np.mean(fmed))
 
@@ -124,5 +125,6 @@ print('fidelity list:', fid_list)
 print('list of corresponding levels:', plist)
 
 fig, ax = plt.subplots()
-ax.plot(plist, fid_list, label = 'Fidelity')
-ax.plot(plist, elt_list, label= 'elapsed time')
+ax.plot(plist, fid_list, label='Fidelity')
+ax.plot(plist, elt_list, label='elapsed time')
+plt.show()

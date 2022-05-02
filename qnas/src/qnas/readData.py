@@ -1,10 +1,12 @@
-import pandas as pd
-import numpy as np
-import sys
+__all__ = ['readFile']
+
+from pandas import read_csv
+from numpy import pi
+from sys import exit
 
 def readFile(filename, n):
     """
-    Reads the data in the file qubitData.csv
+    Reads the data in the file
     Input:
     - filename = name of file to be read
     - n = number of qubits (rows of paramaters in the file to be read)
@@ -17,18 +19,18 @@ def readFile(filename, n):
     anharm = []
     levels = []
     try:
-        data = pd.read_csv(filename, sep=";")
+        data = read_csv(filename, sep=";")
         arr = data.to_numpy()
         for i in range(0, n):
             relax.append(arr[i, 1])
             depha.append(arr[i, 2])
             therma.append(arr[i, 3])
-            anharm.append(arr[i, 4]*2*np.pi*1e6)  # Transfer from [MHz] to angular frequency
+            anharm.append(arr[i, 4]*2*pi*1e6)  # Transfer from [MHz] to angular frequency
             levels.append(int(arr[i, 5]))
     except Exception as error:
-        print("Something is wrong with the csv file! Check the example-file 'qubitData.csv' for how it should look."
+        print("Something is wrong with the csv file! Check the example-file in git for how it should look."
               " Remember to use correct separation of values")
-        raise sys.exit(1)
+        raise exit(1)
     return relax, depha, therma, anharm, levels
 
 
