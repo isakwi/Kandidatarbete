@@ -17,7 +17,6 @@ setuptools.setup(
     keywords=["pypi", "qnas", "algorithm-simulator", "quantum", "quantum-algorithm-simulator", "algorithm","noise","simulator"],  # descriptive meta-data
     classifiers=[  # https://pypi.org/classifiers
         'Development Status :: 3 - Alpha',
-        'Intended Audience :: Physicians, Developers, Quantum Experimentalists',
         'Topic :: Software Development :: Documentation',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
