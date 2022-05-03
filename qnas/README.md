@@ -1,20 +1,38 @@
-Info about QnAS:
+Welcome to QnAS - an open source 
+program to simulate noisy quantum algorithms!
 
-To install: Go to pypi and find QnAS, 
-there you can find the install command!
+Installation guide: Go to TestPyPI and find QnAS, 
+there you can find the installation command! 
+Or you can find it here:
+
+    pip install -i https://test.pypi.org/simple/ qnas
 
 MIT License: Free to use!
 
-QnAS is an open source program to 
-simulate noisy quantum algorithms!
-
 To see source code, go to: https://github.com/isakwi/Kandidatarbete/tree/main/qnas
 
+To get started with QnAS, import QnAS to your
+program and call the help function:
 
+    import qnas
 
+    qnas.help()
 
-To make package, follow these:
-https://packaging.python.org/en/latest/tutorials/packaging-projects/
-Important: name root folder and package folder same: so that we download QnAS and import QnAS,
-it was a little confusing with my test package.
+To get even more help, here comes an example 
+of how you can use qnas.solve() to solve 
+a very simple system of 3 qubits given that you 
+have a qubit parameter file called 
+'qubitData.csv':
+
+    import qnas
+    import qiskit
+    from numpy import pi
+
+    circuit = qiskit.QuantumCircuit(3)
+    circuit.rx(pi,0)
+    circuit.rx(pi,1)
+    circuit.rx(pi,2)
+
+    finalStates = qnas.solve(Qbfile='qubitData.csv', circuit=circuit)
+
 
