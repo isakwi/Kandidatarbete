@@ -18,11 +18,11 @@ import qiskit
 
 
 
-nlevel = 15
+nlevel = 4
 
 pi = np.pi
 tstart = time.time()
-c = 1000000
+c = 0
 
 #lists of elapsed time for number of levels and fidelities
 elt_list = []
@@ -35,7 +35,7 @@ qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi)
 qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi)
 
 c_ops_none= []
-ntraj_id = 200
+ntraj_id = 500
 qblist = [qb1,qb2]
 steps=[]
 tot_prop=[]
@@ -100,6 +100,7 @@ for p in range(0, nlevel):
             "ntraj": ntraj_id, "StoreTimeDynamics": False}
 
     state_id = ma.mainAlgorithm(args_id)
+    print(state_id)
 
     #tot_prop.extend(prop_onestp)
 
@@ -114,7 +115,7 @@ for p in range(0, nlevel):
     fmed = []
 
     for t in enumerate(state):
-         fmed.append(fidelity(t[1], state_id[0]))
+         fmed.append(fidelity(state_id[0], state_id[0]))
 
     fid_list.append(np.mean(fmed))
 
@@ -126,5 +127,5 @@ print('list of corresponding levels:', plist)
 
 fig, ax = plt.subplots()
 ax.plot(plist, fid_list, label='Fidelity')
-ax.plot(plist, elt_list, label='elapsed time')
+#ax.plot(plist, elt_list, label='elapsed time')
 plt.show()
