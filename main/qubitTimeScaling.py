@@ -102,7 +102,7 @@ def circuit(N):
     return circ
 
 
-ant = 16
+ant = 20
 qblist = [qb1] * ant
 
 

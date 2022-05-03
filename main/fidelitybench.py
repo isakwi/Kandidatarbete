@@ -18,11 +18,12 @@ import qiskit
 
 
 
-nlevel = 13
+nlevel = 20
 
 pi = np.pi
-tstart = time.time()
-c = 100000
+diss = 25000
+
+rel = 33333.3
 
 #lists of elapsed time for number of levels and fidelities
 elt_list = []
@@ -35,8 +36,8 @@ print("bruh1",fidelity(basis(2,0), basis(2,0)))
 print("bruh2",fidelity(basis(2,0), basis(2,1)))
 
 # qubits
-qb1 = qbc.Qubit(3, [c, c, c], -229e6 * 2 * pi)
-qb2 = qbc.Qubit(3, [c, c, c], -225e6 * 2 * pi)
+qb1 = qbc.Qubit(3, [rel, diss, 0], -229e6 * 2 * pi)
+qb2 = qbc.Qubit(3, [rel, diss, 0], -225e6 * 2 * pi)
 
 c_ops_none= []
 ntraj_id = 1
@@ -46,7 +47,7 @@ tot_prop=[]
 c_ops = colf.createCollapseOperators(qblist)
 e_ops = []
 # number of trajectories
-ntraj = 40
+ntraj = 200
 tmax= [50e-9, 271e-9]
 psi0 = qbc.createPsi0(qblist, 0)  # 0 is the groundstate
 initstate = tensor(basis(2,0), basis(2,0))
@@ -80,17 +81,18 @@ for p in range(0, nlevel):
 
     """simulating algorithm with noise"""
     args = {"steps": steps, "c_ops": c_ops, "e_ops_inp": e_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax,
-            "ntraj": ntraj, "StoreTimeDynamics": False}
+            "ntraj": ntraj, "StoreTimeDynamics": False, "zz_mat": [[0, 2*np.pi * 100000],[2*np.pi * 100000,0]]}
     state = ma.mainAlgorithm(args)
     print(len(state))
     elt_list.append(time.time() - tstart)
+    print(time.time()-tstart, 'last run')
 
 
     """simulating alogrithm without noise"""
     args_id = {"steps": steps, "c_ops": c_ops_none, "e_ops_inp": e_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax,
             "ntraj": ntraj_id, "StoreTimeDynamics": False}
     state_id = ma.mainAlgorithm(args_id)
-    print(len(state_id))
+    #print(len(state_id))
     #print(state_id[0]==state_id[1], fidelity(state_id[0], state_id[1]))
 
     #tot_prop.extend(prop_onestp)
@@ -106,7 +108,7 @@ for p in range(0, nlevel):
     fmed = []
 
     for i in range(len(state)):
-         fmed.append(fidelity(state[i], state_id[0]))
+         fmed.append(fidelity(state[i], state_id))
 
     fid_list.append(np.mean(fmed))
 
