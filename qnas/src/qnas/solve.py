@@ -57,8 +57,8 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
         except:
             print(f"Couldn't find file {Qbfile}. QnAS.solve() will now exit")
             return
-        for i in range(0, n):  # Creates list with all qubits, for now the desig and init_vec are empty
-            anharm[i] = -2 * pi * abs(anharm[i]) * 1e6  # Convert linear frequency to angular (input seems to usually be linear)
+        for i in range(0, n):  # Creates list with all qubits
+            anharm[i] = 2 * pi * abs(anharm[i]) * 1e6  # Convert linear frequency to angular (input seems to usually be linear)
             Qblist.append(qbc.Qubit(levels[i], [relax[i], depha[i], therma[i]], anharm[i]))
 
     if not 1 <= ntraj <= 100000:

@@ -25,7 +25,7 @@ def readFile(filename, n):
             relax.append(arr[i, 1])
             depha.append(arr[i, 2])
             therma.append(arr[i, 3])
-            anharm.append(arr[i, 4]*2*pi*1e6)  # Transfer from [MHz] to angular frequency
+            anharm.append(arr[i, 4])  # Transfer from [MHz] to angular frequency
             levels.append(int(arr[i, 5]))
     except Exception as error:
         print("Something is wrong with the csv file! Check the example-file in git for how it should look."
