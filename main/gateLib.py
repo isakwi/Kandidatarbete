@@ -233,7 +233,7 @@ if __name__ == "__main__":
 
     # Test specific sigmax
     sx1 = tensor(qeye(2), sigmax(), qeye(2))
-    Qblist = [Qb.Qubit(2, [], [], [],[]) for i in range(0,3)]
+    Qblist = [Qb.Qubit(2, [], []) for i in range(0,3)]
     sx = PX(Qblist,1)
     print(sx)
     if sx1 == sx:
@@ -275,15 +275,9 @@ if __name__ == "__main__":
         print(sz1)
         print(sz)
 
-    # Test iSWAP
-    Qblist = [Qb.Qubit(2, [], [], [],[]) for i in range(2)] + [Qb.Qubit(2, [], [], [],[])]
-    iSWAP = iSWAP(Qblist, [0,2])
-    print("iSWAP: ", iSWAP)
-
-    print(sx*iSWAP)
 
     # Test CZ
-    Qblist = [Qb.Qubit(3, [], [], [], []) for i in range(2)] + [Qb.Qubit(3, [], [], [], [])]
+    Qblist = [Qb.Qubit(3, [], []) for i in range(2)] + [Qb.Qubit(3, [], [])]
     CZnew = CZ(Qblist, [0, 1])
     q1 = tensor(basis(3,0), basis(3,2)) # the state |02>
     q2 = tensor(basis(3,1), basis(3,1)) # the state |11>
