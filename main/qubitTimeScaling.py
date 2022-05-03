@@ -99,7 +99,6 @@ def circuit(N):
 
     for n in range(0, N):
         circ.rx(np.pi, n)
-    print(circ.draw())
     return circ
 
 
@@ -111,7 +110,7 @@ qblist = [qb1] * ant
 
 
 
-for it in range(14, ant):
+for it in range(2, ant):
     nlist.append(it)
 
     qblist= [qb1]* it
