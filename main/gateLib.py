@@ -39,6 +39,7 @@ def RPY(Qblist, target):
     - target = qubit to be targeted by the operator
     Output: Qobj that operates on qubit[target] with correct dimensions"""
     rsy = [qeye(Qb.level) for Qb in Qblist]
+    print(target)
     rsy[target] = 1j* (destroy(Qblist[target].level) - create(Qblist[target].level))
     # OBS: In HD we use -PY for negative rotation.
     return tensor(rsy)
