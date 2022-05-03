@@ -97,8 +97,6 @@ def mainAlgorithmExpectation(args):
             else:
                 tlist_shifted = tlist + tlist_tot[-1]  # Shifting the tlist to start where previous ends.
             tlist_tot = concatenate((tlist_tot, tlist_shifted))
-            # TODO : KOLLA ATT DET HÄR VERKLIGEN BLIR RÄTT ^
-            # Jag tror att det ska funka som det är nu. / Ed
             if max(tlist) >= 1e-11:
                 allStates = append(allStates, transpose(parfor(mcSolving.mcsTimeDynamics, psi0, H=H, tlist=tlist, c_ops=c_ops)))
                 psi0 = allStates[-ntraj:]
@@ -106,7 +104,6 @@ def mainAlgorithmExpectation(args):
                 psi0 = parfor(mcSolving.virtgate, psi0, vgate=vgate)
         tlist_tot = delete(tlist_tot, 0)  # We get double zero in the beginning since tlist_tot = [0] initially
         allStates = reshape(allStates, (len(tlist_tot), ntraj))
-        # TODO: Koolla på detta igen ^
     else:
         psi0 = psi0[0]#we only need one simulation if there is no noise
         allStates = []
