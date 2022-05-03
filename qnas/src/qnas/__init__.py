@@ -15,4 +15,3 @@ from .solve import *
 from .zzInteractionFunction import *
 from .storeTimeDynamicsMain import *
 
-__all__ = ['help']

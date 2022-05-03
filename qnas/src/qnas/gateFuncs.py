@@ -1,3 +1,5 @@
+__all__ = ['AlgStep', 'createGatesFromStep', 'timeDepend']
+
 """
 Contains: 
 - Class Add_step for initialising a new step in the algorithm. 
@@ -9,11 +11,12 @@ Contains:
 """
 
 from . import gateLib
-from qutip import *
+from qutip import QobjEvo
+from numpy import pi, linspace, zeros
 from . import qubitClass as Qb
 from .envelopeFunction import *
-import sys
-from . import anharmonicity
+from sys import exit
+from . import AnHarm
 
 class AlgStep:
     """
@@ -42,24 +45,24 @@ def createGatesFromStep(step, Qblist, t_max):
     tmax = t_max[0]  # Defaults to time for single qubit gate
     if len(step.name) > len(Qblist):
         print('Error: More gates than qubits have been put to a single depth.')
-        sys.exit(1)  # Stops the program with an error code stating that it did not run as it should
+        exit(1)  # Stops the program with an error code stating that it did not run as it should
     for i in range(len(step.name)):
         try: 
             y = eval("gateLib." + step.name[i])  # Calls the gate corresponding to the step.name[i]
         except Exception as error:
             print('Error: A gate you are trying to perform cannot be executed. \
             \nQNAS only handles gates avaliable at Chalmers quantum computer')
-            raise sys.exit(1) # Stops the program
+            raise exit(1) # Stops the program
         if type(step.Tar_Con[i]) == list and max(step.Tar_Con[i]) > len(Qblist) - 1 or type(step.Tar_Con[i]) == int and \
                 step.Tar_Con[i] > len(Qblist) - 1:
             print('Error: Qubit outside of the number of qubits is being targeted by Tar_Con')
-            sys.exit(1)  # Stops the program with the same error code as above
+            exit(1)  # Stops the program with the same error code as above
         if step.angle[i] < 0 and not (gateLib.isVirtual(step, i) or step.name[i] in ["CZ", "HD"]):
-            print("Warning! Negative angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i] % (2*np.pi))/np.pi,3)) + "π")
-            step.angle[i]=step.angle[i] % (2*np.pi)
-        if step.angle[i] > 2 * np.pi and not (gateLib.isVirtual(step, i) or step.name[i] in ["CZ", "HD"]):
-            print("Warning! HUGE angle of " + str(round((step.angle[i]/np.pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i] % (2*np.pi))/np.pi,3)) + "π")
-            step.angle[i]=step.angle[i] % (2*np.pi)
+            print("Warning! Negative angle of " + str(round((step.angle[i]/pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i] % (2*pi))/pi,3)) + "π")
+            step.angle[i]=step.angle[i] % (2*pi)
+        if step.angle[i] > 2 * pi and not (gateLib.isVirtual(step, i) or step.name[i] in ["CZ", "HD"]):
+            print("Warning! HUGE angle of " + str(round((step.angle[i]/pi),3)) +'π detected,' + " will be converted to " + str(round((step.angle[i] % (2*pi))/pi,3)) + "π")
+            step.angle[i]=step.angle[i] % (2*pi)
         if gateLib.isVirtual(step, i):
             H_virt.append(y(Qblist, step.Tar_Con[i], step.angle[i]))
         elif gateLib.isPhysicalGate(step, i):
@@ -69,14 +72,14 @@ def createGatesFromStep(step, Qblist, t_max):
             anyPhysicalGate = True
             H_real.append(y(Qblist, step.Tar_Con[i]))
             if step.name[i] in ["CZ"]: #this is needed atm
-                step.angle[i] = 2* np.pi
+                step.angle[i] = 2* pi
                 tmax = t_max[1]
                 if Qblist[step.Tar_Con[i][0]].level != 3 or Qblist[step.Tar_Con[i][1]].level != 3:
                     print('Error: CZ can only act on 3 level qubits. Qubit ' + str(step.Tar_Con[i][0]) + " = " + str(Qblist[step.Tar_Con[i][0]].level) + ", Qubit " + str(step.Tar_Con[i][1]) + " = " + str(Qblist[step.Tar_Con[i][1]].level))
                     sys.exit(1)  # Stops the program with the same error code as above
         elif step.name[i] in ["HD"]: # HD gate feels pretty unique so I left it as it was when I found it
             anyPhysicalGate = True
-            step.angle[i] = np.pi/2
+            step.angle[i] = pi/2
             H = gateLib.HD(Qblist, step.Tar_Con[i])
             H_real.append(H[0])
             H_virt.append(H[1])
@@ -104,22 +107,22 @@ def timeDepend(step, gates, t_max, Qblist):
     # Find max drive time for 1qb gates ~ largest drive angle
     if t_max < 100*1e-9:  # Two qubit gates have longer drive time than 100ns
         if angles != []: # If only virtual gates no angles
-            t_dmax = t_max * abs(max(angles)) / np.pi  # Drive time for the largest angle in step
-            tlist = np.linspace(0, t_dmax, 10)
+            t_dmax = t_max * abs(max(angles)) / pi  # Drive time for the largest angle in step
+            tlist = linspace(0, t_dmax, 10)
         else:
-            tlist = np.linspace(0,0,10)
+            tlist = linspace(0,0,10)
     else:
-        tlist = np.linspace(0,t_max,10)
-    args=np.zeros(3)
+        tlist = linspace(0,t_max,10)
+    args=zeros(3)
     #Create time dep H from angles
-    tol = np.pi/180  # Tolerance for how small angle we can handle, when an angle is "0"
+    tol = pi/180  # Tolerance for how small angle we can handle, when an angle is "0"
                      # Now set to be able to handle at least one degree and upwards
     H=0
     for i in range(len(step.name)):
         if step.name[i] in ['CZ']:
             for j in range(2): # Removing anharmonicity for the gates targeted by CZ
                 target = step.Tar_Con[i][j]
-                H = H - Qblist[target].anharm/2 * anharmonicity.AnHarm(Qblist, target)
+                H = H - Qblist[target].anharm/2 * AnHarm(Qblist, target)
     for i in range(len(gates)):
         if abs(angles[i]) >= tol:  # Can't add gates which have a too small angle
             gate = gates[i]
@@ -137,7 +140,7 @@ if __name__ == "__main__":
     Qblist.append(Qb.Qubit(3, [], [], []))
 
     steps = []
-    steps.append(AlgStep(["iswap", "PY", "VPZ"], [[0, 1], 1, 1], [0, np.pi, np.pi]))
+    steps.append(AlgStep(["iswap", "PY", "VPZ"], [[0, 1], 1, 1], [0, pi, pi]))
     hej_real, hej_virt, tlist = createGatesFromStep(steps[0], Qblist, t_max= [20e-9, 20e-9, 20e-9])
     print(hej_real)
     print(tlist)

@@ -1,8 +1,7 @@
+__all__ = ['Qubit', 'createPsi0']
 
 
-
-import numpy as np
-from qutip import *
+from qutip import basis, tensor
 
 class Qubit:
     """ Definition of Qubit object class

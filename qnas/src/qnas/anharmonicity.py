@@ -1,4 +1,6 @@
-from qutip import *
+__all__ = ['anharmonicity', 'AnHarm']
+
+from qutip import create, destroy, qeye, tensor
 
 def anharmonicity(Qblist):
     """function for creating anharmonicty term for the Hamiltonian.
@@ -17,8 +19,8 @@ def AnHarm(Qblist, target):
     Input is list of qubits and which qubit you want to target with the operator
     Returns Qobj anharmonicity operator for the targeted qubit
     Input:
-    - Qblist = list of Quubit objects
-    - targert = qubit to be targeted by the gate
+    - Qblist = list of Qubit objects
+    - target = qubit to be targeted by the gate
     Output: anharmonicity term for one of the qubits with correct dimensions"""
     AH = [qeye(Qb.level) for Qb in Qblist]
     AH[target] = create(Qblist[target].level)*create(Qblist[target].level)*destroy(Qblist[target].level)*destroy(Qblist[target].level)
