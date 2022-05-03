@@ -13,13 +13,7 @@ def mcs(psi,H,tlist,c_ops):
     Output: Final state after each step
     """
     if c_ops != []:
-        print("Before mcsolve")
-        print(f"Initial state: {psi}")
-        print(f"Hamiltonian: {H}")
-        print(f"tlist: {tlist}")
-        print(f"c_ops: {c_ops}")
         output = mcsolve(H, psi, tlist, c_ops=c_ops, e_ops = [], ntraj=1, progress_bar=None)
-        print("After mcsolve")
         outstate = (output.states[:, -1])
         return outstate[0]
 
