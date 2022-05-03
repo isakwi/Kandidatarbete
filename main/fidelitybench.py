@@ -18,11 +18,11 @@ import qiskit
 
 
 
-nlevel = 13
+nlevel = 20
 
 pi = np.pi
 tstart = time.time()
-c = 100000
+c = 22220
 
 #lists of elapsed time for number of levels and fidelities
 elt_list = []
@@ -46,7 +46,7 @@ tot_prop=[]
 c_ops = colf.createCollapseOperators(qblist)
 e_ops = []
 # number of trajectories
-ntraj = 40
+ntraj = 50
 tmax= [50e-9, 271e-9]
 psi0 = qbc.createPsi0(qblist, 0)  # 0 is the groundstate
 initstate = tensor(basis(2,0), basis(2,0))
@@ -73,9 +73,10 @@ onestep = opi.qasmToQnas(qc)
 
 
 for p in range(0, nlevel):
-    print(p)
+    print(p+1)
     plist.append(p)
     steps.extend(onestep)
+    #append(len(steps))
     tstart = time.time()
 
     """simulating algorithm with noise"""
@@ -90,7 +91,6 @@ for p in range(0, nlevel):
     args_id = {"steps": steps, "c_ops": c_ops_none, "e_ops_inp": e_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax,
             "ntraj": ntraj_id, "StoreTimeDynamics": False}
     state_id = ma.mainAlgorithm(args_id)
-    print(len(state_id))
     #print(state_id[0]==state_id[1], fidelity(state_id[0], state_id[1]))
 
     #tot_prop.extend(prop_onestp)
@@ -106,7 +106,7 @@ for p in range(0, nlevel):
     fmed = []
 
     for i in range(len(state)):
-         fmed.append(fidelity(state[i], state_id[0]))
+         fmed.append(fidelity(state[i], state_id))
 
     fid_list.append(np.mean(fmed))
 
@@ -117,6 +117,6 @@ print('fidelity list:', fid_list)
 print('list of corresponding levels:', plist)
 
 fig, ax = plt.subplots()
-ax.scatter(plist, fid_list, label='Fidelity')
+ax.plot(plist, fid_list, label='Fidelity')
 #ax.plot(plist, elt_list, label='elapsed time')
 plt.show()
