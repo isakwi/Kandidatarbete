@@ -105,6 +105,8 @@ def qasmToQnas(circuit):
         qubits = []
         for i in range(len(a[k])):
             lastbit = a[k][i][-3:-2]
+            if a[k][i][-4:-2].isdigit():
+                lastbit = a[k][i][-4:-2]
             result = (re.search(r"\[([A-Za-z0-9_]+)\]", a[k][i]))
             if result.group(1) == lastbit:
                 qubits.append(int(lastbit))
