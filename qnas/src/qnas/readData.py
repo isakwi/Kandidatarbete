@@ -1,7 +1,6 @@
 __all__ = ['readFile']
 
 from pandas import read_csv
-from numpy import pi
 from sys import exit
 
 def readFile(filename, n):
@@ -25,7 +24,7 @@ def readFile(filename, n):
             relax.append(arr[i, 1])
             depha.append(arr[i, 2])
             therma.append(arr[i, 3])
-            anharm.append(arr[i, 4])  # Transfer from [MHz] to angular frequency
+            anharm.append(arr[i, 4])
             levels.append(int(arr[i, 5]))
     except Exception as error:
         print("Something is wrong with the csv file! Check the example-file in git for how it should look."

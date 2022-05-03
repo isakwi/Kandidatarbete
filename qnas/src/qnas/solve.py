@@ -40,8 +40,8 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
         print("Couldn't determine number of qubits from circuit."
               "\nQnAS.solve() will now exit")
 
-    if not 1 <= n <= 15:
-        print("Invalid value for number of qubits! Must be between 1 and 15! \nQnAS.solve() will now exit")
+    if not 1 <= n:
+        print("Invalid value for number of qubits! Must be 1 or bigger! \nQnAS.solve() will now exit")
         return
 
     # Read qubit parameters
@@ -58,7 +58,10 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
             print(f"Couldn't find file {Qbfile}. QnAS.solve() will now exit")
             return
         for i in range(0, n):  # Creates list with all qubits
-            anharm[i] = 2 * pi * abs(anharm[i]) * 1e6  # Convert linear frequency to angular (input seems to usually be linear)
+            anharm[i] = 2 * pi * anharm[i] * 1e6  # Convert linear frequency to angular (input seems to usually be linear)
+            relax[i] = 1e6*relax[i]
+            depha[i] = 1e6*depha[i]
+            therma[i] = 1e6*therma[i]
             Qblist.append(qbc.Qubit(levels[i], [relax[i], depha[i], therma[i]], anharm[i]))
 
     if not 1 <= ntraj <= 100000:
