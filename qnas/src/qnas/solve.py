@@ -126,6 +126,7 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
                 if not (e_op[0].shape[0] == Qblist[e_op[1]].level and e_op[0].shape[1] == Qblist[e_op[1]].level):
                     print("Size of expectation operator doesn't match the levels for the qubit!")
                     return
+                #TODO Behöver fixa så att det inte blir error då en 2qb gate används som väntevärde
 
         except:
             print("Expectation operator could not be decided!\n"
