@@ -9,13 +9,13 @@ from . import openqasmInterpreter as opq
 def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops=None):
     """
     The main solver function. Basically a user calls this function and everything else is automatic
-    :param Qbfile: File that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi
+    :param Qbfile: File that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi [optional]
     :param circuit: Qiskit QuantumCircuit object to specify quantum circuit. Can't run without
-    :param zz_int: symmetrical square (n x n) matrix that describes interaction between qubits
-    :param ntraj: number of trajectories for the Monte Carlo solver. Default - 500
-    :param tmax: Max time for 1qb-gate and 2qb-gate ~ [t_1qb, t_2qb]. Default - [20e-9, 200e-9]
-    :param store_time_dynamics: True/False value to store time dynamics. Default - False
-    :param e_ops: Expectation value operators for store_time_dynamics. Given as [[e_op1, Tar_Con],[e_op2, Tar_Con], ...]
+    :param zz_int: symmetrical square (n x n) matrix that describes interaction between qubits [optional]
+    :param ntraj: number of trajectories for the Monte Carlo solver. Default - 500 [optional]
+    :param tmax: Max time for 1qb-gate and 2qb-gate ~ [t_1qb, t_2qb]. Default - [20e-9, 200e-9] [optional]
+    :param store_time_dynamics: True/False value to store time dynamics. Default - False [optional]
+    :param e_ops: Expectation value operators for store_time_dynamics. Given as [[e_op1, Tar_Con],[e_op2, Tar_Con], ...] [optional]
     :return: if store_time_dynamics is True: Returns ntraj many final states and two lists with exp values
             and corresponding times. Else: ntraj many final states
     """
