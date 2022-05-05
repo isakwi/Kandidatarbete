@@ -6,7 +6,7 @@ from . import readData as rd
 from . import collapseOperatorFunction as co
 from . import mainAlgorithm
 from . import openqasmInterpreter as opq
-def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, store_time_dynamics = False, e_ops=None):
+def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, storeTimeDynamics = False, e_ops=None):
     """
     The main solver function. Basically a user calls this function and everything else is automatic
     :param Qbfile: File that holds qubit parameters. Default - 3 levels, No noises, anharmonicity -225e6*2*pi [optional]
@@ -14,7 +14,7 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
     :param zz_int: symmetrical square (n x n) matrix that describes interaction between qubits [optional]
     :param ntraj: number of trajectories for the Monte Carlo solver. Default - 500 [optional]
     :param tmax: Max time for 1qb-gate and 2qb-gate ~ [t_1qb, t_2qb]. Default - [20e-9, 200e-9] [optional]
-    :param store_time_dynamics: True/False value to store time dynamics. Default - False [optional]
+    :param storeTimeDynamics: True/False value to store time dynamics. Default - False [optional]
     :param e_ops: Expectation value operators for store_time_dynamics. Given as [[e_op1, Tar_Con],[e_op2, Tar_Con], ...] [optional]
     :return: if store_time_dynamics is True: Returns ntraj many final states and two lists with exp values
             and corresponding times. Else: ntraj many final states
@@ -94,14 +94,14 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
     except:
         print("tmax could noy be decided. QnAS.solve() will now exit")
         return
-    if type(store_time_dynamics) != bool:
-        print("store_time_dynamics must be a boolean (True/False). "
+    if type(storeTimeDynamics) != bool:
+        print("storeTimeDynamics must be a boolean (True/False). "
               "QnAS.solve() will now exit")
         return
-    if store_time_dynamics == True:  # Only need to check e_ops if store_td is true
+    if storeTimeDynamics == True:  # Only need to check e_ops if store_td is true
         if e_ops is None:
             print("You didn't enter any e_ops, no need to save time dynamics!")
-            store_time_dynamics = False
+            storeTimeDynamics = False
 
         try:
             if type(e_ops) != list:
@@ -170,10 +170,10 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
 
     if zz_int is None:
         args = {"steps" : steps, "c_ops" : c_ops, "psi0" : psi0, "Qblist": Qblist, "t_max": tmax, "ntraj" : ntraj,
-                "StoreTimeDynamics": store_time_dynamics, "e_ops_inp": e_ops}
+                "StoreTimeDynamics": storeTimeDynamics, "e_ops_inp": e_ops}
 
     else:
         args = {"steps": steps, "c_ops": c_ops, "psi0": psi0, "Qblist": Qblist, "t_max": tmax, "ntraj": ntraj,
-                "StoreTimeDynamics": store_time_dynamics, "e_ops_inp": e_ops, "zz_mat": zz_int}
+                "StoreTimeDynamics": storeTimeDynamics, "e_ops_inp": e_ops, "zz_mat": zz_int}
 
     return mainAlgorithm(args)
