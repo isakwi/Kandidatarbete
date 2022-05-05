@@ -102,7 +102,7 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
         if e_ops is None:
             print("You didn't enter any e_ops, no need to save time dynamics!")
             storeTimeDynamics = False
-
+    if storeTimeDynamics == True:
         try:
             if type(e_ops) != list:
                 print("Wrong input type of e_ops! Input given on the form:\n"
@@ -119,14 +119,24 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
                           "and Tar_Con is the target and control in case of 2qb gate, as before.\n"
                           "QnAS.solve() will now exit")
                     return
-                if not 0 <= e_op[1] <= n-1:
-                    print("Your e_ops has targeted a qubit out of the scope!\n"
-                          "QnAS.solve() will now exit")
-                    return
-                if not (e_op[0].shape[0] == Qblist[e_op[1]].level and e_op[0].shape[1] == Qblist[e_op[1]].level):
-                    print("Size of expectation operator doesn't match the levels for the qubit!")
-                    return
-                #TODO Behöver fixa så att det inte blir error då en 2qb gate används som väntevärde
+                if type(e_op[1]) == int:
+                    if not 0 <= e_op[1] <= n-1:
+                        print("Your e_ops has targeted a qubit out of the scope!\n"
+                              "QnAS.solve() will now exit")
+                        return
+                    if not (e_op[0].shape[0] == Qblist[e_op[1]].level and e_op[0].shape[1] == Qblist[e_op[1]].level):
+                        print("Size of expectation operator doesn't match the levels for the qubit!")
+                        return
+                elif type(e_op[1]) == list:
+                    Tar_Con =  e_op[1]
+                    if len(Tar_Con) != 2:
+                        print("You must target 2 qubits if you have a 2qb operator!")
+                        return
+                    if not (0 <= Tar_Con[0] <= n-1 and 0 <= Tar_Con[1] <= n-1):
+                        print("Your e_ops has targeted a qubit out of the scope!\n"
+                              "QnAS.solve() will now exit")
+                        return
+
 
         except:
             print("Expectation operator could not be decided!\n"
