@@ -99,9 +99,10 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
               "QnAS.solve() will now exit")
         return
     if storeTimeDynamics == True:  # Only need to check e_ops if store_td is true
-        if e_ops is None:
-            print("You didn't enter any e_ops, no need to save time dynamics!")
-            storeTimeDynamics = False
+        if e_ops == []:
+            print("You didn't enter any e_ops, but wants to save storeTimeDynamics... Doesn't really add upp..\n"
+                  "QnAS.solve() will now exit")
+            return None, None, None
     if storeTimeDynamics == True:
         try:
             if type(e_ops) != list:
@@ -110,9 +111,16 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
                       "where e_op is a Qobj with the dimensions  ( qubit.level x qubit.level )\n"
                       "and Tar_Con is the target and control in case of 2qb gate, as before.\n"
                       "QnAS.solve() will now exit")
-                return
+                return None, None, None
             for e_op in e_ops:
                 if type(e_op) != list:
+                    print("Wrong input type of e_ops! Input given on the form:\n"
+                          "e_ops_inp = [[e_op1, Tar_Con],[e_op2, Tar_Con], ... ]\n"
+                          "where e_op is a Qobj with the dimensions  ( qubit.level x qubit.level )\n"
+                          "and Tar_Con is the target and control in case of 2qb gate, as before.\n"
+                          "QnAS.solve() will now exit")
+                    return
+                if len(e_op) != 2:
                     print("Wrong input type of e_ops! Input given on the form:\n"
                           "e_ops_inp = [[e_op1, Tar_Con],[e_op2, Tar_Con], ... ]\n"
                           "where e_op is a Qobj with the dimensions  ( qubit.level x qubit.level )\n"
