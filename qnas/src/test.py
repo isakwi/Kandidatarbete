@@ -6,4 +6,5 @@ n = 1
 circuit = qk.QuantumCircuit(n)
 circuit.rx(0, 0)
 
-result = qnas.solve(Qbfile='qubitData.csv', circuit=circuit)
+#result = qnas.solve(Qbfile='qubitData.csv', circuit=circuit)
+qnas.help()

@@ -157,7 +157,15 @@ cost_vec_d = [cost[coord_d[1]] for cost in exp_mat_d]
 
 
 fig2, ax2 = plt.subplots(2,2)
-
+"""
+for i in ax2[0,:]:
+    for j in ax2[1,:]:
+        print(j)
+        handles, labels = j.get_legend_handles_labels()
+        print(handles)
+        print(labels)
+        #j.legend(handles, labels, loc='upper center')
+"""
 
 ax2[0,0].set(xlim= (0,np.pi), ylim= (-1, 1))
 
@@ -169,17 +177,11 @@ ax2[0,0].plot(beta_vec, oo_a, 'o',markerfacecolor='none', markeredgecolor ="purp
 
 ax2[0,0].text(0.05, 0.85, '$(a)$', fontsize = 18, weight='bold', transform=ax2[0,0].transAxes)
 
-"""
-def Convert(lst):
-    return [ -i for i in lst ]
+ax2[0,0].set_xlabel(r"$\beta$")
+ax2[0,0].set_ylabel("$F,P$")
 
-cost_vec_b = Convert(cost_vec_b)
-zz_b = Convert(zz_b)
-zo_b = Convert(zo_b)
-oz_b = Convert(oz_b)
-oo_b = Convert(oo_b)"""
 
-cost_vec_b.reverse()
+cost_vec_b.reverse() # reverses the list
 zz_b.reverse()
 zo_b.reverse()
 oz_b.reverse()
@@ -198,16 +200,13 @@ ax2[1,0].plot(beta_vec, zz_c, 'o',markerfacecolor='none', markeredgecolor = "ora
 ax2[1,0].plot(beta_vec, zo_c, 'o',markerfacecolor='none', markeredgecolor ="red", label="P(|01>)")
 ax2[1,0].plot(beta_vec, oz_c, 'o',markerfacecolor='none', markeredgecolor ="green", label="P(|10>)")
 ax2[1,0].plot(beta_vec, oo_c, 'o',markerfacecolor='none', markeredgecolor ="purple",  label="P(|11>)")
+ax2[1,0].set_xlabel("\u03B2$_1$")
+ax2[1,0].set_ylabel("$F,P$")
+
 
 ax2[1,0].text(0.05, 0.85, '$(c)$', fontsize = 18, weight='bold', transform=ax2[1,0].transAxes)
 
-"""cost_vec_d = Convert(cost_vec_d)
-zz_d = Convert(zz_d)
-zo_d = Convert(zo_d)
-oz_d = Convert(oz_d)
-oo_d = Convert(oo_d)"""
-
-cost_vec_d.reverse()
+cost_vec_d.reverse() 
 zz_d.reverse()
 zo_d.reverse()
 oz_d.reverse()
@@ -218,6 +217,7 @@ ax2[1,1].plot(beta_vec, zz_d, 'o',markerfacecolor='none', markeredgecolor ="oran
 ax2[1,1].plot(beta_vec, zo_d, 'o',markerfacecolor='none', markeredgecolor ="red", label="P(|01>)")
 ax2[1,1].plot(beta_vec, oz_d, 'o',markerfacecolor='none', markeredgecolor ="green", label="P(|10>)")
 ax2[1,1].plot(beta_vec, oo_d, 'o',markerfacecolor='none', markeredgecolor ="purple",  label="P(|11>)")
+ax2[1,1].set_xlabel("\u03B2$_1$")
 
 ax2[1,1].text(0.05, 0.85, '$(d)$', fontsize = 18, weight='bold', transform=ax2[1,1].transAxes)
 
@@ -234,6 +234,15 @@ xlabels = ["0", "$\pi$/2", "$\pi$"]
 ylabels = ["-1", "0", "1"]
 plt.setp(ax2, xticks=xticks, xticklabels=xlabels,yticks=yticks, yticklabels=ylabels) #,yticks=yticks, yticklabels=ylabels)
 
+"""
+#handles, labels = ax2[1,1].get_legend_handles_labels()
+ax2[0,0].legend(loc='center')
+ax2[0,1].legend(loc='center')
+ax2[1,0].legend(loc='center')
+ax2[1,1].legend(loc='center')
+"""
+handles, labels = ax2[0,0].get_legend_handles_labels()
+fig2.legend(handles, labels, loc='upper center',ncol=5)
 
 plt.show()
 fig.savefig("betaplotbenchmark.png", format="png", bbox_inches="tight")
