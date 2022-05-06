@@ -206,6 +206,7 @@ if betaplot:
             file.write("zo = " + str(zo) + '\n')
             file.write("oz = " + str(oz) + '\n')
             file.write("oo = " + str(oo) + '\n')
+            file.write("minima = " + str(minima) + '\n' "coord = " + str(coord) + '\n')
             file.close()
 
     #saves in the current directory, you can add a path before the name: "path/betaplot"...

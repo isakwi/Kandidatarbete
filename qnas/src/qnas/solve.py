@@ -164,7 +164,7 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
         for row in zz_int:
             if type(row) != list:
                 print("Wrong format for the interaction matrix! Should be given as [[x1, x2, ... , xn], [...]]"
-                      "\nfor n qubits! QnAS.solve() will now exit")
+                      " for n qubits! \nQnAS.solve() will now exit")
                 return
             if not n <= len(row) <= 15:
                 print("The matrix can't be smaller than the number of qubits (or larger than 15)!\n "
