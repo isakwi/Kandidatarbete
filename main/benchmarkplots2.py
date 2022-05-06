@@ -1,9 +1,9 @@
 from matplotlib import pyplot as plt
+import matplotlib
 import re 
 import numpy as np
 
-"""Started to create a file to directly import the data from the different simulation,
-but it was difficult and took too long"""
+matplotlib.rcParams.update({'font.size': 12, 'text.usetex': True})
 
 with open("plotdata_b_longrun.txt") as f: # Reads the entire file as one string
     content_b = f.read()
