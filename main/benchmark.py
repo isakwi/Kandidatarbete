@@ -41,8 +41,8 @@ zz_mat = [[0, 2*pi*1e5], [0, 2*pi*1e5]]
 betaplot = True #make this true if we want 1D plots as well
 storeData = True  # To store data in a txt file
 
-gamma_resolution = 60
-beta_resolution = 60
+gamma_resolution = 61
+beta_resolution = 61
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
