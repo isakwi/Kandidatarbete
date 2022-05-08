@@ -17,7 +17,7 @@ import qiskit
 
 
 
-c = 1000000
+c = 1000
 
 #lists of elapsed time for number of levels and fidelities
 elt_list = []
@@ -25,7 +25,7 @@ plist= []
 nlist = []
 flist=[]
 
-ntraj = 2
+ntraj = 100
 e_ops=[]
 tmax= [50e-9, 271e-9]
 
@@ -102,8 +102,7 @@ def circuit(N):
     return circ
 
 
-ant = 20
-qblist = [qb1] * ant
+ant = 15
 
 
 
@@ -112,10 +111,12 @@ qblist = [qb1] * ant
 
 for it in range(2, ant):
     nlist.append(it)
+    #print(circuit(it))
 
     qblist= [qb1]* it
 
     steps = opi.qasmToQnas(circuit(it))
+    #print(steps)
 
     c_ops = colf.createCollapseOperators(qblist)
     psi0 = qbc.createPsi0(qblist, 0)  # 0 is the groundstate
@@ -124,11 +125,14 @@ for it in range(2, ant):
             "ntraj": ntraj, "StoreTimeDynamics": False}
 
     tstart = time.time()
+
     state = ma.mainAlgorithm(args)
     elt_list.append(time.time()-tstart)
+    print(len(state))
+    print('elt_list=',elt_list, nlist, "state=", state[0].dims, state[0].shape)
 
-    print('elt_list=',elt_list, nlist)
 
+print('ntraj=', ntraj)
 
 
 

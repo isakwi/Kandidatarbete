@@ -13,15 +13,15 @@ import time
 
 
 c=1000000.0
-qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * np.pi, [1,1], [1,0,0])
-qb2 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * np.pi, [2,2], [1,0,0])
+qb1 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * np.pi)
+qb2 = qbc.Qubit(3, [c, c, c], -200e6 * 2 * np.pi)
 qblist = [qb1, qb2]
 c_ops = colf.createCollapseOperators(qblist)
-ntraj = 3
+ntraj = 100
 tmax= [20e-9, 200e-9]
 psi0 = qbc.createPsi0(qblist, 0)
-iterations = 100
-initial_points = 10
+iterations = 30
+initial_points = 5
 
 problem = 'A'
 
