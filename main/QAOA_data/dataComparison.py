@@ -38,7 +38,7 @@ sim_min_a = [float(i) for i in id_a]
 sim_min_a = sim_min_a[0]
 #print(sim_min_a)
 
-with open("../../plotdata_b_longrun6161.txt") as file_b:
+with open("../plotdata_b_longrun6161.txt") as file_b:
     id_b = []
     for ln in file_b:
         if ln.startswith("minima ="):
@@ -56,7 +56,7 @@ sim_min_c = [float(i) for i in id_c]
 sim_min_c = sim_min_c[0]
 #print(sim_min_c)
 
-with open("../../plotdata_d_longrun6161.txt") as file_d:
+with open("../plotdata_d_longrun6161.txt") as file_d:
     id_d = []
     for ln in file_d:
         if ln.startswith("minima ="):
