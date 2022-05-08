@@ -149,11 +149,11 @@ for i in range(len(beta_vec)):
 print(f"Minimum value is {minima} and matrix indices [{coord[0]}, {coord[1]}]")
 print(f"It is located at gamma = {gamma_vec[coord[1]]} and beta at {beta_vec[coord[0]]}")
 
-#if storeData:
-#    with np.printoptions(threshold=np.inf):
-#        file = open("plotdata_" + problem + ".txt", "w+") #Seems to work
-#        file.write("For contourf:" + '\n' + "gamma_vec = " + str(gamma_vec) + '\n' + "beta_vec = " + str(beta_vec) + '\n' "exp_mat = " + str(exp_mat) + '\n' "minima = " + str(minima) + '\n' "coord = " + str(coord) + '\n')
-#        file.close()
+if storeData:
+    with np.printoptions(threshold=np.inf):
+        file = open("plotdata_" + problem + ".txt", "w+") #Seems to work
+        file.write("For contourf:" + '\n' + "gamma_vec = " + str(gamma_vec) + '\n' + "beta_vec = " + str(beta_vec) + '\n' "exp_mat = " + str(exp_mat) + '\n' "minima = " + str(minima) + '\n' "coord = " + str(coord) + '\n')
+        file.close()
 
 
 k11 = tensor(basis(3, 1), basis(3, 1))
