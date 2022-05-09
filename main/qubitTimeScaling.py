@@ -25,7 +25,7 @@ plist= []
 nlist = []
 flist=[]
 
-ntraj = 2
+ntraj = 100
 e_ops=[]
 tmax= [50e-9, 271e-9]
 
@@ -102,22 +102,21 @@ def circuit(N):
     return circ
 
 
-ant = 16
-qblist = [qb1] * ant
+ant = 13
+startvalue = 2
 
 
-
-
-
-
-for it in range(2, ant):
+for it in range(startvalue, ant):
+    qblist = [qb1] * it
+    print(len(qblist))
     nlist.append(it)
 
-    qblist= [qb1]* it
-
     steps = opi.qasmToQnas(circuit(it))
+    #print(circuit(it))
 
     c_ops = colf.createCollapseOperators(qblist)
+
+    #print(c_ops[0])
     psi0 = qbc.createPsi0(qblist, 0)  # 0 is the groundstate
 
     args = {"steps": steps, "c_ops": c_ops, "e_ops_inp": e_ops, "psi0": psi0, "Qblist": qblist, "t_max": tmax,

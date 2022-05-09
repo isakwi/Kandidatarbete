@@ -55,6 +55,9 @@ def qasmToQnas(circuit):
 
         new_qc = qiskit.converters.dag_to_circuit(dag)
         gatelist.append(new_qc.qasm())
+                """" Thanks to user tsgeorgios for providing this solution on how to remove depths of a circuit
+                <tsgeorgios> <08/04/2022> <v 1.0> <https://quantumcomputing.stackexchange.com/questions/13651/how-to-remove-last-n-layers-of-quantum-circuit-in-qiskit>        
+                """
 
     newgatelist = []  # function for splitting lines in gatelist. gatelist[n][k] gives nth depth, and kth element
     for i in range(qc.depth()):
