@@ -36,7 +36,7 @@ Gphiqb2 = 1/Tphiqb2
 qb1 = qbc.Qubit(3, [G1qb1, Gphiqb1, c], -229e6 * 2 * pi) # In other parts of the program we work linearly, right? Should be angular, So this is correct. Input in .csv is linear
 qb2 = qbc.Qubit(3, [G1qb2, Gphiqb2, c], -225e6 * 2 * pi)
 
-zz_mat = [[0, 2*pi*1e5], [0, 2*pi*1e5]]
+zz_mat = [] # [[0, 2*pi*1e5], [0, 2*pi*1e5]]
 
 betaplot = True #make this true if we want 1D plots as well
 storeData = True  # To store data in a txt file
@@ -60,7 +60,7 @@ tmax= [50e-9, 271e-9]
 psi0 = qbc.createPsi0(qblist, 0)  # 0 is the groundstate
 
 #for problem in ["c","d"]:
-problem = 'b'
+problem = 'd'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -198,7 +198,7 @@ if betaplot:
     ax2.set_ylabel("Cost function or probability of occupation")
     if storeData:
         with np.printoptions(threshold=np.inf):
-            file = open("plotdata_betaplot_" + problem + ".txt", "w+") #Seems to work
+            file = open("plotdata_" + problem + ".txt", "a") #Seems to work
             file.write("For betaplot:" + '\n')
             file.write("beta_vec = " + str(beta_vec) + '\n')
             file.write("cost_vec = " + str(cost_vec) + '\n')
