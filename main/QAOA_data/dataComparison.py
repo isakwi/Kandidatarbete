@@ -5,7 +5,14 @@ import re
 #from ../benchmarkplots2 import reWriteMatrix
 
 sys.path.insert(1, '../')
-from benchmarkplots2 import reWriteMatrix
+from benchmarkplots2 import generateMatrices
+
+file_a = "../benchmarkDATA&PLOTS/plotdata_a_longrun.txt"
+file_b = "../benchmarkDATA&PLOTS/plotdata_b_longrun6161.txt"
+file_c = "../benchmarkDATA&PLOTS/plotdata_c_longrun6161.txt"
+file_d = "../benchmarkDATA&PLOTS/plotdata_d_longrun6161.txt"
+
+exp_mat_a, exp_mat_b, exp_mat_c, exp_mat_d = generateMatrices(file_a, file_b, file_c, file_d)
 
 min_a = np.amin(data_a)
 index_a = np.where(data_a == min_a)
@@ -35,7 +42,7 @@ print("index_c = " + str(index_c))
 print("min_d = " + str(min_d))
 print("index_d = " + str(index_d))
 
-with open("../benchmarkDATA&PLOTS/plotdata_a_longrun.txt") as file_a:
+with open(file_a) as file_a:
     id_a = []
     ind_a = []
     for ln in file_a:
@@ -43,12 +50,12 @@ with open("../benchmarkDATA&PLOTS/plotdata_a_longrun.txt") as file_a:
             id_a.append(ln[9:-1])
         if ln.startswith("coord ="):
             ind_a.append(ln[8:-1])
-    #content_a = file_a.read()
 
 sim_min_a = [float(i) for i in id_a]
 sim_min_a = sim_min_a[0]
 sim_index_a = ind_a
 sim_index_a = sim_index_a[0]
+
 
 """
 content_a = re.split(".+=", content_a)
@@ -60,7 +67,7 @@ max_a = np.amin(-exp_mat_a)
 
 #print(sim_min_a)
 
-with open("../benchmarkDATA&PLOTS/plotdata_b_longrun6161.txt") as file_b:
+with open(file_b) as file_b:
     id_b = []
     ind_b = []
     for ln in file_b:
@@ -68,11 +75,12 @@ with open("../benchmarkDATA&PLOTS/plotdata_b_longrun6161.txt") as file_b:
             id_b.append(ln[9:-1])
         if ln.startswith("coord ="):
             ind_b.append(ln[9:-2])
-    #content_b = file_b.read()
 sim_min_b = [float(i) for i in id_b]
 sim_min_b = sim_min_b[0]
 sim_index_b = ind_b
 sim_index_b = sim_index_b[0]
+
+
 """
 exp_mat_b = content_b[3]
 exp_mat_b = reWriteMatrix(exp_mat_b)
@@ -80,7 +88,7 @@ max_b = np.amin(-exp_mat_b)
 """
 #print(sim_min_b)
 
-with open("../benchmarkDATA&PLOTS/plotdata_c_longrun6161.txt") as file_c:
+with open(file_c) as file_c:
     id_c = []
     ind_c = []
     for ln in file_c:
@@ -88,11 +96,12 @@ with open("../benchmarkDATA&PLOTS/plotdata_c_longrun6161.txt") as file_c:
             id_c.append(ln[9:-1])
         if ln.startswith("coord ="):
             ind_c.append(ln[8:-1])
-    #content_c = file_c.read()
 sim_min_c = [float(i) for i in id_c]
 sim_min_c = sim_min_c[0]
 sim_index_c = ind_c
 sim_index_c = sim_index_c[0]
+
+
 """
 exp_mat_c = content_c[3]
 exp_mat_c = reWriteMatrix(exp_mat_c)
@@ -100,7 +109,7 @@ max_c = np.amin(-exp_mat_c)
 """
 #print(sim_min_c)
 
-with open("../benchmarkDATA&PLOTS/plotdata_d_longrun6161.txt") as file_d:
+with open(file_d) as file_d:
     id_d = []
     ind_d = []
     for ln in file_d:
@@ -108,11 +117,12 @@ with open("../benchmarkDATA&PLOTS/plotdata_d_longrun6161.txt") as file_d:
             id_d.append(ln[9:-1])
         if ln.startswith("coord ="):
             ind_d.append(ln[9:-2])
-    #content_d = file_d.read()
 sim_min_d = [float(i) for i in id_d]
 sim_min_d = sim_min_d[0]
 sim_index_d = ind_d
 sim_index_d = sim_index_d[0]
+
+
 """
 exp_mat_d = content_d[3]
 exp_mat_d = reWriteMatrix(exp_mat_d)
@@ -184,12 +194,27 @@ print(sim_min_a)
 print(sim_min_b)
 print(sim_min_c)
 print(sim_min_d)
-
+print("diff i min")
 print(proc_a)
 print(proc_b)
 print(proc_c)
 print(proc_d)
 
+#mean_diff_a = np.mean(abs(exp_mat_a - data_a))
+mean_diff_b = np.mean(abs(exp_mat_b - data_b))
+mean_diff_c = np.mean(abs(exp_mat_c - data_c))
+mean_diff_d = np.mean(abs(exp_mat_d - data_d))
+
+#mean_diff_proc_a 
+mean_diff_proc_b = abs(mean_diff_b/min_b)
+mean_diff_proc_c = abs(mean_diff_c/min_c)
+mean_diff_proc_d = abs(mean_diff_d/min_d)
+
+
+print("average percentage diff")
+print(mean_diff_proc_b)
+print(mean_diff_proc_c)
+print(mean_diff_proc_d)
 
 """
 print(sim_gamma_a)
