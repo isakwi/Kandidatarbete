@@ -36,13 +36,13 @@ Gphiqb2 = 1/Tphiqb2
 qb1 = qbc.Qubit(3, [G1qb1, Gphiqb1, c], -229e6 * 2 * pi) # In other parts of the program we work linearly, right? Should be angular, So this is correct. Input in .csv is linear
 qb2 = qbc.Qubit(3, [G1qb2, Gphiqb2, c], -225e6 * 2 * pi)
 
-zz_mat = [[0, 2*pi*1e5], [0, 2*pi*1e5]]
+zz_mat = [] # [[0, 2*pi*1e5], [0, 2*pi*1e5]]
 
 betaplot = True #make this true if we want 1D plots as well
 storeData = True  # To store data in a txt file
 
-gamma_resolution = 60
-beta_resolution = 60
+gamma_resolution = 61
+beta_resolution = 61
 
 # list of angles for parameters
 gamma_vec = np.linspace(0, pi, gamma_resolution)
@@ -58,7 +58,9 @@ c_ops = colf.createCollapseOperators(qblist)
 ntraj = 500
 tmax= [50e-9, 271e-9]
 psi0 = qbc.createPsi0(qblist, 0)  # 0 is the groundstate
-problem = 'a'
+
+#for problem in ["c","d"]:
+problem = 'd'
 
 if problem == 'a':
     J, h1, h2 = 1/2, -1/2, 0
@@ -109,7 +111,7 @@ for i in range(0, gamma_resolution):
 # saving mean value of expectation value in matrix
         exp_mat[j, i] = np.mean(expect(ham, state))  # Beta y-axis and gamma x-axis
         if betaplot:
-            state_mat[j][i] = state[0].data
+            state_mat[j][i] = state
 
 print("Time elapsed: %.2f seconds." %(time.time()-tstart))
 
@@ -134,10 +136,16 @@ plt.show()
 minima = exp_mat[0][0]
 coord = [0, 0]
 for i in range(len(beta_vec)):
-    for j in range(len(gamma_vec)):
-        if exp_mat[i][j] < minima:
-            minima = exp_mat[i][j]
-            coord = [i, j]
+    if problem in ['b', 'd']:
+        for j in range(int(len(gamma_vec)/2)):  # Only search up to π/2 to not having to flip the data
+            if exp_mat[i][j] < minima:
+                minima = exp_mat[i][j]
+                coord = [i, j]
+    else:
+        for j in range(len(gamma_vec)):
+            if exp_mat[i][j] < minima:
+                minima = exp_mat[i][j]
+                coord = [i, j]
 print(f"Minimum value is {minima} and matrix indices [{coord[0]}, {coord[1]}]")
 print(f"It is located at gamma = {gamma_vec[coord[1]]} and beta at {beta_vec[coord[0]]}")
 
@@ -147,18 +155,36 @@ if storeData:
         file.write("For contourf:" + '\n' + "gamma_vec = " + str(gamma_vec) + '\n' + "beta_vec = " + str(beta_vec) + '\n' "exp_mat = " + str(exp_mat) + '\n' "minima = " + str(minima) + '\n' "coord = " + str(coord) + '\n')
         file.close()
 
+
+k11 = tensor(basis(3, 1), basis(3, 1))
+k00 = tensor(basis(3, 0), basis(3, 0))
+k01 = tensor(basis(3, 0), basis(3, 1))
+k10 = tensor(basis(3, 1), basis(3, 0))
+e00 = k00*k00.dag()
+e01 = k01*k01.dag()
+e10 = k10*k10.dag()
+e11 = k11*k11.dag()
+zz=[]
+zo=[]
+oz=[]
+oo=[]
 if betaplot:
     fig, ax2 = plt.subplots()
     state_vec = [row[coord[1]] for row in state_mat]
     cost_vec = [cost[coord[1]] for cost in exp_mat]
-    zz = [state[0,0] for state in state_vec]  # |00>
-    zz = [np.abs(amp) ** 2 for amp in zz]
-    zo = [state[1,0] for state in state_vec]  # |01>
-    zo = [np.abs(amp) ** 2 for amp in zo]
-    oz = [state[3,0] for state in state_vec]  # |10>
-    oz = [np.abs(amp) ** 2 for amp in oz]
-    oo = [state[4,0] for state in state_vec]  # |11>
-    oo = [np.abs(amp) ** 2 for amp in oo]
+    for state in state_vec:
+        zz.append(np.mean(expect(e00, state)))  # |00>
+        zo.append(np.mean(expect(e01, state)))  # |01>
+        oz.append(np.mean(expect(e10, state)))  # |10>
+        oo.append(np.mean(expect(e11, state)))  # |11>
+    #zz = [state[0,0] for state in state_vec]  # |00>
+    #zz = [np.abs(amp) ** 2 for amp in zz]
+    #zo = [state[1,0] for state in state_vec]  # |01>
+    #zo = [np.abs(amp) ** 2 for amp in zo]
+    #oz = [state[3,0] for state in state_vec]  # |10>
+    #oz = [np.abs(amp) ** 2 for amp in oz]
+    #oo = [state[4,0] for state in state_vec]  # |11>
+    #oo = [np.abs(amp) ** 2 for amp in oo]
     ax2.plot(beta_vec, cost_vec, 'o',color = "magenta", label="F")
     ax2.plot(beta_vec, zz, 'o',color = "orange", label="P(|00>)")
     ax2.plot(beta_vec, zo, 'ro', label="P(|01>)")
@@ -170,13 +196,18 @@ if betaplot:
     #ax2.set_title('Problem {problem}')
     ax2.set_xlabel(r"$\beta$")
     ax2.set_ylabel("Cost function or probability of occupation")
-    file = open("plotdata_" + problem + ".txt", "a") #Seems to work
-    file.write("For betaplot:" + '\n' + "beta_vec = " + str(beta_vec) + '\n')
-    file.write("zz = " + str(zz) + '\n')
-    file.write("zo = " + str(zo) + '\n')
-    file.write("oz = " + str(oz) + '\n')
-    file.write("oo = " + str(oo) + '\n')
-    file.close()
+    if storeData:
+        with np.printoptions(threshold=np.inf):
+            file = open("plotdata_" + problem + ".txt", "a") #Seems to work
+            file.write("For betaplot:" + '\n')
+            file.write("beta_vec = " + str(beta_vec) + '\n')
+            file.write("cost_vec = " + str(cost_vec) + '\n')
+            file.write("zz = " + str(zz) + '\n')
+            file.write("zo = " + str(zo) + '\n')
+            file.write("oz = " + str(oz) + '\n')
+            file.write("oo = " + str(oo) + '\n')
+            file.write("minima = " + str(minima) + '\n' "coord = " + str(coord) + '\n')
+            file.close()
 
     #saves in the current directory, you can add a path before the name: "path/betaplot"...
     imStr = "betaplot" + str(problem).upper() + "FOR_PROGRAM.pdf"

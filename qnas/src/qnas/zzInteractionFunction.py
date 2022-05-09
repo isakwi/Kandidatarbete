@@ -1,4 +1,4 @@
-__all__ = ['zzInteraction']
+ __all__ = ['zzInteraction']
 
 from numpy import array
 from qutip import qeye, destroy, tensor
@@ -28,7 +28,7 @@ def zzInteraction(Qblist, interaction_mat):
                 eyeqb[qb[0]] = destroy(qb[1].level).dag() * destroy(qb[1].level)
                 eyequb[qub[0]] = destroy(qub[1].level).dag() * destroy(qub[1].level)
 
-                inter = inter + interaction_mat[qb[0],qub[0]] * tensor(eyeqb)*tensor(eyequb)
+                inter = inter + (interaction_mat[qb[0],qub[0]]/2) * tensor(eyeqb)*tensor(eyequb)
                 H_intlist.append(inter)
 
     for ind in range(0, len(H_intlist)): #adds interaction terms together and returns hamiltonian term for ZZ-interaction
