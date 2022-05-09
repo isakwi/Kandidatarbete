@@ -5,16 +5,16 @@ import numpy as np
 
 matplotlib.rcParams.update({'font.size': 12, 'text.usetex': True})
 
-with open("plotdata_b_longrun.txt") as f: # Reads the entire file as one string
+with open("benchmarkDATA&PLOTS/plotdata_b_longrun.txt") as f: # Reads the entire file as one string
     content_b = f.read()
 
-with open("plotdata_c_longrun2.txt") as f: # Reads the entire file as one string
+with open("benchmarkDATA&PLOTS/plotdata_c_longrun2.txt") as f: # Reads the entire file as one string
     content_c = f.read()
 
-with open("plotdata_d_longrun.txt") as f:
+with open("benchmarkDATA&PLOTS/plotdata_d_longrun.txt") as f:
     content_d = f.read()
 
-with open("plotdata_a_longrun.txt") as f:
+with open("benchmarkDATA&PLOTS/plotdata_a_longrun.txt") as f:
     content_a = f.read()
 
 # Splits the text document into multiple strings with the different data

@@ -35,7 +35,7 @@ print("index_c = " + str(index_c))
 print("min_d = " + str(min_d))
 print("index_d = " + str(index_d))
 
-with open("../plotdata_a_isaklongrun.txt") as file_a:
+with open("../benchmarkDATA&PLOTS/plotdata_a_longrun.txt") as file_a:
     id_a = []
     ind_a = []
     for ln in file_a:
@@ -60,7 +60,7 @@ max_a = np.amin(-exp_mat_a)
 
 #print(sim_min_a)
 
-with open("../../plotdata_b_longrun6161.txt") as file_b:
+with open("../benchmarkDATA&PLOTS/plotdata_b_longrun6161.txt") as file_b:
     id_b = []
     ind_b = []
     for ln in file_b:
@@ -80,7 +80,7 @@ max_b = np.amin(-exp_mat_b)
 """
 #print(sim_min_b)
 
-with open("../plotdata_c_longrun6161.txt") as file_c:
+with open("../benchmarkDATA&PLOTS/plotdata_c_longrun6161.txt") as file_c:
     id_c = []
     ind_c = []
     for ln in file_c:
@@ -100,7 +100,7 @@ max_c = np.amin(-exp_mat_c)
 """
 #print(sim_min_c)
 
-with open("../../plotdata_d_longrun6161.txt") as file_d:
+with open("../benchmarkDATA&PLOTS/plotdata_d_longrun6161.txt") as file_d:
     id_d = []
     ind_d = []
     for ln in file_d:
