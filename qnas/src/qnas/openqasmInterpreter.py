@@ -53,10 +53,7 @@ def qasmToQnas(circuit):
             for node in layer:
                 if node.type == 'op':
                     dag.remove_op_node(node)
-        """" Thanks to user tsgeorgios for providing this solution on how to remove depths of a circuit
-        <tsgeorgios> <08/04/2022> <v 1.0> <https://quantumcomputing.stackexchange.com
-        /questions/13651/how-to-remove-last-n-layers-of-quantum-circuit-in-qiskit>        
-        """
+
 
         new_qc = dag_to_circuit(dag)
         gatelist.append(new_qc.qasm())
