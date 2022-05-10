@@ -7,10 +7,10 @@ import re
 sys.path.insert(1, '../')
 from benchmarkplots2 import generateMatrices
 
-file_a = "../benchmarkDATA&PLOTS/plotdata_a_longrun.txt"
-file_b = "../benchmarkDATA&PLOTS/plotdata_b_longrun6161.txt"
-file_c = "../benchmarkDATA&PLOTS/plotdata_c_longrun6161.txt"
-file_d = "../benchmarkDATA&PLOTS/plotdata_d_longrun6161.txt"
+file_a = "../benchmarkDATA&PLOTS/Old_Data/plotdata_a_longrun.txt"
+file_b = "../benchmarkDATA&PLOTS/Old_Data/plotdata_b_longrun6161.txt"
+file_c = "../benchmarkDATA&PLOTS/Old_Data/plotdata_c_longrun6161.txt"
+file_d = "../benchmarkDATA&PLOTS/Old_Data/plotdata_d_longrun6161.txt"
 
 exp_mat_a, exp_mat_b, exp_mat_c, exp_mat_d = generateMatrices(file_a, file_b, file_c, file_d)
 

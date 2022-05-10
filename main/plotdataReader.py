@@ -2,13 +2,13 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 '''Put in the correct file names for each run here'''
-with open('benchmarkDATA&PLOTS/plotdata_d_longrun.txt', 'r') as fa:   # OBS, correct the filename
+with open('benchmarkDATA&PLOTS/Old_Data/plotdata_d_longrun.txt', 'r') as fa:   # OBS, correct the filename
     linesA = fa.readlines()
-with open('benchmarkDATA&PLOTS/plotdata_b_longrun.txt', 'r') as fb:
+with open('benchmarkDATA&PLOTS/Old_Data/plotdata_b_longrun.txt', 'r') as fb:
     linesB = fb.readlines()
-with open('benchmarkDATA&PLOTS/plotdata_c_longrun2.txt', 'r') as fc:
+with open('benchmarkDATA&PLOTS/Old_Data/plotdata_c_longrun2.txt', 'r') as fc:
     linesC = fc.readlines()
-with open('benchmarkDATA&PLOTS/plotdata_d_longrun.txt', 'r') as fd:
+with open('benchmarkDATA&PLOTS/Old_Data/plotdata_d_longrun.txt', 'r') as fd:
     linesD = fd.readlines()
 
 gamma_vec =[]   # Should be the same for every run since we use 60x60 for all of them
