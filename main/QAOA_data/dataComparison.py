@@ -2,6 +2,7 @@ from extract_Labber_results import data_a, data_b, data_c, data_d
 import numpy as np  
 import sys
 import re
+from matplotlib import pyplot as plt
 #from ../benchmarkplots2 import reWriteMatrix
 
 sys.path.insert(1, '../')
@@ -17,18 +18,25 @@ exp_mat_a, exp_mat_b, exp_mat_c, exp_mat_d = generateMatrices(file_a, file_b, fi
 min_a = np.amin(data_a)
 index_a = np.where(data_a == min_a)
 index_a = list(zip(index_a[0], index_a[1]))
+max_a = -np.amin(-data_a)
+
 
 min_b = np.amin(data_b)
 index_b = np.where(data_b == min_b)
 index_b = list(zip(index_b[0], index_b[1]))
+max_b = -np.amin(-data_b)
 
 min_c = np.amin(data_c)
 index_c = np.where(data_c == min_c)
 index_c = list(zip(index_c[0], index_c[1]))
+max_c = -np.amin(-data_c)
+
 
 min_d = np.amin(data_d)
 index_d = np.where(data_d == min_d)
 index_d = list(zip(index_d[0], index_d[1]))
+max_d = -np.amin(-data_d)
+
 
 print("min_a = " + str(min_a))
 print("index_a = " + str(index_a))
@@ -234,3 +242,17 @@ print(diff_b)
 print(diff_c)
 print(diff_d)
 """
+"""
+print(max_a)
+print(max_b)
+print(max_c)
+print(max_d)
+"""
+
+
+plt.imshow(exp_mat_b - data_b, origin='lower',cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1)
+plt.show()
+plt.imshow(exp_mat_c - data_c, origin='lower', cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1)
+plt.show()
+plt.imshow(exp_mat_d - data_d, origin='lower', cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1)
+plt.show()

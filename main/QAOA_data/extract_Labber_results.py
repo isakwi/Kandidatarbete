@@ -28,12 +28,12 @@ else:
 # In[8]:
 
 
-"""
+
 for i in range(4):
     plt.imshow(data[i,:,:], origin='lower')
     #print(i)
     plt.show()
-"""
+
 """
 0 = b
 1 = c

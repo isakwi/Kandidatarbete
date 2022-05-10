@@ -1,4 +1,4 @@
- __all__ = ['zzInteraction']
+__all__ = ['zzInteraction']
 
 from numpy import array
 from qutip import qeye, destroy, tensor

@@ -153,29 +153,37 @@ if __name__ == "__main__":
     labels = ["0", "$\pi$/2", "$\pi$"]
     cbar = fig.colorbar(cs_b, ticks=np.linspace(-1,1,9), ax=ax)
     ticks = [gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]]
-    plt.setp(ax, xticks=ticks, xticklabels=labels, yticks=ticks, yticklabels=labels)
+    #plt.setp(ax, xticks=ticks, xticklabels=labels, yticks=ticks, yticklabels=labels)
+    plt.setp(ax[0,0], xticks=ticks, xticklabels=[], yticks=ticks, yticklabels=labels)
+    plt.setp(ax[0,1], xticks=ticks, xticklabels=[], yticks=ticks, yticklabels=[])
+    plt.setp(ax[1,0], xticks=ticks, xticklabels=labels, yticks=ticks, yticklabels=labels)
+    plt.setp(ax[1,1], xticks=ticks, xticklabels=labels, yticks=ticks, yticklabels=[])
+    
+    
 
     #ax[0,0].set_title(f'Cost function F($\gamma$, \u03B2) for problem a')
-    ax[0,0].set_ylabel("\u03B2$_1$")
+    #ax[0,0].set_ylabel("\u03B2$_1$")
+    ax[0,0].set_ylabel(r"$\beta_1$")    
     #plt.xticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
     #plt.yticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
-    ax[0,0].text(0.05, 0.85, '$(a)$', fontsize = 18, weight='bold', transform=ax[0,0].transAxes)
+    ax[0,0].text(0.05, 0.85, r'$\textbf{(a)}$', fontsize = 18, weight='bold', transform=ax[0,0].transAxes)
 
     #ax[0,1].set_title(f'Cost function F($\gamma$, \u03B2) for problem b')
-    ax[0,1].text(0.05,0.85, '$(b)$', fontsize = 18, weight='bold', transform=ax[0,1].transAxes)
+    ax[0,1].text(0.05,0.85, r'$\textbf{(b)}$', fontsize = 18, weight='bold', transform=ax[0,1].transAxes)
     #plt.xticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
     #plt.yticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
 
     #ax[1,0].set_title(f'Cost function F($\gamma$, \u03B2) for problem c')
     ax[1,0].set_xlabel("$\gamma_1$")
-    ax[1,0].set_ylabel("\u03B2$_1$")
-    ax[1,0].text(0.05, 0.85, '$(c)$', fontsize = 18, weight='bold', transform=ax[1,0].transAxes)
+    #ax[1,0].set_ylabel("\u03B2$_1$")
+    ax[1,0].set_ylabel(r"$\beta_1$")
+    ax[1,0].text(0.05, 0.85, r'$\textbf{(c)}$', fontsize = 18, weight='bold', transform=ax[1,0].transAxes)
     #plt.xticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
     #plt.yticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
 
     #ax[1,1].set_title(f'Cost function F($\gamma$, \u03B2) for problem d')
     ax[1,1].set_xlabel("$\gamma_1$")
-    ax[1,1].text(0.05, 0.85, '$(d)$', fontsize = 18, weight='bold', transform=ax[1,1].transAxes)
+    ax[1,1].text(0.05, 0.85, r'$\textbf{(d)}$', fontsize = 18, weight='bold', transform=ax[1,1].transAxes)
     #plt.xticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
     #plt.yticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
 
@@ -206,15 +214,15 @@ if __name__ == "__main__":
     beta_vec = np.linspace(0,np.pi,61)
     ax2[0,0].set(xlim= (0,np.pi), ylim= (-1, 1))
 
-    ax2[0,0].plot(beta_vec, cost_vec_a, 'o',markerfacecolor='none', markeredgecolor ="magenta", label="F")
-    ax2[0,0].plot(beta_vec, zz_a, 'o',markerfacecolor='none', markeredgecolor ="orange", label="P(|00>)")
-    ax2[0,0].plot(beta_vec, zo_a, 'o',markerfacecolor='none', markeredgecolor ="red", label="P(|01>)")
-    ax2[0,0].plot(beta_vec, oz_a, 'o',markerfacecolor='none', markeredgecolor ="green", label="P(|10>)")
-    ax2[0,0].plot(beta_vec, oo_a, 'o',markerfacecolor='none', markeredgecolor ="purple",  label="P(|11>)")
+    ax2[0,0].plot(beta_vec, cost_vec_a, 'o',markerfacecolor='none', markeredgecolor ="magenta", label="$F$")
+    ax2[0,0].plot(beta_vec, zz_a, 'o',markerfacecolor='none', markeredgecolor ="orange", label=r"$P_{|00\rangle}$")
+    ax2[0,0].plot(beta_vec, zo_a, 'o',markerfacecolor='none', markeredgecolor ="red", label=r"$P_{|01\rangle}$")
+    ax2[0,0].plot(beta_vec, oz_a, 'o',markerfacecolor='none', markeredgecolor ="green", label=r"$P_{|10\rangle}$")
+    ax2[0,0].plot(beta_vec, oo_a, 'o',markerfacecolor='none', markeredgecolor ="purple",  label=r"$P_{|11\rangle}$")
 
-    ax2[0,0].text(0.05, 0.85, '$(a)$', fontsize = 18, weight='bold', transform=ax2[0,0].transAxes)
+    ax2[0,0].text(0.05, 0.85, r'$\textbf{(a)}$', fontsize = 18, weight='bold', transform=ax2[0,0].transAxes)
 
-    ax2[0,0].set_xlabel(r"$\beta$")
+    #ax2[0,0].set_xlabel(r"$\beta$")
     ax2[0,0].set_ylabel("$F,P$")
 
 
@@ -230,18 +238,18 @@ if __name__ == "__main__":
     ax2[0,1].plot(beta_vec, oz_b, 'o',markerfacecolor='none', markeredgecolor ="green", label="P(|10>)")
     ax2[0,1].plot(beta_vec, oo_b, 'o',markerfacecolor='none', markeredgecolor ="purple",  label="P(|11>)")
 
-    ax2[0,1].text(0.05, 0.85, '$(b)$', fontsize = 18, weight='bold', transform=ax2[0,1].transAxes)
+    ax2[0,1].text(0.05, 0.85, r'$\textbf{(b)}$', fontsize = 18, weight='bold', transform=ax2[0,1].transAxes)
 
     ax2[1,0].plot(beta_vec, cost_vec_c, 'o',markerfacecolor='none', markeredgecolor = "magenta", label="F")
     ax2[1,0].plot(beta_vec, zz_c, 'o',markerfacecolor='none', markeredgecolor = "orange", label="P(|00>)")
     ax2[1,0].plot(beta_vec, zo_c, 'o',markerfacecolor='none', markeredgecolor ="red", label="P(|01>)")
     ax2[1,0].plot(beta_vec, oz_c, 'o',markerfacecolor='none', markeredgecolor ="green", label="P(|10>)")
     ax2[1,0].plot(beta_vec, oo_c, 'o',markerfacecolor='none', markeredgecolor ="purple",  label="P(|11>)")
-    ax2[1,0].set_xlabel("\u03B2$_1$")
+    ax2[1,0].set_xlabel(r"$\beta$")
     ax2[1,0].set_ylabel("$F,P$")
 
 
-    ax2[1,0].text(0.05, 0.85, '$(c)$', fontsize = 18, weight='bold', transform=ax2[1,0].transAxes)
+    ax2[1,0].text(0.05, 0.05, r'$\textbf{(c)}$', fontsize = 18, weight='bold', transform=ax2[1,0].transAxes)
 
     #cost_vec_d.reverse()
     #zz_d.reverse()
@@ -254,9 +262,9 @@ if __name__ == "__main__":
     ax2[1,1].plot(beta_vec, zo_d, 'o',markerfacecolor='none', markeredgecolor ="red", label="P(|01>)")
     ax2[1,1].plot(beta_vec, oz_d, 'o',markerfacecolor='none', markeredgecolor ="green", label="P(|10>)")
     ax2[1,1].plot(beta_vec, oo_d, 'o',markerfacecolor='none', markeredgecolor ="purple",  label="P(|11>)")
-    ax2[1,1].set_xlabel("\u03B2$_1$")
+    ax2[1,1].set_xlabel(r"$\beta$")
 
-    ax2[1,1].text(0.05, 0.85, '$(d)$', fontsize = 18, weight='bold', transform=ax2[1,1].transAxes)
+    ax2[1,1].text(0.05, 0.05, r'$\textbf{(d)}$', fontsize = 18, weight='bold', transform=ax2[1,1].transAxes)
 
     #ax2.legend()
     #ax2.set(xlim= (0,pi), ylim= (-1, 1))
@@ -269,7 +277,12 @@ if __name__ == "__main__":
     yticks = [-1,0,1]
     xlabels = ["0", "$\pi$/2", "$\pi$"]
     ylabels = ["-1", "0", "1"]
-    plt.setp(ax2, xticks=xticks, xticklabels=xlabels,yticks=yticks, yticklabels=ylabels) #,yticks=yticks, yticklabels=ylabels)
+    #plt.setp(ax2, xticks=xticks, xticklabels=xlabels,yticks=yticks, yticklabels=ylabels) #,yticks=yticks, yticklabels=ylabels)
+    plt.setp(ax2[0,0], xticks=xticks, xticklabels=[],yticks=yticks, yticklabels=ylabels) #,yticks=yticks, yticklabels=ylabels)
+    plt.setp(ax2[0,1], xticks=xticks, xticklabels=[],yticks=yticks, yticklabels=[]) #,yticks=yticks, yticklabels=ylabels)
+    plt.setp(ax2[1,0], xticks=xticks, xticklabels=xlabels,yticks=yticks, yticklabels=ylabels) #,yticks=yticks, yticklabels=ylabels)
+    plt.setp(ax2[1,1], xticks=xticks, xticklabels=xlabels,yticks=yticks, yticklabels=[]) #,yticks=yticks, yticklabels=ylabels)
+
 
     """
     #handles, labels = ax2[1,1].get_legend_handles_labels()
