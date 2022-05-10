@@ -20,6 +20,12 @@ def tensorifyExpectationOperator(Qblist, Tar_Con, Gate):
     Output: Tensored gate with correct dimension
     """
     gateList = [qeye(Qb.level) for Qb in Qblist]
+
+    #### Error check from solve to be implemented here. Remove from solve after implemented!!
+    """if not (e_op[0].shape[0] == Qblist[e_op[1]].level and e_op[0].shape[1] == Qblist[e_op[1]].level):
+        print("Size of expectation operator doesn't match the levels for the qubit!")
+        return"""
+    ####
     if Gate.shape[0] == Qblist[0].level ** len(Qblist): #If the user wants entanglement or something. Note: all qubits must have same energy level
         return Gate
     if type(Tar_Con) == int:  # 1qb gate
