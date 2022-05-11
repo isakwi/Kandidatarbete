@@ -144,6 +144,9 @@ def solve(Qbfile = None, circuit = None, zz_int = None, ntraj=500, tmax=None, st
                         print("Your e_ops has targeted a qubit out of the scope!\n"
                               "QnAS.solve() will now exit")
                         return
+                    if Tar_Con[0] == Tar_Con[1]:
+                        print("Same qubit is target, and control! QnAS.solve() will now exit.")
+                        return
 
 
         except:
