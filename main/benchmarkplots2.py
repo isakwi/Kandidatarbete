@@ -55,13 +55,14 @@ def generateMatrices(file_a, file_b, file_c, file_d):
         content_a = f.read()
 
     # Splits the text document into multiple strings with the different data
-    str1, gamma_vec_a, beta_vec_a, exp_mat_a, minima_a, coord_a, beta_vec_a, zz_a, zo_a, oz_a, oo_a = re.split(".+=", content_a)
-
+#    str1, gamma_vec_a, beta_vec_a, exp_mat_a, minima_a, coord_a, beta_vec_a, zz_a, zo_a, oz_a, oo_a = re.split(".+=", content_a)
+    #str1, gamma_vec_a, beta_vec_a, exp_mat_a, minima_a, coord_a = re.split(".+=", content_a)
+    str1, gamma_vec_a, beta_vec_a, exp_mat_a, minima_a, coord_a, str2, beta_vec_b, cost_vec_a, zz_a, zo_a, oz_a, oo_a, minima_a = re.split(".+=", content_a) # not correct, only went for correct number of terms
     str1, gamma_vec_b, beta_vec_b, exp_mat_b, minima_b, coord_b = re.split(".+=", content_b)
 
     str1, gamma_vec_c, beta_vec_c, exp_mat_c, minima_c, coord_c = re.split(".+=", content_c)
 
-    str1, gamma_vec_d, beta_vec_d, exp_mat_d, minima_d, coord_d = re.split(".+=", content_d)
+    str1, gamma_vec_d, beta_vec_d, exp_mat_d, minima_d, coord_d, str2, beta_vec_d, cost_vec_d, zz_d, zo_d, oz_d, oo_d, minima_d  = re.split(".+=", content_d)
 
     exp_mat_a = reWriteMatrix(exp_mat_a)
     exp_mat_b = reWriteMatrix(exp_mat_b)

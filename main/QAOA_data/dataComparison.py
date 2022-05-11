@@ -8,10 +8,10 @@ from matplotlib import pyplot as plt
 sys.path.insert(1, '../')
 from benchmarkplots2 import generateMatrices
 
-file_a = "../benchmarkDATA&PLOTS/Old_Data/plotdata_a_longrun.txt"
+file_a = "../benchmarkDATA&PLOTS/plotdata_a_Isak61x61final.txt"
 file_b = "../benchmarkDATA&PLOTS/Old_Data/plotdata_b_longrun6161.txt"
 file_c = "../benchmarkDATA&PLOTS/Old_Data/plotdata_c_longrun6161.txt"
-file_d = "../benchmarkDATA&PLOTS/Old_Data/plotdata_d_longrun6161.txt"
+file_d = "../benchmarkDATA&PLOTS/plotdata_d_6161Ed.txt"
 
 exp_mat_a, exp_mat_b, exp_mat_c, exp_mat_d = generateMatrices(file_a, file_b, file_c, file_d)
 
@@ -249,10 +249,11 @@ print(max_c)
 print(max_d)
 """
 
-
+"""
 plt.imshow(exp_mat_b - data_b, origin='lower',cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1)
 plt.show()
 plt.imshow(exp_mat_c - data_c, origin='lower', cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1)
 plt.show()
 plt.imshow(exp_mat_d - data_d, origin='lower', cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1)
 plt.show()
+"""
