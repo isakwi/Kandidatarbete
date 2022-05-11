@@ -74,8 +74,9 @@ def generateMatrices(file_a, file_b, file_c, file_d):
 
 
 if __name__ == "__main__":
-    matplotlib.rcParams.update({'font.size': 12, 'text.usetex': True})
-
+    matplotlib.rcParams.update({'font.size': 18, 'text.usetex': True})
+    matplotlib.rc('text.latex', preamble=r'\usepackage{amsmath}')
+    
     with open("benchmarkDATA&PLOTS/plotdata_b_6161Ed.txt") as f: # Reads the entire file as one string
         content_b = f.read()
 
@@ -184,7 +185,7 @@ if __name__ == "__main__":
     #plt.yticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
 
     #ax[1,1].set_title(f'Cost function F($\gamma$, \u03B2) for problem d')
-    ax[1,1].set_xlabel("$\gamma_1$")
+    ax[1,1].set_xlabel(r"$\gamma_1$")
     ax[1,1].text(0.05, 0.85, r'$\textbf{(d)}$', fontsize = 18, weight='bold', transform=ax[1,1].transAxes)
     #plt.xticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
     #plt.yticks([gamma_vec[0], (gamma_vec[-1] + gamma_vec[0])/2, gamma_vec[-1]], labels)
@@ -294,7 +295,7 @@ if __name__ == "__main__":
     ax2[1,1].legend(loc='center')
     """
     handles, labels = ax2[0,0].get_legend_handles_labels()
-    fig2.legend(handles, labels, loc='upper center',ncol=5)
+    fig2.legend(handles, labels, loc='upper center',ncol=5, frameon=False, columnspacing=0.8, handletextpad=0.1)
 
     plt.show()
     fig2.savefig("betaplotbenchmark.png", format="png", bbox_inches="tight")
