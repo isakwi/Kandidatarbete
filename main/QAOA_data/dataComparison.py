@@ -163,23 +163,23 @@ print(sim_index_d, index_d)
 gamma_vec = np.linspace(0, np.pi, 61)
 beta_vec = np.linspace(0, np.pi, 61)
 
-sim_gamma_a = gamma_vec[16]
-sim_beta_a = beta_vec[23]
+sim_gamma_a = gamma_vec[17]
+sim_beta_a = beta_vec[22]
 gamma_a = gamma_vec[17]
 beta_a = beta_vec[22]
 
-sim_gamma_b = gamma_vec[14]
+sim_gamma_b = gamma_vec[15]
 sim_beta_b = beta_vec[15]
 gamma_b = gamma_vec[16]
 beta_b = beta_vec[16]
 
-sim_gamma_c = gamma_vec[28]
-sim_beta_c = beta_vec[16]
+sim_gamma_c = gamma_vec[29]
+sim_beta_c = beta_vec[15]
 gamma_c = gamma_vec[29]
 beta_c = beta_vec[14]
 
 sim_gamma_d = gamma_vec[15]
-sim_beta_d = beta_vec[54]
+sim_beta_d = beta_vec[53]
 gamma_d = gamma_vec[15]
 beta_d = beta_vec[51]
 
@@ -259,3 +259,4 @@ plt.show()
 plt.imshow(exp_mat_d - data_d, origin='lower', cmap=plt.get_cmap('PiYG'), vmin=-1, vmax=1)
 plt.show()
 """
+
