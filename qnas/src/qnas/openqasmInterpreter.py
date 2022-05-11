@@ -54,6 +54,7 @@ def qasmToQnas(circuit):
                 if node.type == 'op':
                     dag.remove_op_node(node)
 
+
         new_qc = dag_to_circuit(dag)
         gatelist.append(new_qc.qasm())
 
