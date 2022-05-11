@@ -9,8 +9,8 @@ sys.path.insert(1, '../')
 from benchmarkplots2 import generateMatrices
 
 file_a = "../benchmarkDATA&PLOTS/plotdata_a_Isak61x61final.txt"
-file_b = "../benchmarkDATA&PLOTS/Old_Data/plotdata_b_longrun6161.txt"
-file_c = "../benchmarkDATA&PLOTS/Old_Data/plotdata_c_longrun6161.txt"
+file_b = "../benchmarkDATA&PLOTS/plotdata_b_6161Ed.txt"
+file_c = "../benchmarkDATA&PLOTS/plotdata_c_Isak61x61final.txt"
 file_d = "../benchmarkDATA&PLOTS/plotdata_d_6161Ed.txt"
 
 exp_mat_a, exp_mat_b, exp_mat_c, exp_mat_d = generateMatrices(file_a, file_b, file_c, file_d)
@@ -183,43 +183,45 @@ sim_beta_d = beta_vec[54]
 gamma_d = gamma_vec[15]
 beta_d = beta_vec[51]
 
-print("simulerat", "experimentellt")
-print(sim_gamma_a, gamma_a)
-print(sim_beta_a, beta_a)
-print(sim_gamma_b, gamma_b)
-print(sim_beta_b, beta_b)
-print(sim_gamma_c, gamma_c)
-print(sim_beta_c, beta_c)
-print(sim_gamma_d, gamma_d)
-print(sim_beta_d, beta_d)
+print("vinkel, simulerad, experimentell")
+print("gamma_a", sim_gamma_a,"|", gamma_a)
+print("beta_a", sim_beta_a, "|", beta_a)
+print("gamma_b", sim_gamma_b,"|", gamma_b)
+print("beta_b", sim_beta_b,"|", beta_b)
+print("gamma_c", sim_gamma_c,"|", gamma_c)
+print("beta_c", sim_beta_c,"|", beta_c)
+print("gamma_d",sim_gamma_d,"|", gamma_d)
+print("beta_d", sim_beta_d,"|", beta_d)
 
-print(min_a)
-print(min_b)
-print(min_c)
-print(min_d)
-
+print("exp_min, sim_min")
+print(min_a, sim_min_a)
+print(min_b, sim_min_b)
+print(min_c, sim_min_c)
+print(min_d, sim_min_d)
+"""
 print(sim_min_a)
 print(sim_min_b)
 print(sim_min_c)
-print(sim_min_d)
-print("diff i min")
+print(sim_min_d)"""
+print("proc diff i min")
 print(proc_a)
 print(proc_b)
 print(proc_c)
 print(proc_d)
 
-#mean_diff_a = np.mean(abs(exp_mat_a - data_a))
+mean_diff_a = np.mean(abs(exp_mat_a - data_a))
 mean_diff_b = np.mean(abs(exp_mat_b - data_b))
 mean_diff_c = np.mean(abs(exp_mat_c - data_c))
 mean_diff_d = np.mean(abs(exp_mat_d - data_d))
 
-#mean_diff_proc_a 
+mean_diff_proc_a = abs(mean_diff_a/min_a)
 mean_diff_proc_b = abs(mean_diff_b/min_b)
 mean_diff_proc_c = abs(mean_diff_c/min_c)
 mean_diff_proc_d = abs(mean_diff_d/min_d)
 
 
 print("average percentage diff")
+print(mean_diff_proc_a)
 print(mean_diff_proc_b)
 print(mean_diff_proc_c)
 print(mean_diff_proc_d)
