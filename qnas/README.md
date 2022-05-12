@@ -1,11 +1,11 @@
 Welcome to QnAS - an open source 
 program to simulate noisy quantum algorithms!
 
-Installation guide: Go to TestPyPI and find QnAS, 
+Installation guide: Go to PyPI and find QnAS, 
 there you can find the installation command! 
 Or you can find it here:
 
-    pip install -i https://test.pypi.org/simple/ qnas
+    pip install qnas
 
 MIT License: Free to use!
 
