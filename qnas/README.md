@@ -35,4 +35,12 @@ have a qubit parameter file called
 
     finalStates = qnas.solve(Qbfile='qubitData.csv', circuit=circuit)
 
+Here's an example of how the 'qubitdata.csv' should look like:
+    
+    Qubit;Relaxation(MHz);Dephasing(MHz);Thermal(MHz);Anharmonicity(MHz);Levels
+	01;1.1;1.2;0.00;-229;3
+	02;1.3;1.0;0.00;-225;3
+	03;1.2;1.4;0.00;-226;3
+
+To add more qubits, just add more rows to the csv file!
 
