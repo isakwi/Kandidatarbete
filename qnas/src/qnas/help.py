@@ -33,7 +33,7 @@ def help():
           "The qubit parameter file needs to be located in the folder where you are running your program.\n"
           "Here is an example qubit file structure for 3 qubits (OBS! .csv file!):\n"
           "If you want more qubits, just add similar rows to the file!\n\n"
-          "\tQubit;Relaxation;Dephasing;Thermal;Anharmonicity(MHz);Levels\n"
+          "\tQubit;Relaxation(MHz);Dephasing(MHz);Thermal(MHz);Anharmonicity(MHz);Levels\n"
           "\t01;1.1;1.2;0.00;-229;3\n"
           "\t02;1.3;1.0;0.00;-225;3\n"
           "\t03;1.2;1.4;0.00;-226;3\n\n"
