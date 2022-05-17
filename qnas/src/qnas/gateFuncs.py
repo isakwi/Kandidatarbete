@@ -90,7 +90,7 @@ def createGatesFromStep(step, Qblist, t_max):
     return H_real, H_virt, tmax
 
 
-def timeDepend(step, gates, t_max, Qblist):
+def timeDepend(step, gates, t_max, Qblist, storeTimeDynamics):
     """
     Translates the H_real from Qobj to QobjEvo by including the drive envelope corresponding to the
     angle specified in the step, and sums all the QobjEvos together to return the entire Hamiltonian for
@@ -112,7 +112,10 @@ def timeDepend(step, gates, t_max, Qblist):
         else:
             tlist = linspace(0,0,10)
     else:
-        tlist = linspace(0,t_max,10)
+        if storeTimeDynamics:
+            tlist = linspace(0, t_max, 100)
+        else:
+            tlist = linspace(0,t_max,10)
     args=zeros(3)
     #Create time dep H from angles
     tol = pi/180  # Tolerance for how small angle we can handle, when an angle is "0"

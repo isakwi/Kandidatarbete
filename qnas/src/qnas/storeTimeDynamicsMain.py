@@ -87,7 +87,7 @@ def mainAlgorithmExpectation(args):
     if c_ops != []:
         for i in range(0, len(steps)):  # all steps
             physicalgates, virtualgates, tmax = gf.createGatesFromStep(steps[i], Qblist, t_max)
-            Htd, tlist = gf.timeDepend(steps[i], physicalgates, tmax, Qblist)
+            Htd, tlist = gf.timeDepend(steps[i], physicalgates, tmax, Qblist, storeTimeDynamics=True)
             H = Htd + H0
             # Create tlist for the entire process
             OnlyVirtualGates = True
@@ -111,7 +111,7 @@ def mainAlgorithmExpectation(args):
         allStates = []
         for i in range(0, len(steps)):  # all steps
             physicalgates, virtualgates, tmax = gf.createGatesFromStep(steps[i], Qblist, t_max)
-            Htd, tlist = gf.timeDepend(steps[i], physicalgates, tmax, Qblist)
+            Htd, tlist = gf.timeDepend(steps[i], physicalgates, tmax, Qblist, storeTimeDynamics=True)
             H = Htd + H0
             # Create tlist for the entire process
             OnlyVirtualGates = True
