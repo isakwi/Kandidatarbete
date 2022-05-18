@@ -1,4 +1,4 @@
 Qubit;Relaxation(MHz);Dephasing(MHz);Thermal(MHz);Anharmonicity(MHz);Levels
-01;0.2;0.04;0.00;-225;3
-02;0.2;0.04;0.00;-225;3
+01;0.4;0.1;0.00;-225;3
+02;0.4;0.1;0.00;-225;3
 
