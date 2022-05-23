@@ -116,8 +116,8 @@ def CZ(Qblist, Tar_Con):
     - Qblist = list of Qubit objects
     - Tar_Con = qubits to be targeted by the operator
     Output: Qobj that operates on the targeted qubits with correct dimensions"""
-    k11 = tensor(basis(3, 1), basis(3, 1))
-    k02 = tensor(basis(3, 0), basis(3, 2))
+    k11 = tensor(basis(Qblist[Tar_Con[0]].level, 1), basis(Qblist[Tar_Con[1]].level, 1))
+    k02 = tensor(basis(Qblist[Tar_Con[0]].level, 0), basis(Qblist[Tar_Con[1]].level, 2))
     H = k11 * k02.dag() + k02 * k11.dag()
     cz = [qeye(Qb.level) for Qb in Qblist]
     target = Tar_Con[0]  # index of the targeted qubit

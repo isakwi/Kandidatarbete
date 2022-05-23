@@ -71,8 +71,11 @@ def createGatesFromStep(step, Qblist, t_max):
             if step.name[i] in ["CZ"]: #this is needed atm
                 step.angle[i] = 2* np.pi
                 tmax = t_max[1]
-                if Qblist[step.Tar_Con[i][0]].level != 3 or Qblist[step.Tar_Con[i][1]].level != 3:
-                    print('Error: CZ can only act on 3 level qubits. Qubit ' + str(step.Tar_Con[i][0]) + " = " + str(Qblist[step.Tar_Con[i][0]].level) + ", Qubit " + str(step.Tar_Con[i][1]) + " = " + str(Qblist[step.Tar_Con[i][1]].level))
+                if Qblist[step.Tar_Con[i][0]].level < 3 or Qblist[step.Tar_Con[i][1]].level < 3:
+                    print('Error: CZ can only act on >3 level qubits. Qubit ' + str(step.Tar_Con[i][0]) + " = " + str(Qblist[step.Tar_Con[i][0]].level) + ", Qubit " + str(step.Tar_Con[i][1]) + " = " + str(Qblist[step.Tar_Con[i][1]].level))
+                    sys.exit(1)  # Stops the program with the same error code as above
+                elif Qblist[step.Tar_Con[i][0]].level != Qblist[step.Tar_Con[i][1]].level:
+                    print('Error: Both Qubits targeted by CZ need to be the same level. Qubit ' + str(step.Tar_Con[i][0]) + " = " + str(Qblist[step.Tar_Con[i][0]].level) + ", Qubit " + str(step.Tar_Con[i][1]) + " = " + str(Qblist[step.Tar_Con[i][1]].level))
                     sys.exit(1)  # Stops the program with the same error code as above
         elif step.name[i] in ["HD"]: # HD gate feels pretty unique so I left it as it was when I found it
             anyPhysicalGate = True
