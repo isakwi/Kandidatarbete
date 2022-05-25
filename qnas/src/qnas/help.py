@@ -49,6 +49,4 @@ def help():
           "\tfinalStates = qnas.solve(Qbfile='qubitData.csv', circuit=circuit)\n\n"
           "If you want descriptions about other functions that you want to use,\n"
           "Go read in the source descriptions under the function definitions!\n"
-          "https://github.com/isakwi/Kandidatarbete/tree/main/qnas\n\n"
-          "Do you want to donate to QnAS development to keep the project going forward?\n"
-          "Swish to +46 70 603 61 27, thanks!")
+          "https://github.com/isakwi/Kandidatarbete/tree/main/qnas\n\n")

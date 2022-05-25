@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name='qnas',  # should match the package folder
-    version='0.0.9',  # important for updates
+    version='1.0.0',  # important for updates
     license='MIT',  # should match your chosen license
     description='QnAS package',
     long_description=long_description,  # loads your README.md
@@ -20,9 +20,6 @@ setuptools.setup(
         'Topic :: Software Development :: Documentation',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
     ],
 
     package_dir={"": "src"},
