@@ -1,12 +1,8 @@
-Welcome to QnAS - an open source 
-program to simulate noisy quantum algorithms!
+# Bachelor's thesis
 
-Installation guide: Go to PyPI and find QnAS, 
-there you can find the installation command! 
-Or you can find it here:
+Welcome to the working folder of this bachelor's thesis conducted by 
+A. Blom, A. Edenmyr, E. Martinson, L. Nordqvist, D. Palmqvist and I. Wikman
+at Chalmers University of Technology during the spring 2022. 
 
-    pip install qnas
-
-MIT License: Free to use!
-
-To see source code, go to: https://github.com/isakwi/Kandidatarbete/tree/main/qnas
+The final product with installation can be found at:
+https://github.com/isakwi/Kandidatarbete/tree/main/qnas
